@@ -1,0 +1,37 @@
+---
+
+- name: Clean working directory
+  file:
+    state: absent
+    path: "{{ working_directory }}"
+  tags: [ devstack ]
+  become: no
+
+- name: Create working directory
+  file:
+    state: directory
+    path: "{{ working_directory }}"
+  become: no
+  tags: [ devstack ]
+
+- name: Copy SSH config
+  blockinfile:
+    path: "{{ ssh_keys_dir }}/config"
+    create: yes
+    block: |
+      host github.com
+       HostName github.com
+       User git
+       ForwardAgent yes
+       StrictHostKeyChecking no
+  become: no
+  tags: [ devstack ]
+
+- name: Clone Github repository
+  git:
+    repo: "{{ git_repo_url }}"
+    version: "{{ git_repo_branch }}"
+    dest: "{{ devstack_directory }}"
+    accept_hostkey: yes
+  become: false
+  tags: [ devstack ]

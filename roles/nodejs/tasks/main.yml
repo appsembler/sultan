@@ -1,0 +1,26 @@
+---
+
+- name: Add repository keys
+  apt_key:
+    url: "{{ item }}"
+  with_items:
+    - "http://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    - "https://dl.yarnpkg.com/debian/pubkey.gpg"
+  tags: [ nodejs ]
+
+- name: Add repositories
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+      - "deb http://deb.nodesource.com/node_10.x {{ ansible_lsb.codename }} main"
+      - "deb-src http://deb.nodesource.com/node_10.x {{ ansible_lsb.codename }} main"
+      - "deb https://dl.yarnpkg.com/debian/ stable main"
+  tags: [ nodejs ]
+
+- name: Install package
+  apt:
+    name: "nodejs"
+    state: "present"
+  tags: [ nodejs ]

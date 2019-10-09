@@ -1,0 +1,13 @@
+
+git_repo_url: https://github.com/appsembler/devstack.git
+git_repo_branch: hawthorn
+
+working_directory: "~/work"
+devstack_directory: "{{ working_directory }}/devstack"
+
+ssh_keys_dir: "~/.ssh"
+
+docker_group_name: "docker"
+
+user_home: "/home/{{ user }}"
+gcloud_bin: "{{ user_home }}/google-cloud-sdk/bin"

@@ -1,0 +1,20 @@
+---
+
+- hosts: "{{ instance_name }}"
+  become: true
+  vars_files:
+    - server-vars.yml
+  pre_tasks:
+    - name: Get the username running the deploy
+      become: false
+      local_action: command whoami
+      register: whoami
+
+    - set_fact:
+        user: "{{ whoami.stdout }}"
+  roles:
+    - server
+    - docker
+    - nodejs
+    - gcloud
+    - devstack

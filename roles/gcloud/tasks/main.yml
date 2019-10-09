@@ -1,0 +1,55 @@
+---
+
+- name: Remove google-cloud-sdk snap
+  snap:
+    name: google-cloud-sdk
+    state: absent
+  ignore_errors: True
+  tags: [ gcloud ]
+
+- name: Install Google Cloud SDK
+  expect:
+    command: '/bin/bash -c "curl --silent https://sdk.cloud.google.com | bash 2>&1 >/dev/null"'
+    responses:
+      '.*directory.*': "\n"
+      '.*Remove.*': "y"
+      '.*improve.*': "n"
+      '.*continue.*': "n"
+  tags: [ gcloud ]
+  become: no
+
+- name: add {{ gcloud_bin }} to path
+  lineinfile:
+    dest: /etc/environment
+    state: present
+    backrefs: yes
+    regexp: 'PATH=(["]*)((?!.*?{{gcloud_bin}}).*?)(["]*)$'
+    line: "PATH={{ gcloud_bin }}:{{ ansible_env.PATH }}"
+  tags: [ gcloud ]
+
+- name:  Install docker-credential-gcr
+  expect:
+    command: "gcloud components install docker-credential-gcr"
+    responses:
+      'Do you want to continue (Y/n)?': Y
+  environment:
+    PATH: "{{ gcloud_bin }}:{{ ansible_env.PATH }}"
+  become: no
+  tags: [ gcloud ]
+
+- name: Configure the Docker client to use docker-credential-gcr
+  command: "docker-credential-gcr configure-docker"
+  environment:
+    PATH: "{{ gcloud_bin }}:{{ ansible_env.PATH }}"
+  become: no
+  tags: [ gcloud ]
+
+- name: Configure Docker auth
+  expect:
+    command: gcloud auth configure-docker
+    responses:
+      Do you want to continue (Y/n)?: Y
+  environment:
+    PATH: "{{ gcloud_bin }}:{{ ansible_env.PATH }}"
+  become: no
+  tags: [ gcloud ]

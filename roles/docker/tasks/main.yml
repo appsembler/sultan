@@ -1,0 +1,39 @@
+---
+
+- name: Create '{{ docker_group_name }}' group
+  group:
+    name: "{{ docker_group_name }}"
+    state: present
+  tags: [ docker ]
+
+- name: Add '{{ user }}' to '{{ docker_group_name }}' group
+  user:
+    name: "{{ user }}"
+    groups: "{{ docker_group_name }}"
+    append: true
+  tags: [ docker ]
+
+- name: Add GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  tags: [ docker ]
+
+- name: Add Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+  tags: [ docker ]
+
+- name: Install packages
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: latest
+  loop: [
+    "docker-ce",
+    "docker-ce-cli",
+    "containerd.io",
+    "docker-compose",
+  ]
+  tags: [ docker ]

@@ -1,0 +1,56 @@
+---
+
+- hosts: all
+  tasks:
+    - name: Insert the Tahoe devstack hostnames
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          #
+          # Those configurations are temporary and might removed
+          # or changed based on your devstack configurations.
+
+          {{ IP_ADDRESS }} {{ TAHOE_HOST_NAME }}
+          {{ IP_ADDRESS }} edx.devstack.lms
+          {{ IP_ADDRESS }} red.localhost
+          {{ IP_ADDRESS }} blue.localhost
+          {{ IP_ADDRESS }} green.localhost
+      when: target == "hosts_update"
+      become: yes
+
+    - name: Remove Tahoe devstack hostnames
+      blockinfile:
+        path: /etc/hosts
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        block: ""
+      when: target == "hosts_revert"
+      become: yes
+
+    - name: Configure SSH agent forwarding
+      blockinfile:
+        path: ~/.ssh/config
+
+        create: yes
+        block: |
+          Host devstack
+            HostName {{ IP_ADDRESS }}
+            User {{ USER }}
+            IdentityFile {{ SSH_KEY }}
+            ForwardAgent yes
+
+      when: target == "ssh_config"
+
+    # TODO: use ssh-keyscan instead.
+    - name: Get the remote instance host key running the deploy
+      local_action: "command gcloud compute ssh {{ INSTANCE_NAME }} --command 'cat /etc/ssh/ssh_host_ecdsa_key.pub' --project {{ PROJECT_NAME }}"
+      register: host_key
+      when: target == "ssh_config"
+
+    - name: Configure SSH known hosts
+      lineinfile:
+        path: ~/.ssh/known_hosts
+        regexp: '^{{ IP_ADDRESS }} '
+        insertafter: '^#{{ IP_ADDRESS }} '
+        line: "{{ IP_ADDRESS }} {{ host_key.stdout }}"
+
+      when: target == "ssh_config"

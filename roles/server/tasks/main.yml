@@ -1,0 +1,48 @@
+---
+
+- name: Install aptitude using apt
+  apt:
+    name: aptitude
+    state: latest
+    update_cache: yes
+    force_apt_get: yes
+  tags: [ server ]
+
+- name: Uninstall old versions
+  apt:
+    name: "{{ item }}"
+    state: absent
+  loop: [
+    "docker",
+    "docker-engine",
+    "docker.io",
+    "containerd",
+    "runc"
+  ]
+  tags: [ server ]
+
+- name: Install required system packages
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    force_apt_get: yes
+  loop: [
+    "apt-transport-https",
+    "build-essential",
+    "ca-certificates",
+    "curl",
+    "gnupg-agent",
+    "software-properties-common",
+    "python-pexpect",
+    "python-pip",
+    "python3-pip",
+    "virtualenv",
+    "python-setuptools"
+  ]
+  tags: [ server ]
+
+- name: Install pexpect
+  pip:
+    name: pexpect
+  become: yes
