@@ -230,19 +230,20 @@ local.ssh.config: ve/bin/ansible-playbook
 	@. ve/bin/activate; ansible-playbook local.yml \
 		--connection=local \
 		-i '127.0.0.1,' \
-		-e "IP_ADDRESS=$(IP_ADDRESS) INSTANCE_NAME=$(INSTANCE_NAME) USER=$(USER_NAME) SSH_KEY=$(SSH_KEY) PROJECT_NAME=$(PROJECT_NAME) target=ssh_config" > $(ANSIBLE_OUTPUT)
+		--tags ssh_config \
+		-e "IP_ADDRESS=$(IP_ADDRESS) USER=$(USER_NAME) SSH_KEY=$(SSH_KEY)" > $(ANSIBLE_OUTPUT)
 	@ssh-add $(SSH_KEY)
 
 local.hosts.update: ve/bin/ansible-playbook  ## Updates your hosts file by adding the necessary hosts to it.
 	@echo Updating /etc/hosts file ...
 
 	$(eval IP_ADDRESS := $(shell make instance.ip))
-	@. ve/bin/activate; sudo ansible-playbook --connection=local -i '127.0.0.1,' -e "IP_ADDRESS=$(IP_ADDRESS) target=hosts_update TAHOE_HOST_NAME=$(TAHOE_HOST_NAME)" local.yml > $(ANSIBLE_OUTPUT)
+	@. ve/bin/activate; sudo ansible-playbook --connection=local -i '127.0.0.1,' --tags hosts_update -e "IP_ADDRESS=$(IP_ADDRESS) TAHOE_HOST_NAME=$(TAHOE_HOST_NAME)" local.yml > $(ANSIBLE_OUTPUT)
 
 local.hosts.revert: ve/bin/ansible-playbook  ## Updates your hosts file by removing the added hosts from it.
 	@echo Reverting changes made on /etc/hosts file ...
 	@echo Your local host sudo password might be required.
-	@. ve/bin/activate; sudo ansible-playbook --connection=local -i '127.0.0.1,' -e "target=hosts_revert" local.yml > $(ANSIBLE_OUTPUT)
+	@. ve/bin/activate; sudo ansible-playbook --connection=local -i '127.0.0.1,' --tags hosts_revert local.yml > $(ANSIBLE_OUTPUT)
 
 git:  ## Runs git commands against your remote devstack
 	@make instance.run command="(cd $(DEVSTACK_WORK_DIR)/$(repo) && git $(command))"
