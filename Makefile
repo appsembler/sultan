@@ -49,7 +49,7 @@ ve/bin/ansible-playbook: requirements.txt
 clean:  ## Clean software and directory caches
 	@echo Flush pip packages...
 	@rm -rf ve
-	@rm dynamic-inventory/gce.ini
+	@rm dynamic-inventory/gce.ini || echo ''
 	@make ve/bin/ansible-playbook
 
 	@echo Flush Ansible cache...
@@ -265,7 +265,7 @@ devstack.make:  ## Perfoms a make command on your instance.
 	@make instance.run command="(cd $(DEVSTACK_WORK_DIR)/devstack && make $(target))"
 
 devstack.run:  ## Runs devstack servers.
-	@make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack && make HOST=$(TAHOE_HOST_NAME) tahoe.up.full"
+	@make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack && make dev.up"
 
 devstack.stop:  ## Stops devstack servers.
 	@make devstack.make target=stop
@@ -277,7 +277,7 @@ devstack.mount:  ## Mounts the devstack from your instance onto your machine.
 	@echo "Mount directory created: " $(MOUNT_DIR)
 	@sshfs \
 		-o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,IdentityFile=$(SSH_KEY) \
-		$(USER_NAME)@$(IP_ADDRESS):/home/$(USER_NAME)/work/tahoe-hawthorn \
+		$(USER_NAME)@$(IP_ADDRESS):/home/$(USER_NAME)/workspace \
 		$(MOUNT_DIR)
 
 devstack.unmount: ## Releases the devstack mount from your machine.
