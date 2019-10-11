@@ -9,30 +9,30 @@ help: ## This help message
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | \
 		sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
 
-environment.display:  ## Prints the values of the environemnt variables to be used in the make command as define in .env.* files
-	@echo SSH_KEY = $(SSH_KEY)
-	@echo PROJECT_ID = $(PROJECT_ID)
-	@echo USER_NAME = $(USER_NAME)
+environment.debug:  ## Prints the values of the environemnt variables to be used in the make command as define in .env.* files
+	@echo ALLOW_FIREWALL = $(ALLOW_FIREWALL)
+	@echo ANSIBLE_OUTPUT = $(ANSIBLE_OUTPUT)
+	@echo DENY_FIREWALL = $(DENY_FIREWALL)
+	@echo DEVSTACK_WORK_DIR = $(DEVSTACK_WORK_DIR)
+	@echo DISK_SIZE = $(DISK_SIZE)
 	@echo HOST_NAME = $(HOST_NAME)
+	@echo HOSTS_FILE = $(HOSTS_FILE)
+	@echo IMAGE_FAMILY = $(IMAGE_FAMILY)
+	@echo IMAGE_NAME = $(IMAGE_NAME)
 	@echo INSTANCE_NAME = $(INSTANCE_NAME)
 	@echo INSTANCE_TAG = $(INSTANCE_TAG)
-	@echo IMAGE_NAME = $(IMAGE_NAME)
-	@echo DENY_FIREWALL = $(DENY_FIREWALL)
-	@echo ALLOW_FIREWALL = $(ALLOW_FIREWALL)
-	@echo DISK_SIZE = $(DISK_SIZE)
-	@echo MACHINE_TYPE = $(MACHINE_TYPE)
-	@echo ZONE = $(ZONE)
 	@echo INVENTORY = $(INVENTORY)
-	@echo TMP_DIR = $(TMP_DIR)
+	@echo MACHINE_TYPE = $(MACHINE_TYPE)
 	@echo MOUNT_DIR = $(MOUNT_DIR)
-	@echo HOSTS_FILE = $(HOSTS_FILE)
-	@echo TAHOE_HOST_NAME = $(TAHOE_HOST_NAME)
-	@echo VERBOSITY = $(VERBOSITY)
-	@echo ANSIBLE_OUTPUT = $(ANSIBLE_OUTPUT)
-	@echo DEVSTACK_WORK_DIR = $(DEVSTACK_WORK_DIR)
-	@echo IMAGE_FAMILY = $(IMAGE_FAMILY)
+	@echo PROJECT_ID = $(PROJECT_ID)
 	@echo SERVICE_ACCOUNT_EMAIL = $(SERVICE_ACCOUNT_EMAIL)
 	@echo SERVICE_KEY_PATH = $(SERVICE_KEY_PATH)
+	@echo SSH_KEY = $(SSH_KEY)
+	@echo TAHOE_HOST_NAME = $(TAHOE_HOST_NAME)
+	@echo TMP_DIR = $(TMP_DIR)
+	@echo USER_NAME = $(USER_NAME)
+	@echo VERBOSITY = $(VERBOSITY)
+	@echo ZONE = $(ZONE)
 
 environment.create:
 	@echo Creating \`.env.$(USER_NAME)\` file...
