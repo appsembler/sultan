@@ -61,3 +61,12 @@
         block: "{{ host_key.stdout }}"
       tags:
         - ssh_config
+
+    - name: Configure inventory variables
+      template:
+        src: dynamic-inventory/gce.ini.j2
+        dest: dynamic-inventory/gce.ini
+        mode: '0644'
+      tags:
+        - inventory
+

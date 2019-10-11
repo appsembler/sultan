@@ -31,6 +31,8 @@ environment.display:  ## Prints the values of the environemnt variables to be us
 	@echo ANSIBLE_OUTPUT = $(ANSIBLE_OUTPUT)
 	@echo DEVSTACK_WORK_DIR = $(DEVSTACK_WORK_DIR)
 	@echo IMAGE_FAMILY = $(IMAGE_FAMILY)
+	@echo SERVICE_ACCOUNT_EMAIL = $(SERVICE_ACCOUNT_EMAIL)
+	@echo SERVICE_KEY_PATH = $(SERVICE_KEY_PATH)
 
 environment.create:
 	@echo Creating \`.env.$(USER_NAME)\` file...
@@ -42,10 +44,12 @@ ve/bin/ansible-playbook: requirements.txt
 	@echo Installing project requirements...
 	@virtualenv ve
 	@ve/bin/pip install -r requirements.txt
+	@make local.inventory.config
 
 clean:  ## Clean software and directory caches
 	@echo Flush pip packages...
 	@rm -rf ve
+	@rm dynamic-inventory/gce.ini
 	@make ve/bin/ansible-playbook
 
 	@echo Flush Ansible cache...
@@ -232,6 +236,15 @@ local.ssh.config: ve/bin/ansible-playbook
 		-i '127.0.0.1,' \
 		--tags ssh_config \
 		-e "IP_ADDRESS=$(IP_ADDRESS) USER=$(USER_NAME) SSH_KEY=$(SSH_KEY)" > $(ANSIBLE_OUTPUT)
+	@ssh-add $(SSH_KEY)
+
+local.inventory.config: ve/bin/ansible-playbook
+	@echo Updating your inventory credentials ...
+	@. ve/bin/activate; ansible-playbook local.yml \
+		--connection=local \
+		-i '127.0.0.1,' \
+		--tags inventory \
+		-e "PROJECT_ID=$(PROJECT_ID) SERVICE_ACCOUNT_EMAIL=$(SERVICE_ACCOUNT_EMAIL) SERVICE_KEY_PATH=$(SERVICE_KEY_PATH)" > $(ANSIBLE_OUTPUT)
 	@ssh-add $(SSH_KEY)
 
 local.hosts.update: ve/bin/ansible-playbook  ## Updates your hosts file by adding the necessary hosts to it.
