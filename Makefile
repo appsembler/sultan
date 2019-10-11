@@ -11,7 +11,7 @@ help: ## This help message
 
 environment.display:  ## Prints the values of the environemnt variables to be used in the make command as define in .env.* files
 	@echo SSH_KEY = $(SSH_KEY)
-	@echo PROJECT_NAME = $(PROJECT_NAME)
+	@echo PROJECT_ID = $(PROJECT_ID)
 	@echo USER_NAME = $(USER_NAME)
 	@echo HOST_NAME = $(HOST_NAME)
 	@echo INSTANCE_NAME = $(INSTANCE_NAME)
@@ -70,13 +70,13 @@ instance.delete: local.hosts.revert instance.firewall.deny.delete instance.firew
 		--quiet \
 		--zone=$(ZONE) \
 		--verbosity $(VERBOSITY) \
-		--project $(PROJECT_NAME) \
+		--project $(PROJECT_ID) \
 		|| echo 'No previous instance found'
 
 instance.start:  ## Starts your stopped instance on GCP.
 	@gcloud compute instances start $(INSTANCE_NAME) \
 		--zone=$(ZONE) \
-		--project $(PROJECT_NAME)
+		--project $(PROJECT_ID)
 	@make local.hosts.update
 	@make local.ssh.config
 
@@ -84,7 +84,7 @@ instance.stop: local.hosts.revert  ## Stops your instance on GCP, but doesn't de
 	@echo Stopping your instance \($(INSTANCE_NAME)\) on GCP...
 	@gcloud compute instances stop $(INSTANCE_NAME) \
 		--zone=$(ZONE) \
-		--project $(PROJECT_NAME)
+		--project $(PROJECT_ID)
 
 instance.create:   ## Creates an empty instance for you on GCP.
 	@echo Creating your virtual machine on GCP...
@@ -96,12 +96,12 @@ instance.create:   ## Creates an empty instance for you on GCP.
 		--tags=devstack,http-server,$(INSTANCE_TAG) \
 		--zone=$(ZONE) \
 		--verbosity $(VERBOSITY) \
-		--project=$(PROJECT_NAME)
+		--project=$(PROJECT_ID)
 
 instance.image.delete.command:
 	@echo Removing $(NAME) image from GCP...
 	@gcloud compute images delete $(NAME) \
-		--project=$(PROJECT_NAME) \
+		--project=$(PROJECT_ID) \
 		--verbosity $(VERBOSITY) \
 		--quiet \
 		|| echo 'No previous image found'
@@ -118,7 +118,7 @@ instance.image.create.command:
 		--source-disk-zone=$(ZONE) \
 		--family=$(IMAGE_FAMILY) \
 		--labels=user=$(INSTANCE_NAME) \
-		--project=$(PROJECT_NAME)
+		--project=$(PROJECT_ID)
 
 instance.image.create: instance.image.delete instance.stop   ## Creates an image from your instance on GCP.
 	@echo Create a new image for you on GCP...
@@ -131,7 +131,7 @@ instance.image.master.create: instance.stop instance.image.master.delete  ## Cre
 instance.firewall.deny.delete:   ## Deletes the GCP Firewall's rule that prevents accessing your instance by all ways.
 	@echo Removing DENY firewall rule from gcp...
 	@gcloud compute firewall-rules delete $(DENY_FIREWALL) \
-		--project=$(PROJECT_NAME) \
+		--project=$(PROJECT_ID) \
 		--verbosity $(VERBOSITY) \
 		--quiet \
 		|| echo 'No previous deny firewall found'
@@ -145,12 +145,12 @@ instance.firewall.deny.create:  ## Creates a GCP Firewall's rule to prevent all 
 		--source-ranges=0.0.0.0/0 \
 		--priority=1000 \
 		--target-tags=$(INSTANCE_TAG) \
-		--project=$(PROJECT_NAME)
+		--project=$(PROJECT_ID)
 
 instance.firewall.allow.delete:  ## Deletes the GCP Firewall's rule that allows your IP to access your instance.
 	@echo Removing ALLOW firewall rule from gcp...
 	@gcloud compute firewall-rules delete $(ALLOW_FIREWALL) \
-		--project=$(PROJECT_NAME) \
+		--project=$(PROJECT_ID) \
 		--verbosity $(VERBOSITY) \
 		--quiet \
 		|| echo 'No previous allow firewall found'
@@ -166,7 +166,7 @@ instance.firewall.allow.create:  ## Creates a GCP Firewall's rule allowing your 
 		--source-ranges $(MY_PUBLIC_IP) \
 		--priority 50 \
 		--target-tags=$(INSTANCE_TAG)\
-		--project=$(PROJECT_NAME)
+		--project=$(PROJECT_ID)
 
 instance.firewall.deny.refresh: instance.firewall.deny.delete instance.firewall.deny.create  ## Refreshes the deny rule on GCP Firewall by deleting the old rule and creating a new one.
 	@echo "Deny rule has been updated on the firewall."
@@ -184,12 +184,12 @@ instance.setup.image: clean instance.delete ## Setup a restricted instance for y
 	@echo Setting up a new instance from your image...
 	@gcloud compute instances create $(INSTANCE_NAME) \
 		--image=$(IMAGE_NAME) \
-		--image-project=$(PROJECT_NAME) \
+		--image-project=$(PROJECT_ID) \
 		--boot-disk-size=$(DISK_SIZE) \
 		--machine-type=$(MACHINE_TYPE) \
 		--tags=devstack,http-server,$(INSTANCE_TAG) \
 		--zone=$(ZONE) \
-		--project=$(PROJECT_NAME)
+		--project=$(PROJECT_ID)
 
 	@make instance.restrict
 	@make local.hosts.update
@@ -201,12 +201,12 @@ instance.setup.image.master: clean instance.delete ## Setup a restricted instanc
 	@echo Setting up a new instance from the master image...
 	@gcloud compute instances create $(INSTANCE_NAME) \
 		--image=$(IMAGE_FAMILY) \
-		--image-project=$(PROJECT_NAME) \
+		--image-project=$(PROJECT_ID) \
 		--boot-disk-size=$(DISK_SIZE) \
 		--machine-type=$(MACHINE_TYPE) \
 		--tags=devstack,http-server,$(INSTANCE_TAG) \
 		--zone=$(ZONE) \
-		--project=$(PROJECT_NAME)
+		--project=$(PROJECT_ID)
 
 	@make instance.restrict
 	@make local.hosts.update
@@ -221,7 +221,7 @@ instance.run:  ## SSH into or run commands on your instance.
 instance.ip:  ## Gets the external IP of your instance.
 	@gcloud compute instances describe $(INSTANCE_NAME) \
 		--zone=$(ZONE) \
-		--project=$(PROJECT_NAME) \
+		--project=$(PROJECT_ID) \
 		--format='get(networkInterfaces[0].accessConfigs[0].natIP)'
 
 local.ssh.config: ve/bin/ansible-playbook
