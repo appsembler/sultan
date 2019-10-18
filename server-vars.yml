@@ -1,6 +1,6 @@
 
 git_repo_url: https://github.com/appsembler/devstack.git
-git_repo_branch: jazzar/enterprise
+git_repo_branch: appsembler/hawthorn
 
 working_directory: "~/workspace"
 devstack_directory: "{{ working_directory }}/devstack"
