@@ -2,14 +2,23 @@ include .env*
 export $(shell sed 's/=.*//' .env*)
 
 SHELL := /bin/bash
+VERSION = 1.0.0
 .PHONY: help
 
+help: ## This help message.
+	@echo -e "\n\
+	Sultan v$(VERSION)\n\
+	An Open edX Remote Devstack Toolkit from Appsembler\n\n\n\n\
+	Main Targets\n\
+	=======================================================================================================\n\n\
+	$$(grep -hE '^\S+:.*###' $(MAKEFILE_LIST) | sed -e 's/:.*###\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)\
+	\n\n\
+	All Targets \n\
+	=======================================================================================================\n\n\
+	$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)" \
+	| less
 
-help: ## This help message
-	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | \
-		sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
-
-environment.debug:  ## Prints the values of the environemnt variables to be used in the make command as define in .env.* files
+environment.debug:  ## Prints the values of the environemnt variables to be used in the make command as define in .env.* files.
 	@echo ALLOW_FIREWALL = $(ALLOW_FIREWALL)
 	@echo ANSIBLE_OUTPUT = $(ANSIBLE_OUTPUT)
 	@echo DENY_FIREWALL = $(DENY_FIREWALL)
@@ -34,7 +43,7 @@ environment.debug:  ## Prints the values of the environemnt variables to be used
 	@echo VERBOSITY = $(VERBOSITY)
 	@echo ZONE = $(ZONE)
 
-environment.create:
+environment.create:  ### Creates a custom environment file for you where you can personalize your instance's default settings.
 	@echo Creating \`.env.$(USER_NAME)\` file...
 	@[ -f .env.$(USER_NAME) ] && \
 		echo ERROR: \`.env.$(USER_NAME)\` already exists! || \
@@ -46,7 +55,7 @@ ve/bin/ansible-playbook: requirements.txt
 	@ve/bin/pip install -r requirements.txt
 	@make local.inventory.config
 
-clean:  ## Clean software and directory caches
+clean:  ## Clean software and directory caches.
 	@echo Flush pip packages...
 	@rm -rf ve
 	@rm dynamic-inventory/gce.ini || echo ''
@@ -55,7 +64,7 @@ clean:  ## Clean software and directory caches
 	@echo Flush Ansible cache...
 	@. ve/bin/activate; ansible-playbook local.yml --check --flush-cache &> $(ANSIBLE_OUTPUT)
 
-instance.ping: ve/bin/ansible-playbook  ## Performs a ping to your instance.
+instance.ping: ve/bin/ansible-playbook  ### Performs a ping to your instance.
 	@. ve/bin/activate; ansible -i $(INVENTORY) $(INSTANCE_NAME) -m ping
 
 instance.deploy: ve/bin/ansible-playbook  ## Deploys your remote instance and prepare it for devstack provisioning.
@@ -68,7 +77,7 @@ devstack.provision:  ## Provisions the devstack on your instance.
 	make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack/ && make dev.provision"
 	@echo Run \`make devstack.run\` to run the devstack.
 
-instance.delete: local.hosts.revert instance.firewall.deny.delete instance.firewall.allow.delete  ## Deletes your instance from GCP.
+instance.delete: local.hosts.revert instance.firewall.deny.delete instance.firewall.allow.delete  ### Deletes your instance from GCP.
 	@echo Removing your instance \($(INSTANCE_NAME)\) from GCP...
 	@gcloud compute instances delete $(INSTANCE_NAME) \
 		--quiet \
@@ -124,7 +133,7 @@ instance.image.create.command:
 		--labels=user=$(INSTANCE_NAME) \
 		--project=$(PROJECT_ID)
 
-instance.image.create: instance.image.delete instance.stop   ## Creates an image from your instance on GCP.
+instance.image.create: instance.image.delete instance.stop   ### Creates an image from your instance on GCP.
 	@echo Create a new image for you on GCP...
 	@make NAME=$(IMAGE_NAME) instance.image.create.command
 
@@ -178,10 +187,10 @@ instance.firewall.deny.refresh: instance.firewall.deny.delete instance.firewall.
 instance.firewall.allow.refresh: instance.firewall.allow.delete instance.firewall.allow.create  ## Refreshes the allow rule on GCP Firewall by deleting the old rule and creating a new one.
 	@echo "Allow rule has been updated on the firewall."
 
-instance.restrict: instance.firewall.deny.refresh instance.firewall.allow.refresh  ## Restricts the access to your instance to you only by creating the necessary rules.
+instance.restrict: instance.firewall.deny.refresh instance.firewall.allow.refresh  ### Restricts the access to your instance to you only by creating the necessary rules.
 	@echo "You have the only IP that can access the instance now"
 
-instance.setup: clean instance.delete instance.create instance.restrict local.hosts.update local.ssh.config instance.deploy devstack.provision  ## Setup a restricted instance for you on GCP contains a provisioned devstack.
+instance.setup: clean instance.delete instance.create instance.restrict local.hosts.update local.ssh.config instance.deploy devstack.provision  ### Setup a restricted instance for you on GCP contains a provisioned devstack.
 	@echo "Your instance created successfully"
 
 instance.setup.image: clean instance.delete ## Setup a restricted instance for you on GCP (contains a devstack).
@@ -264,13 +273,13 @@ git:  ## Runs git commands against your remote devstack
 devstack.make:  ## Perfoms a make command on your instance.
 	@make instance.run command="(cd $(DEVSTACK_WORK_DIR)/devstack && make $(target))"
 
-devstack.run:  ## Runs devstack servers.
+devstack.run:  ### Runs devstack servers.
 	@make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack && make dev.up"
 
-devstack.stop:  ## Stops devstack servers.
+devstack.stop: devstack.unmount  ### Stops and unmounts a devstack servers.
 	@make devstack.make target=stop
 
-devstack.mount:  ## Mounts the devstack from your instance onto your machine.
+devstack.mount:  ### Mounts the devstack from your instance onto your machine.
 	$(eval IP_ADDRESS := $(shell make instance.ip))
 
 	@mkdir -p $(MOUNT_DIR)
