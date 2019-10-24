@@ -8,7 +8,7 @@ VERSION = 1.0.0
 help: ## This help message.
 	@echo -e "\n\
 	Sultan v$(VERSION)\n\
-	An Open edX Remote Devstack Toolkit from Appsembler\n\n\n\n\
+	An Open edX Remote Devstack Toolkit by Appsembler\n\n\n\n\
 	Main Targets\n\
 	=======================================================================================================\n\n\
 	$$(grep -hE '^\S+:.*###' $(MAKEFILE_LIST) | sed -e 's/:.*###\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)\

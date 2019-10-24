@@ -23,6 +23,7 @@
       blockinfile:
         path: "{{ item }}"
         marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        create: yes
         block: ""
       become: yes
       with_items:
