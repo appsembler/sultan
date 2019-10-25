@@ -67,6 +67,16 @@ clean:  ## Clean software and directory caches.
 instance.ping: ve/bin/ansible-playbook  ### Performs a ping to your instance.
 	@. ve/bin/activate; ansible -i $(INVENTORY) $(INSTANCE_NAME) -m ping
 
+instance.status: ## Shows you the current status of the your GCP instance
+	@gcloud compute instances describe $(INSTANCE_NAME) \
+		--quiet \
+		--zone=$(ZONE) \
+		--verbosity $(VERBOSITY) \
+		--project $(PROJECT_ID) \
+		--format='value[](status)' \
+		|| echo 'No instance found'
+
+
 instance.deploy: ve/bin/ansible-playbook  ## Deploys your remote instance and prepare it for devstack provisioning.
 	@. ve/bin/activate; ansible-playbook devstack.yml \
 		-i $(INVENTORY) \
@@ -134,7 +144,7 @@ instance.image.create.command:
 		--project=$(PROJECT_ID)
 
 instance.image.create: instance.image.delete instance.stop   ### Creates an image from your instance on GCP.
-	@echo Create a new image for you on GCP...
+	@echo Creating a new devstack image on GCP...
 	@make NAME=$(IMAGE_NAME) instance.image.create.command
 
 instance.image.master.create: instance.stop instance.image.master.delete  ## Creates a master image from your instance on GCP.
