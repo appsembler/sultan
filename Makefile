@@ -70,7 +70,7 @@ instance.ping: ve/bin/ansible-playbook  ### Performs a ping to your instance.
 instance.deploy: ve/bin/ansible-playbook  ## Deploys your remote instance and prepare it for devstack provisioning.
 	@. ve/bin/activate; ansible-playbook devstack.yml \
 		-i $(INVENTORY) \
-		-e "instance_name=$(INSTANCE_NAME)"
+		-e "instance_name=$(INSTANCE_NAME) working_directory=$(DEVSTACK_WORK_DIR)"
 	@echo Run \`make devstack.provision\` to run the devstack.
 
 devstack.provision:  ## Provisions the devstack on your instance.
@@ -286,8 +286,9 @@ devstack.mount:  ### Mounts the devstack from your instance onto your machine.
 	@echo "Mount directory created: " $(MOUNT_DIR)
 	@sshfs \
 		-o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,IdentityFile=$(SSH_KEY) \
-		$(USER_NAME)@$(IP_ADDRESS):/home/$(USER_NAME)/workspace \
+		$(USER_NAME)@$(IP_ADDRESS):$(DEVSTACK_WORK_DIR) \
 		$(MOUNT_DIR)
+	@echo "Workspace has been mounted successfully."
 
 devstack.unmount: ## Releases the devstack mount from your machine.
 ifeq ($(shell uname -s),Darwin)

@@ -5,7 +5,6 @@
     state: absent
     path: "{{ working_directory }}"
   tags: [ devstack ]
-  become: no
 
 - name: Create working directory
   file:
