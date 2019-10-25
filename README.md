@@ -72,6 +72,12 @@ To create an instance from your image
 $ make instance.setup.image
 ```
 
+## Environment files
+We create a specific ignored .env file for you run `make environment.create`, to debug the final environment variables values you can run
+```shell
+$ make environment.debug
+```
+
 ## Target help
 To check the targets documentation run
 ```shell
