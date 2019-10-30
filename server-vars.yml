@@ -1,12 +1,7 @@
 
-git_repo_url: https://github.com/appsembler/devstack.git
-git_repo_branch: appsembler/hawthorn
-
-working_directory: "~/workspace"
 devstack_directory: "{{ working_directory }}/devstack"
 
 ssh_keys_dir: "~/.ssh"
-
 docker_group_name: "docker"
 
 user_home: "/home/{{ user }}"
