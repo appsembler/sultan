@@ -1,5 +1,5 @@
 
-environment.debug:  ## Prints the values of the environemnt variables to be used in the make command as define in .env.* files.
+environment.debug:  ## Prints the values of the environemnt variables to be used in the make command as define in .configs.* files.
 	@echo -e "${cyan}ALLOW_FIREWALL${normal}        $(ALLOW_FIREWALL)"
 	@echo -e "${cyan}DENY_FIREWALL${normal}         $(DENY_FIREWALL)"
 	@echo -e "${cyan}DEVSTACK_REPO_BRANCH${normal}  $(DEVSTACK_REPO_BRANCH)"
@@ -7,8 +7,8 @@ environment.debug:  ## Prints the values of the environemnt variables to be used
 	@echo -e "${cyan}DEVSTACK_RUN_COMMAND${normal}  $(DEVSTACK_RUN_COMMAND)"
 	@echo -e "${cyan}DEVSTACK_WORK_DIR${normal}     $(DEVSTACK_WORK_DIR)"
 	@echo -e "${cyan}DISK_SIZE${normal}             $(DISK_SIZE)"
-	@echo -e "${cyan}EDX_HOST_NAMES{normal}         $(EDX_HOST_NAMES)"
-	@echo -e "${cyan}HOST_NAMES{normal}             $(HOST_NAMES)"
+	@echo -e "${cyan}EDX_HOST_NAMES${normal}        $(EDX_HOST_NAMES)"
+	@echo -e "${cyan}HOST_NAME${normal}             $(HOST_NAME)"
 	@echo -e "${cyan}HOSTS_FILE${normal}            $(HOSTS_FILE)"
 	@echo -e "${cyan}IMAGE_FAMILY${normal}          $(IMAGE_FAMILY)"
 	@echo -e "${cyan}IMAGE_NAME${normal}            $(IMAGE_NAME)"

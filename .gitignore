@@ -1,4 +1,4 @@
 ve/
 *.retry
-.env.*
+.configs.*
 dynamic-inventory/gce.ini
