@@ -65,7 +65,7 @@ $make devstack.unmount
 ## Creating an image
 To create an image from your running devstack, use the following
 ```shell
-$ make instance.image.create
+$ make image.create
 ```
 To create an instance from your image
 ```shell
