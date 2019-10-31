@@ -18,7 +18,7 @@ To create an in-cloud devstack for yourself, you need the following instructions
 $ git clone git@github.com:appsembler/sultan.git
 $ cd sultan
 $ make environment.create
-## Change SSH_KEY, PROJECT_ID, SERVICE_ACCOUNT_EMAIL, SERVICE_KEY_PATH in the created .env.<username> file
+## Change SSH_KEY, PROJECT_ID, SERVICE_ACCOUNT_EMAIL, SERVICE_KEY_PATH in the created .configs.<username> file
 $ make instance.setup
 ```
 
@@ -73,7 +73,7 @@ $ make instance.setup.image
 ```
 
 ## Environment files
-We create a specific ignored .env file for you run `make environment.create`, to debug the final environment variables values you can run
+We create a specific ignored .configs file for you run `make environment.create`, to debug the final environment variables values you can run
 ```shell
 $ make environment.debug
 ```

@@ -1,5 +1,5 @@
-include .env*
-export $(shell sed 's/=.*//' .env*)
+include .configs*
+export $(shell sed 's/=.*//' .configs*)
 
 SHELL := /bin/bash
 VERSION = 1.0.0
@@ -49,10 +49,10 @@ error:
 	@echo -e "\nIf you couldn't identify the cause of the problem, please submit an issue on https://github.com/appsembler/sultan/issues.${normal}"
 
 environment.create:  ### Creates a custom environment file for you where you can personalize your instance's default settings.
-	@echo -e "Creating your custom environment file...    ${dim}(.env.$(USER_NAME))${normal}"
-	@[ -f .env.$(USER_NAME) ] && \
-		echo -e "${yellow}The file \${bold}.env.$(USER_NAME)\${normal}${yellow} already exists! ${bold}(ABORTED)${normal}" || \
-		(sed '/^#/! s/\(.*\)/#\1/g' <.env > .env.$(USER_NAME) && \
+	@echo -e "Creating your custom environment file...    ${dim}(.configs.$(USER_NAME))${normal}"
+	@[ -f .configs.$(USER_NAME) ] && \
+		echo -e "${yellow}The file \${bold}.configs.$(USER_NAME)\${normal}${yellow} already exists! ${bold}(ABORTED)${normal}" || \
+		(sed '/^#/! s/\(.*\)/#\1/g' <.configs > .configs.$(USER_NAME) && \
 		 echo -e "${green}Your env file has been successfully created.${normal}" &&\
 		 echo -e "Make sure to override the following variables before proceeding to the setup:" && \
 		 echo -e "    * SSH_KEY" && \
