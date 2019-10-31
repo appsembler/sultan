@@ -46,3 +46,10 @@
   pip:
     name: pexpect
   become: yes
+
+- name: set inotify watchers
+  sysctl:
+    name=fs.inotify.max_user_watches
+    value=524288
+    state=present
+    reload=yes

@@ -2,189 +2,100 @@ include .env*
 export $(shell sed 's/=.*//' .env*)
 
 SHELL := /bin/bash
+VERSION = 1.0.0
 .PHONY: help
 
+bold = \033[1m
+inverted = \033[7m
+underline = \033[4m
+normal = \033[0m
 
-help: ## This help message
-	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | \
-		sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
+cyan = \033[36m
+dim = \033[90m
+green = \033[92m
+red = \033[31m
+redbold = \033[1;31m
+magenta = \033[35m
+yellow = \033[33m
 
-environment.debug:  ## Prints the values of the environemnt variables to be used in the make command as define in .env.* files
-	@echo ALLOW_FIREWALL = $(ALLOW_FIREWALL)
-	@echo ANSIBLE_OUTPUT = $(ANSIBLE_OUTPUT)
-	@echo DENY_FIREWALL = $(DENY_FIREWALL)
-	@echo DEVSTACK_WORK_DIR = $(DEVSTACK_WORK_DIR)
-	@echo DISK_SIZE = $(DISK_SIZE)
-	@echo HOST_NAME = $(HOST_NAME)
-	@echo HOSTS_FILE = $(HOSTS_FILE)
-	@echo IMAGE_FAMILY = $(IMAGE_FAMILY)
-	@echo IMAGE_NAME = $(IMAGE_NAME)
-	@echo INSTANCE_NAME = $(INSTANCE_NAME)
-	@echo INSTANCE_TAG = $(INSTANCE_TAG)
-	@echo INVENTORY = $(INVENTORY)
-	@echo MACHINE_TYPE = $(MACHINE_TYPE)
-	@echo MOUNT_DIR = $(MOUNT_DIR)
-	@echo PROJECT_ID = $(PROJECT_ID)
-	@echo SERVICE_ACCOUNT_EMAIL = $(SERVICE_ACCOUNT_EMAIL)
-	@echo SERVICE_KEY_PATH = $(SERVICE_KEY_PATH)
-	@echo SSH_KEY = $(SSH_KEY)
-	@echo TAHOE_HOST_NAME = $(TAHOE_HOST_NAME)
-	@echo TMP_DIR = $(TMP_DIR)
-	@echo USER_NAME = $(USER_NAME)
-	@echo VERBOSITY = $(VERBOSITY)
-	@echo ZONE = $(ZONE)
-
-environment.create:
-	@echo Creating \`.env.$(USER_NAME)\` file...
-	@[ -f .env.$(USER_NAME) ] && \
-		echo ERROR: \`.env.$(USER_NAME)\` already exists! || \
-		sed '/^#/! s/\(.*\)/#\1/g' <.env > .env.$(USER_NAME)
+help: ## This help message.
+	@echo -e "\n\
+	Sultan ${cyan}v$(VERSION)${noraml}\n\
+	An Open edX Remote Devstack Toolkit by Appsembler\n\n\n\n\
+	${bold}Main Targets${normal}\n\
+	=======================================================================================================\n\n\
+	$$(grep -hE '^\S+:.*###' $(MAKEFILE_LIST) | sed -e 's/:.*###\s*/:/' -e 's/^\(.\+\):\(.*\)/\1:\2/' | column -c2 -t -s :)\
+	\n\n\
+	${bold}All Targets${normal} \n\
+	=======================================================================================================\n\n\
+	$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\1:\2/' | column -c2 -t -s :)" \
+	| less
 
 ve/bin/ansible-playbook: requirements.txt
 	@echo Installing project requirements...
-	@virtualenv ve
-	@ve/bin/pip install -r requirements.txt
+	@virtualenv ve &> $(SHELL_OUTPUT)
+	@ve/bin/pip install -r requirements.txt &> $(SHELL_OUTPUT)
 	@make local.inventory.config
 
-clean:  ## Clean software and directory caches
+include targets/*.mk
+
+error:
+	@echo ''
+	@echo -e "${magenta}An error happened while executing the command you just used!"
+	@echo -e "While this might be an issue with the tool, we would like you to do a little bit more debugging:"
+	@echo -e "    * Run ${underline}${cyan}make environment.debug${normal}${magenta} and check if all of your environment variables hold the correct values."
+	@echo -e "    * Toggle the verbosity settings (${bold}VERBOSITY${normal}${magenta}, and ${bold}SHELL_OUTPUT${normal}${magenta}) in your env file. Follow instructions in the comments above  of them for more details."
+	@echo -e "    * Check https://github.com/appsembler/sultan/wiki for a detailed documentation on the configuration process."
+	@echo -e "\nIf you couldn't identify the cause of the problem, please submit an issue on https://github.com/appsembler/sultan/issues.${normal}"
+
+environment.create:  ### Creates a custom environment file for you where you can personalize your instance's default settings.
+	@echo -e "Creating your custom environment file...    ${dim}(.env.$(USER_NAME))${normal}"
+	@[ -f .env.$(USER_NAME) ] && \
+		echo -e "${yellow}The file \${bold}.env.$(USER_NAME)\${normal}${yellow} already exists! ${bold}(ABORTED)${normal}" || \
+		(sed '/^#/! s/\(.*\)/#\1/g' <.env > .env.$(USER_NAME) && \
+		 echo -e "${green}Your env file has been successfully created.${normal}" &&\
+		 echo -e "Make sure to override the following variables before proceeding to the setup:" && \
+		 echo -e "    * SSH_KEY" && \
+		 echo -e "    * PROJECT_ID" && \
+		 echo -e "    * SERVICE_ACCOUNT_EMAIL" && \
+		 echo -e "    * SERVICE_KEY_PATH" \
+		 )
+
+clean:  ## Clean software and directory caches.
 	@echo Flush pip packages...
 	@rm -rf ve
-	@rm dynamic-inventory/gce.ini
+	@rm dynamic-inventory/gce.ini || echo ''
 	@make ve/bin/ansible-playbook
 
 	@echo Flush Ansible cache...
-	@. ve/bin/activate; ansible-playbook local.yml --check --flush-cache &> $(ANSIBLE_OUTPUT)
+	@. ve/bin/activate; ansible-playbook local.yml --check --flush-cache &> $(SHELL_OUTPUT)
 
-instance.ping: ve/bin/ansible-playbook  ## Performs a ping to your instance.
-	@. ve/bin/activate; ansible -i $(INVENTORY) $(INSTANCE_NAME) -m ping
+instance.ping: ve/bin/ansible-playbook  ### Performs a ping to your instance.
+	@. ve/bin/activate; ansible -i $(INVENTORY) $(INSTANCE_NAME) -m ping \
+		|| (echo -e "\n${redbold}ERROR${red} Unable to ping instance!${normal}\n${bold}This might caused by one of the following reasons:${normal}\n\
+	    * The instance is not set up yet. To set up an instance run ${underline}${cyan}make instnace.setup${normal}.\n\
+	    * The instance was stopped. Check the status of your instance using ${underline}${cyan}make instance.describe.status${normal} and start it by running ${underline}${cyan}make instance.start${normal}.\n\
+	    * The instance might have been restricted under a previous IP of yours. To allow your current IP from accessing the instance run ${underline}${cyan}make instance.restrict${normal}."; \
+	    make error)
 
-instance.deploy: ve/bin/ansible-playbook  ## Deploys your remote instance and prepare it for devstack provisioning.
-	@. ve/bin/activate; ansible-playbook devstack.yml \
-		-i $(INVENTORY) \
-		-e "instance_name=$(INSTANCE_NAME)"
-	@echo Run \`make devstack.provision\` to run the devstack.
+image.create: instance.stop image.delete   ### Creates an image from your instance on GCP.
+	@echo "Creating a new devstack image from your GCP instance...    ${dim}($(IMAGE_NAME))${normal}"
+	@make NAME=$(IMAGE_NAME) image.create.command
+	@echo -e "${green}Your image has been successfully created${normal}"
 
-devstack.provision:  ## Provisions the devstack on your instance.
-	make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack/ && make dev.provision"
-	@echo Run \`make devstack.run\` to run the devstack.
+instance.restrict: instance.firewall.deny.refresh instance.firewall.allow.refresh  ### Restricts the access to your instance to you only by creating the necessary rules.
+ifeq ($(RESTRICT_INSTANCE),true)
+	$(eval MY_PUBLIC_IP := $(shell curl -s ifconfig.me))
+	@echo -e "${green}The instance only communicates with your IP now${normal}    ${dim}($(MY_PUBLIC_IP))${normal}"
+else
+	@echo -e "\n${yellow}The instance accepts requests from any IP now.${normal}    ${dim}(0.0.0.0/0)${normal}"
+endif
+	@echo -e "If this is not the expected behavior, consider toggling the instance restriction setting ${bold}RESTRICT_INSTANCE${normal} in your env file."
 
-instance.delete: local.hosts.revert instance.firewall.deny.delete instance.firewall.allow.delete  ## Deletes your instance from GCP.
-	@echo Removing your instance \($(INSTANCE_NAME)\) from GCP...
-	@gcloud compute instances delete $(INSTANCE_NAME) \
-		--quiet \
-		--zone=$(ZONE) \
-		--verbosity $(VERBOSITY) \
-		--project $(PROJECT_ID) \
-		|| echo 'No previous instance found'
+instance.setup: clean instance.delete instance.create instance.restrict local.hosts.update local.ssh.config instance.deploy devstack.provision  ### Setup a restricted instance for you on GCP contains a provisioned devstack.
+	@echo -e "${green}Your instance has been successfully created!${normal}"
 
-instance.start:  ## Starts your stopped instance on GCP.
-	@gcloud compute instances start $(INSTANCE_NAME) \
-		--zone=$(ZONE) \
-		--project $(PROJECT_ID)
-	@make local.hosts.update
-	@make local.ssh.config
-
-instance.stop: local.hosts.revert  ## Stops your instance on GCP, but doesn't delete it.
-	@echo Stopping your instance \($(INSTANCE_NAME)\) on GCP...
-	@gcloud compute instances stop $(INSTANCE_NAME) \
-		--zone=$(ZONE) \
-		--project $(PROJECT_ID)
-
-instance.create:   ## Creates an empty instance for you on GCP.
-	@echo Creating your virtual machine on GCP...
-	@gcloud compute instances create $(INSTANCE_NAME) \
-		--image-family=ubuntu-1804-lts \
-		--image-project=gce-uefi-images \
-		--boot-disk-size=$(DISK_SIZE) \
-		--machine-type=$(MACHINE_TYPE) \
-		--tags=devstack,http-server,$(INSTANCE_TAG) \
-		--zone=$(ZONE) \
-		--verbosity $(VERBOSITY) \
-		--project=$(PROJECT_ID)
-
-instance.image.delete.command:
-	@echo Removing $(NAME) image from GCP...
-	@gcloud compute images delete $(NAME) \
-		--project=$(PROJECT_ID) \
-		--verbosity $(VERBOSITY) \
-		--quiet \
-		|| echo 'No previous image found'
-
-instance.image.delete:   ## Deletes your image from GCP.
-	@make NAME=$(IMAGE_NAME) instance.image.delete.command
-
-instance.image.master.delete:
-	@make NAME=$(IMAGE_FAMILY) instance.image.delete.command
-
-instance.image.create.command:
-	@gcloud beta compute images create $(NAME) \
-		--source-disk=$(INSTANCE_NAME) \
-		--source-disk-zone=$(ZONE) \
-		--family=$(IMAGE_FAMILY) \
-		--labels=user=$(INSTANCE_NAME) \
-		--project=$(PROJECT_ID)
-
-instance.image.create: instance.image.delete instance.stop   ## Creates an image from your instance on GCP.
-	@echo Create a new image for you on GCP...
-	@make NAME=$(IMAGE_NAME) instance.image.create.command
-
-instance.image.master.create: instance.stop instance.image.master.delete  ## Creates a master image from your instance on GCP.
-	@echo Create a new master devstack image on GCP...
-	@make NAME=$(IMAGE_FAMILY) instance.image.create.command
-
-instance.firewall.deny.delete:   ## Deletes the GCP Firewall's rule that prevents accessing your instance by all ways.
-	@echo Removing DENY firewall rule from gcp...
-	@gcloud compute firewall-rules delete $(DENY_FIREWALL) \
-		--project=$(PROJECT_ID) \
-		--verbosity $(VERBOSITY) \
-		--quiet \
-		|| echo 'No previous deny firewall found'
-
-instance.firewall.deny.create:  ## Creates a GCP Firewall's rule to prevent all kind of access to your instance.
-	@echo Creating DENY firewall rule in gcp...
-	@gcloud compute firewall-rules create $(DENY_FIREWALL) \
-		--action=deny \
-		--direction=ingress \
-		--rules=tcp \
-		--source-ranges=0.0.0.0/0 \
-		--priority=1000 \
-		--target-tags=$(INSTANCE_TAG) \
-		--project=$(PROJECT_ID)
-
-instance.firewall.allow.delete:  ## Deletes the GCP Firewall's rule that allows your IP to access your instance.
-	@echo Removing ALLOW firewall rule from gcp...
-	@gcloud compute firewall-rules delete $(ALLOW_FIREWALL) \
-		--project=$(PROJECT_ID) \
-		--verbosity $(VERBOSITY) \
-		--quiet \
-		|| echo 'No previous allow firewall found'
-
-instance.firewall.allow.create:  ## Creates a GCP Firewall's rule allowing your IP to access your instance.
-	$(eval MY_PUBLIC_IP := $(shell curl ifconfig.me))
-
-	@echo Creating ALLOW firewall rule in gcp...
-	@gcloud compute firewall-rules create $(ALLOW_FIREWALL) \
-		--action allow \
-		--direction ingress \
-		--rules tcp \
-		--source-ranges $(MY_PUBLIC_IP) \
-		--priority 50 \
-		--target-tags=$(INSTANCE_TAG)\
-		--project=$(PROJECT_ID)
-
-instance.firewall.deny.refresh: instance.firewall.deny.delete instance.firewall.deny.create  ## Refreshes the deny rule on GCP Firewall by deleting the old rule and creating a new one.
-	@echo "Deny rule has been updated on the firewall."
-
-instance.firewall.allow.refresh: instance.firewall.allow.delete instance.firewall.allow.create  ## Refreshes the allow rule on GCP Firewall by deleting the old rule and creating a new one.
-	@echo "Allow rule has been updated on the firewall."
-
-instance.restrict: instance.firewall.deny.refresh instance.firewall.allow.refresh  ## Restricts the access to your instance to you only by creating the necessary rules.
-	@echo "You have the only IP that can access the instance now"
-
-instance.setup: clean instance.delete instance.create instance.restrict local.hosts.update local.ssh.config instance.deploy devstack.provision  ## Setup a restricted instance for you on GCP contains a provisioned devstack.
-	@echo "Your instance created successfully"
-
-instance.setup.image: clean instance.delete ## Setup a restricted instance for you on GCP (contains a devstack).
+instance.setup.image: clean instance.delete ## Setup a restricted instance from an already created image for you on GCP (contains a devstack).
 	@echo Setting up a new instance from your image...
 	@gcloud compute instances create $(INSTANCE_NAME) \
 		--image=$(IMAGE_NAME) \
@@ -198,8 +109,8 @@ instance.setup.image: clean instance.delete ## Setup a restricted instance for y
 	@make instance.restrict
 	@make local.hosts.update
 	@make local.ssh.config
-	@echo "Your instance created successfully from " $(IMAGE_NAME)
-	@echo "Run 'make devstack.run' to start the servers"
+	@echo -e "${green}Your instance has been successfully created!${normal} (From $(IMAGE_NAME))"
+	@echo -e "Run ${cyan}${underline}make instance.start${normal} and then ${cyan}${underline}make devstack.run${normal} to start devstack servers."
 
 instance.setup.image.master: clean instance.delete ## Setup a restricted instance from the master image.
 	@echo Setting up a new instance from the master image...
@@ -215,76 +126,5 @@ instance.setup.image.master: clean instance.delete ## Setup a restricted instanc
 	@make instance.restrict
 	@make local.hosts.update
 	@make local.ssh.config
-	@echo "Your instance created successfully from " $(IMAGE_NAME)
-	@echo "Run 'make devstack.run' to start the servers"
-
-instance.run:  ## SSH into or run commands on your instance.
-
-	@ssh -tt devstack "$(command)"
-
-instance.ip:  ## Gets the external IP of your instance.
-	@gcloud compute instances describe $(INSTANCE_NAME) \
-		--zone=$(ZONE) \
-		--project=$(PROJECT_ID) \
-		--format='get(networkInterfaces[0].accessConfigs[0].natIP)'
-
-local.ssh.config: ve/bin/ansible-playbook
-	@echo Updating ~/.ssh/config file ...
-	$(eval IP_ADDRESS := $(shell make instance.ip))
-	@. ve/bin/activate; ansible-playbook local.yml \
-		--connection=local \
-		-i '127.0.0.1,' \
-		--tags ssh_config \
-		-e "IP_ADDRESS=$(IP_ADDRESS) USER=$(USER_NAME) SSH_KEY=$(SSH_KEY)" > $(ANSIBLE_OUTPUT)
-	@ssh-add $(SSH_KEY)
-
-local.inventory.config: ve/bin/ansible-playbook
-	@echo Updating your inventory credentials ...
-	@. ve/bin/activate; ansible-playbook local.yml \
-		--connection=local \
-		-i '127.0.0.1,' \
-		--tags inventory \
-		-e "PROJECT_ID=$(PROJECT_ID) SERVICE_ACCOUNT_EMAIL=$(SERVICE_ACCOUNT_EMAIL) SERVICE_KEY_PATH=$(SERVICE_KEY_PATH)" > $(ANSIBLE_OUTPUT)
-	@ssh-add $(SSH_KEY)
-
-local.hosts.update: ve/bin/ansible-playbook  ## Updates your hosts file by adding the necessary hosts to it.
-	@echo Updating /etc/hosts file ...
-
-	$(eval IP_ADDRESS := $(shell make instance.ip))
-	@. ve/bin/activate; sudo ansible-playbook --connection=local -i '127.0.0.1,' --tags hosts_update -e "IP_ADDRESS=$(IP_ADDRESS) TAHOE_HOST_NAME=$(TAHOE_HOST_NAME)" local.yml > $(ANSIBLE_OUTPUT)
-
-local.hosts.revert: ve/bin/ansible-playbook  ## Updates your hosts file by removing the added hosts from it.
-	@echo Reverting changes made on /etc/hosts file ...
-	@echo Your local host sudo password might be required.
-	@. ve/bin/activate; sudo ansible-playbook --connection=local -i '127.0.0.1,' --tags hosts_revert local.yml > $(ANSIBLE_OUTPUT)
-
-git:  ## Runs git commands against your remote devstack
-	@make instance.run command="(cd $(DEVSTACK_WORK_DIR)/$(repo) && git $(command))"
-
-devstack.make:  ## Perfoms a make command on your instance.
-	@make instance.run command="(cd $(DEVSTACK_WORK_DIR)/devstack && make $(target))"
-
-devstack.run:  ## Runs devstack servers.
-	@make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack && make HOST=$(TAHOE_HOST_NAME) tahoe.up.full"
-
-devstack.stop:  ## Stops devstack servers.
-	@make devstack.make target=stop
-
-devstack.mount:  ## Mounts the devstack from your instance onto your machine.
-	$(eval IP_ADDRESS := $(shell make instance.ip))
-
-	@mkdir -p $(MOUNT_DIR)
-	@echo "Mount directory created: " $(MOUNT_DIR)
-	@sshfs \
-		-o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,IdentityFile=$(SSH_KEY) \
-		$(USER_NAME)@$(IP_ADDRESS):/home/$(USER_NAME)/work/tahoe-hawthorn \
-		$(MOUNT_DIR)
-
-devstack.unmount: ## Releases the devstack mount from your machine.
-ifeq ($(shell uname -s),Darwin)
-	@diskutil unmount force $(MOUNT_DIR)
-else
-	@sudo unmount force $(MOUNT_DIR)
-endif
-
-	@rm -rf $(MOUNT_DIR)
+	@echo -e "${green}Your instance has been successfully created!${normal} (From $(IMAGE_FAMILY))"
+	@echo -e "Run ${cyan}${underline}make instance.start${normal} and then ${cyan}${underline}make devstack.run${normal} to start devstack servers."

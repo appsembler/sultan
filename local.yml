@@ -2,32 +2,35 @@
 
 - hosts: all
   tasks:
-    - name: Insert the Tahoe devstack hostnames
+    - name: Add mappings to /etc/hosts
       blockinfile:
         path: /etc/hosts
         block: |
-          #
-          # Those configurations are temporary and might removed
-          # or changed based on your devstack configurations.
-
-          {{ IP_ADDRESS }} {{ TAHOE_HOST_NAME }}
-          {{ IP_ADDRESS }} edx.devstack.lms
-          {{ IP_ADDRESS }} red.localhost
-          {{ IP_ADDRESS }} blue.localhost
-          {{ IP_ADDRESS }} green.localhost
+          {{ IP_ADDRESS }} {{ item }}
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item }}"
       become: yes
+      with_items: "{{ EDX_HOST_NAMES.split(',') }}"
       tags:
         - hosts_update
 
-    - name: Remove Tahoe devstack hostnames
+    - name: Remove SSH configurations
       blockinfile:
-        path: "{{ item }}"
+        create: yes
+        path: ~/.ssh/config
         marker: "# {mark} ANSIBLE MANAGED BLOCK"
         block: ""
       become: yes
-      with_items:
-        - /etc/hosts
-        - ~/.ssh/config
+      tags:
+        - hosts_revert
+
+    - name: Remove mappings from /etc/hosts
+      blockinfile:
+        path: /etc/hosts
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item }}"
+        create: yes
+        block: ""
+      become: yes
+      with_items: "{{ EDX_HOST_NAMES.split(',') }}"
       tags:
         - hosts_revert
 
