@@ -52,15 +52,15 @@ $ make instance.delete
 
 > The instance is secured behind a firewall that only identifies your IP. If your IP happened to change (after a network disconnection for example), run `make instance.restrict` to change your IP in the firewall rule.
 
-## Mounting the devstack
-To mount the devstack on your local machine
-```shell
-$ make devstack.mount
-```
-Or to unmont:
-```shell
-$make devstack.unmount
-```
+
+## Development
+There are so many ways you can choose from to interact with a remote code. However, we recommend two common methods that ensures security, real-time transfer, and immediate reflection:
+
+### SSHFS
+We implicitly implemented this functionality within the toolkit. To use it all you have to do is to  run `make devstack.mount` and then open your favorite text editor and start editing the files on the server from your machine.
+
+### Prefered IDEs
+Some IDEs gives you the power to edit code on remote machines. [Visual Studio Code](https://code.visualstudio.com) for example, recently added [Code Remote Extensions](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack). With this extension, you'll be able to open any folder on your remote machine and take advantage of VS Code's full feature set.
 
 ## Creating an image
 To create an image from your running devstack, use the following
