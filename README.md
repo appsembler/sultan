@@ -57,7 +57,7 @@ $ make instance.delete
 There are so many ways you can choose from to interact with the remote code. However, we recommend two common methods to  ensure security, real-time transfer, and immediate reflection on the remote instance:
 
 ### SSHFS
-We implicitly implemented this functionality within the toolkit. To use it all you have to do is to  run `make devstack.mount` and then open your favorite text editor and start editing files on the server from your machine.
+To use it all you have to do is to  run `make devstack.mount` and then open your favorite text editor and start editing files on the server from your machine.
 
 ### Prefered IDEs
 Some IDEs gives you the power to edit code on remote machines. [Visual Studio Code](https://code.visualstudio.com) for example, recently added [Code Remote Extensions](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack). With this extension, you'll be able to open any folder on your remote machine and take advantage of VS Code's full feature set.
