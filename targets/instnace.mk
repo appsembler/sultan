@@ -25,7 +25,13 @@ instance.deploy: ve/bin/ansible-playbook  ## Deploys your remote instance and pr
 	@echo -e "Run ${cyan}${underline}make devstack.provision${normal} to start provisioning your devstack."
 
 devstack.provision:  ## Provisions the devstack on your instance.
-	make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack/ && make dev.provision"
+#	make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack/ && make OPENEDX_RELEASE=hawthorn.master requirements"
+	for number in 1 2 3 4 5 6 78 9; do \
+		make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack/ && make OPENEDX_RELEASE=hawthorn.master dev.clone"; \
+	done
+	make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack/ && make OPENEDX_RELEASE=hawthorn.master dev.checkout"
+	make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack/ && make OPENEDX_RELEASE=hawthorn.master dev.provision"
+
 	@echo -e "${green}The devstack has been provisioned successfully!${normal}"
 	@echo -e "Run ${cyan}${underline}make devstack.run${normal} to start devstack servers."
 
