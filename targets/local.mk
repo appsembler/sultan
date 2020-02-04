@@ -17,6 +17,7 @@ environment.debug:  ## Prints the values of the environemnt variables to be used
 	@echo -e "${cyan}INVENTORY${normal}             $(INVENTORY)"
 	@echo -e "${cyan}MACHINE_TYPE${normal}          $(MACHINE_TYPE)"
 	@echo -e "${cyan}MOUNT_DIR${normal}             $(MOUNT_DIR)"
+	@echo -e "${cyan}OPENEDX_RELEASE${normal}       $(OPENEDX_RELEASE)"
 	@echo -e "${cyan}PROJECT_ID${normal}            $(PROJECT_ID)"
 	@echo -e "${cyan}RESTRICT_INSTANCE${normal}     $(RESTRICT_INSTANCE)"
 	@echo -e "${cyan}SERVICE_ACCOUNT_EMAIL${normal} $(SERVICE_ACCOUNT_EMAIL)"

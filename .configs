@@ -74,6 +74,10 @@ DEVSTACK_REPO_URL=https://github.com/edx/devstack.git
 
 # The devstack branch you want to deploy.
 DEVSTACK_REPO_BRANCH=master
+#
+# To run the docker images for a named Open edX release.
+# To work on the master branches and latest images, unset OPENEDX_RELEASE or set it to an empty string.
+OPENEDX_RELEASE="$(subst open-release/,,${DEVSTACK_REPO_BRANCH})"
 
 # The command that runs all of your devstack services (LMS, Studio, ...) Change it if you have a custom one.
 DEVSTACK_RUN_COMMAND=dev.up
