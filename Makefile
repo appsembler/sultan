@@ -43,12 +43,12 @@ error:
 	@echo ''
 	@echo -e "${magenta}An error happened while executing the command you just used!"
 	@echo -e "While this might be an issue with the tool, we would like you to do a little bit more debugging:"
-	@echo -e "    * Run ${underline}${cyan}make environment.debug${normal}${magenta} and check if all of your environment variables hold the correct values."
+	@echo -e "    * Run ${underline}${cyan}make config.debug${normal}${magenta} and check if all of your environment variables hold the correct values."
 	@echo -e "    * Toggle the verbosity settings (${bold}VERBOSITY${normal}${magenta}, and ${bold}SHELL_OUTPUT${normal}${magenta}) in your env file. Follow instructions in the comments above  of them for more details."
 	@echo -e "    * Check https://github.com/appsembler/sultan/wiki for a detailed documentation on the configuration process."
 	@echo -e "\nIf you couldn't identify the cause of the problem, please submit an issue on https://github.com/appsembler/sultan/issues.${normal}"
 
-environment.create:  ### Creates a custom environment file for you where you can personalize your instance's default settings.
+config.init:  ### Creates a custom environment file for you where you can personalize your instance's default settings.
 	@echo -e "Creating your custom environment file...    ${dim}(.configs.$(USER_NAME))${normal}"
 	@[ -f .configs.$(USER_NAME) ] && \
 		echo -e "${yellow}The file \${bold}.configs.$(USER_NAME)\${normal}${yellow} already exists! ${bold}(ABORTED)${normal}" || \

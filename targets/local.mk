@@ -1,5 +1,5 @@
 
-environment.debug:  ## Prints the values of the environemnt variables to be used in the make command as define in .configs.* files.
+config.debug:  ## Prints the values of the environemnt variables to be used in the make command as define in .configs.* files.
 	@echo -e "${cyan}ALLOW_FIREWALL${normal}        $(ALLOW_FIREWALL)"
 	@echo -e "${cyan}DENY_FIREWALL${normal}         $(DENY_FIREWALL)"
 	@echo -e "${cyan}DEVSTACK_REPO_BRANCH${normal}  $(DEVSTACK_REPO_BRANCH)"

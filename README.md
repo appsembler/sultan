@@ -17,7 +17,7 @@ To create an in-cloud devstack for yourself, you need the following instructions
 ```Shell
 $ git clone git@github.com:appsembler/sultan.git
 $ cd sultan
-$ make environment.create
+$ make config.init
 ## Change SSH_KEY, PROJECT_ID, SERVICE_ACCOUNT_EMAIL, SERVICE_KEY_PATH in the created .configs.<username> file
 $ make instance.setup
 ```
@@ -73,9 +73,9 @@ $ make instance.setup.image
 ```
 
 ## Environment files
-We create a specific ignored .configs file for you run `make environment.create`, to debug the final environment variables values you can run
+We create a specific ignored .configs file for you run `make config.init`, to debug the final environment variables values you can run
 ```shell
-$ make environment.debug
+$ make config.debug
 ```
 
 ## Target help
@@ -87,7 +87,7 @@ $ make help
 ## Errors
 Errors are possible all the time. If an error's fired while executing commands from this toolkit it is recommended to do a little bit more debugging.
 While this might be an issue with the tool, we just want you to make sure that have everything correct set up in place:
-* Run make environment.debug and check if all of your environment variables hold the correct values.
+* Run make config.debug and check if all of your environment variables hold the correct values.
 * Toggle the verbosity settings (`VERBOSITY`, and `SHELL_OUTPUT`) in your env file. Follow instructions in the comments above  of them for more details.
 * Check our [Wiki](https://github.com/appsembler/sultan/wiki) page for a detailed documentation on the configuration process.
 
