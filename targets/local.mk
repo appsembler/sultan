@@ -12,6 +12,7 @@ environment.debug:  ## Prints the values of the environemnt variables to be used
 	@echo -e "${cyan}HOSTS_FILE${normal}            $(HOSTS_FILE)"
 	@echo -e "${cyan}IMAGE_FAMILY${normal}          $(IMAGE_FAMILY)"
 	@echo -e "${cyan}IMAGE_NAME${normal}            $(IMAGE_NAME)"
+	@echo -e "${cyan}INSTANCE_EXTRA_ARGS${normal}   $(INSTANCE_EXTRA_ARGS)"
 	@echo -e "${cyan}INSTANCE_NAME${normal}         $(INSTANCE_NAME)"
 	@echo -e "${cyan}INSTANCE_TAG${normal}          $(INSTANCE_TAG)"
 	@echo -e "${cyan}INVENTORY${normal}             $(INVENTORY)"
