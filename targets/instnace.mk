@@ -26,8 +26,8 @@ instance.deploy: ve/bin/ansible-playbook  ## Deploys your remote instance and pr
 
 devstack.provision:  ## Provisions the devstack on your instance.
 	@make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack/ && make OPENEDX_RELEASE=$(OPENEDX_RELEASE$) requirements"
-	for number in 1 2 3 4 5 6 78 9; do \
-		@make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack/ && make OPENEDX_RELEASE=$(OPENEDX_RELEASE$) dev.clone"; \
+	@for number in 1 2 3 4 5 6 78 9 10 11; do \
+		make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack/ && make OPENEDX_RELEASE=$(OPENEDX_RELEASE$) dev.clone"; \
 	done
 	@make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack/ && make OPENEDX_RELEASE=$(OPENEDX_RELEASE$) dev.checkout"
 	@make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack/ && make OPENEDX_RELEASE=$(OPENEDX_RELEASE$) dev.provision"
