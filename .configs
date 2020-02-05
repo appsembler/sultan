@@ -28,7 +28,7 @@ ALLOW_FIREWALL=allow-$(INSTANCE_NAME)-webserver-access
 # The size of the disk your instance is going to use in GB. We don't recommend it to be less than 50.
 DISK_SIZE=200
 
-# Determines the specifications of your machine. Currently 2 vCPUs and 7.5 GB of memory.
+# Determines the specifications of your machine. EdX here recommends 2 vCPUs and 8GB of memory. https://github.com/edx/devstack#getting-started
 MACHINE_TYPE=n1-standard-2
 
 # The zone of your machine.
@@ -74,7 +74,7 @@ DEVSTACK_REPO_URL=https://github.com/edx/devstack.git
 
 # The devstack branch you want to deploy.
 DEVSTACK_REPO_BRANCH=master
-#
+
 # To run the docker images for a named Open edX release.
 # To work on the master branches and latest images, unset OPENEDX_RELEASE or set it to an empty string.
 OPENEDX_RELEASE="$(subst open-release/,,${DEVSTACK_REPO_BRANCH})"
@@ -84,3 +84,6 @@ DEVSTACK_RUN_COMMAND=dev.up
 
 # Whether to deny all IPs (except yours) from accessing your instance or not.
 RESTRICT_INSTANCE=true
+
+# Extra arguments to pass when creating an instance
+INSTANCE_EXTRA_ARGS=--preemptible
