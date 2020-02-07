@@ -2,6 +2,8 @@ devstack.make:  ## Perfoms a make command on your instance.
 	@make instance.run command="(cd $(DEVSTACK_WORK_DIR)/devstack && make $(target))"
 
 devstack.run:  ### Runs devstack servers.
+	make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack && make down"
+	make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack && make pull"
 	make instance.run command="cd $(DEVSTACK_WORK_DIR)/devstack && make $(DEVSTACK_RUN_COMMAND)"
 	@echo -e "${green}The devstack is up and running.${normal}"
 
