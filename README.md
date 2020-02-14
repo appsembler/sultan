@@ -12,17 +12,41 @@ Some available and ready-to-use devstack images are going to help you running th
 An extensive documentation on the architecture and toolkit can be found in the repo's wiki page [here](https://github.com/appsembler/sultan/wiki).
 
 ## Quick Start
-To create an in-cloud devstack for yourself, you need the following instructions.
 
-```Shell
+First, install the [GCloud SDK](https://cloud.google.com/sdk/gcloud/).
+
+Then pull htis repo and initialize your configuration:
+
+```shell
 $ git clone git@github.com:appsembler/sultan.git
 $ cd sultan
 $ make config.init
 ## Change SSH_KEY, PROJECT_ID, SERVICE_ACCOUNT_EMAIL, SERVICE_KEY_PATH in the created .configs.<username> file
+```
+This last command creates a `.config.<username>` file in the root directory. We'll modify it below, but first you'll need to create a service account in the GCloud project you will you for your forthcoming devstack instance (official docs [here](https://cloud.google.com/iam/docs/creating-managing-service-accounts).
+
+Grant the service account permission to create an instance (official docs [here](https://cloud.google.com/iam/docs/granting-roles-to-service-accounts#granting_access_to_a_service_account_for_a_resource). Grant the `roles/compute.instanceAdmin` role. (See also the [list of roles](https://cloud.google.com/sdk/gcloud/reference/iam/roles/list) for more info.)
+
+Follow the official docs ([here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys)) to generate a key for your service account. Store it on your disk and edit the `SERVICE_KEY_PATH` to match its location. 
+
+Modify the following variables in this recently-created config file located at `.config.<username>`: 
+
+* `SSH_KEY`: The private key that has access to the GCP project where we will create your instance
+* `PROJECT_ID`: The GCloud project ID.
+* `SERVICE_ACCOUNT_EMAIL`: A string that we will use to create a service account. 
+* `SERVICE_KEY_PATH`: Path to the service account key created in the steps above. 
+
+If this is your first time creating your instance, we recommend enabling the verbose mode to be able to debug your issues:
+* `SHELL_OUTPUT=/dev/null` 
+* `VERBOSITY=debug` 
+
+Now, create your instance:
+
+```shell
 $ make instance.setup
 ```
 
-> You need to configre GCloud on your machine before setting the variables above.
+> You need to configure GCloud on your machine before setting the variables above.
 
 To run the devstack
 ```shell
@@ -57,7 +81,7 @@ $ make instance.delete
 There are so many ways you can choose from to interact with the remote code. However, we recommend two common methods to  ensure security, real-time transfer, and immediate reflection on the remote instance:
 
 ### SSHFS
-We implicitly implemented this functionality within the toolkit. To use it all you have to do is to  run `make devstack.mount` and then open your favorite text editor and start editing files on the server from your machine.
+To use it all you have to do is to  run `make devstack.mount` and then open your favorite text editor and start editing files on the server from your machine.
 
 ### Prefered IDEs
 Some IDEs gives you the power to edit code on remote machines. [Visual Studio Code](https://code.visualstudio.com) for example, recently added [Code Remote Extensions](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack). With this extension, you'll be able to open any folder on your remote machine and take advantage of VS Code's full feature set.
