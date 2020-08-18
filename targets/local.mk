@@ -47,7 +47,7 @@ local.inventory.config: ve/bin/ansible-playbook
 		--connection=local \
 		-i '127.0.0.1,' \
 		--tags inventory \
-		-e "PROJECT_ID=$(PROJECT_ID) SERVICE_ACCOUNT_EMAIL=$(SERVICE_ACCOUNT_EMAIL) SERVICE_KEY_PATH=$(SERVICE_KEY_PATH)" > $(SHELL_OUTPUT) || (echo -e "${redbold}ERROR configuring your inventory.${normal}" && make error && exit 1)
+		-e "PROJECT_ID=$(PROJECT_ID) SSH_KEY=$(SSH_KEY) SERVICE_ACCOUNT_EMAIL=$(SERVICE_ACCOUNT_EMAIL) SERVICE_KEY_PATH=$(SERVICE_KEY_PATH)" > $(SHELL_OUTPUT) || (echo -e "${redbold}ERROR configuring your inventory.${normal}" && make error && exit 1)
 	@ssh-add $(SSH_KEY)
 	@echo -e "${green}Your inventory has been configured successfully!${normal}"
 

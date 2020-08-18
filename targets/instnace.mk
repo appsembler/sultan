@@ -68,7 +68,6 @@ instance.create:   ## Creates an empty instance for you on GCP.
 		--tags=devstack,http-server,$(INSTANCE_TAG) \
 		--zone=$(ZONE) \
 		--verbosity=$(VERBOSITY) \
-		$(INSTANCE_EXTRA_ARGS) \
 		--project=$(PROJECT_ID)
 	@echo -e "${green}Your virtual machine has been successfully created!${normal}"
 
