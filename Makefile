@@ -1,4 +1,4 @@
-include .configs*
+include $(sort $(wildcard .configs*))
 export $(shell sed 's/=.*//' .configs*)
 
 SHELL := /bin/bash
