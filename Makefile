@@ -73,7 +73,7 @@ clean:  ## Clean software and directory caches.
 instance.ping: ve/bin/ansible-playbook  ### Performs a ping to your instance.
 	@. ve/bin/activate; ansible -i $(INVENTORY) $(INSTANCE_NAME) -m ping \
 		|| (echo -e "\n${redbold}ERROR${red} Unable to ping instance!${normal}\n${bold}This might caused by one of the following reasons:${normal}\n\
-	    * The instance is not set up yet. To set up an instance run ${underline}${cyan}make instnace.setup${normal}.\n\
+	    * The instance is not set up yet. To set up an instance run ${underline}${cyan}make instance.setup${normal}.\n\
 	    * The instance was stopped. Check the status of your instance using ${underline}${cyan}make instance.describe.status${normal} and start it by running ${underline}${cyan}make instance.start${normal}.\n\
 	    * The instance might have been restricted under a previous IP of yours. To allow your current IP from accessing the instance run ${underline}${cyan}make instance.restrict${normal}."; \
 	    make error)
