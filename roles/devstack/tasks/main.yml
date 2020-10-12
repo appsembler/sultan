@@ -34,3 +34,10 @@
     accept_hostkey: yes
   become: false
   tags: [ devstack ]
+
+- name: Create devstack virtualenv
+  command:
+    cmd: virtualenv {{ virtual_env_dir }} -p python3
+    creates: "{{ working_directory }}/env"
+  become: false
+  tags: [ devstack ]

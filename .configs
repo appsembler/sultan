@@ -58,7 +58,9 @@ SHELL_OUTPUT=/dev/null
 HOME_DIR=/home/$(USER_NAME)
 
 # The location of devstack on the remote machine
-DEVSTACK_WORK_DIR=$(HOME_DIR)/workspace
+DEVSTACK_WORKSPACE=$(HOME_DIR)/workspace
+DEVSTACK_DIR=$(DEVSTACK_WORKSPACE)/devstack
+VIRTUAL_ENV=$(DEVSTACK_WORKSPACE)/env
 
 # Devstack image family
 IMAGE_FAMILY=devstack
@@ -84,6 +86,3 @@ DEVSTACK_RUN_COMMAND=dev.up
 
 # Whether to deny all IPs (except yours) from accessing your instance or not.
 RESTRICT_INSTANCE=true
-
-# Extra arguments to pass when creating an instance
-INSTANCE_EXTRA_ARGS=--preemptible

@@ -46,6 +46,7 @@
   pip:
     name: pexpect
   become: yes
+  tags: [ server ]
 
 - name: set inotify watchers
   sysctl:
@@ -53,3 +54,19 @@
     value=524288
     state=present
     reload=yes
+  tags: [ server ]
+
+- name: Install direnv
+  get_url:
+    url: https://github.com/direnv/direnv/releases/download/v2.22.1/direnv.linux-amd64
+    dest: /usr/local/bin/direnv
+    mode: 0755
+  tags: [ server, direnv_setup ]
+
+- name: Set direnv bashrc
+  become: false
+  blockinfile:
+    dest: ~/.bashrc
+    block: |
+        eval "$(direnv hook bash)"
+  tags: [ server, direnv_setup ]
