@@ -41,3 +41,23 @@
     creates: "{{ working_directory }}/env"
   become: false
   tags: [ devstack ]
+
+- name: Move devstack files to {{ user }} home
+  shell: ". /etc/profile && mv $DEVSTACK_USER/* /home/{{ user }}"
+  tags: [ never, devstack ]
+  ignore_errors: yes
+
+- name: Change '{{ working_directory }}' owner
+  file:
+    path: "{{ working_directory }}"
+    state: directory
+    recurse: yes
+    owner: "{{ user }}"
+    group: "{{ user }}"
+  tags: [ never, devstack ]
+
+- name: Store current devstack user
+  blockinfile:
+    path: "/etc/profile"
+    block: "export DEVSTACK_USER={{ user_home }}"
+  tags: [ server, reconfiguration ]

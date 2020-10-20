@@ -1,5 +1,11 @@
 ---
 
+- name: Update apt
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  tags: [ server ]
+
 - name: Install aptitude using apt
   apt:
     name: aptitude
@@ -48,25 +54,10 @@
   become: yes
   tags: [ server ]
 
-- name: set inotify watchers
+- name: Set inotify watchers
   sysctl:
     name=fs.inotify.max_user_watches
     value=524288
     state=present
     reload=yes
   tags: [ server ]
-
-- name: Install direnv
-  get_url:
-    url: https://github.com/direnv/direnv/releases/download/v2.22.1/direnv.linux-amd64
-    dest: /usr/local/bin/direnv
-    mode: 0755
-  tags: [ server, direnv_setup ]
-
-- name: Set direnv bashrc
-  become: false
-  blockinfile:
-    dest: ~/.bashrc
-    block: |
-        eval "$(direnv hook bash)"
-  tags: [ server, direnv_setup ]

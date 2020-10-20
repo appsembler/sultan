@@ -34,7 +34,7 @@ devstack.provision:  ## Provisions the devstack on your instance.
 	@echo -e "Run ${cyan}${underline}make devstack.run${normal} to start devstack servers."
 
 instance.delete: local.hosts.revert instance.firewall.deny.delete instance.firewall.allow.delete  ### Deletes your instance from GCP.
-	@echo -e "Deleting your virtual machine from GCP...   ($(INSTANCE_NAME))"
+	@echo -e "Deleting your virtual machine from GCP...   ${dim}($(INSTANCE_NAME))${normal}"
 	@(gcloud compute instances delete $(INSTANCE_NAME) \
 		--quiet \
 		--zone=$(ZONE) \
@@ -43,23 +43,24 @@ instance.delete: local.hosts.revert instance.firewall.deny.delete instance.firew
 	|| echo 'No previous instance found'
 
 instance.start:  ## Starts your stopped instance on GCP.
-	@echo -e "Starting your virtual machine on GCP...   ($(INSTANCE_NAME))"
+	@echo -e "Starting your virtual machine on GCP...   ${dim}($(INSTANCE_NAME))${normal}"
 	@gcloud compute instances start $(INSTANCE_NAME) \
 		--zone=$(ZONE) \
 		--project $(PROJECT_ID)
+	@make local.hosts.update
 	@make local.hosts.update
 	@make local.ssh.config
 	@echo -e "${green}Your virtual machine has been started successfully!${normal}"
 
 instance.stop: local.hosts.revert  ## Stops your instance on GCP, but doesn't delete it.
-	@echo -e "Stopping your virtual machine on GCP...   ($(INSTANCE_NAME))"
+	@echo -e "Stopping your virtual machine on GCP...   ${dim}($(INSTANCE_NAME))${normal}"
 	@gcloud compute instances stop $(INSTANCE_NAME) \
 		--zone=$(ZONE) \
 		--project $(PROJECT_ID)
 	@echo -e "${green}Your virtual machine has been stopped successfully!${normal}"
 
 instance.create:   ## Creates an empty instance for you on GCP.
-	@echo -e "Creating your virtual machine on GCP...   ($(INSTANCE_NAME))"
+	@echo -e "Creating your virtual machine on GCP...   ${dim}($(INSTANCE_NAME))${normal}"
 	@gcloud compute instances create $(INSTANCE_NAME) \
 		--image-family=ubuntu-1804-lts \
 		--image-project=gce-uefi-images \

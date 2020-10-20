@@ -1,7 +1,7 @@
 devstack.make:  ## Performs a make command on your instance.
 	@make instance.run command="(cd $(DEVSTACK_DIR) \
 		&& source $(VIRTUAL_ENV)/bin/activate \
-		&& make DEVSTACK_WORKSPACE=$(DEVSTACK_DIR) \
+		&& make DEVSTACK_WORKSPACE=$(DEVSTACK_WORKSPACE) \
 		   OPENEDX_RELEASE=$(OPENEDX_RELEASE) \
 		   VIRTUAL_ENV=$(VIRTUAL_ENV) \
 		$(target))"

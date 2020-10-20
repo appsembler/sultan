@@ -33,8 +33,8 @@ help: ## This help message.
 
 ve/bin/ansible-playbook: requirements.txt
 	@echo Installing project requirements...
-	@virtualenv ve &> $(SHELL_OUTPUT)
-	@ve/bin/pip install -r requirements.txt &> $(SHELL_OUTPUT)
+	@virtualenv -p python3 ve &> $(SHELL_OUTPUT)
+	@ve/bin/pip install -r requirements.txt&> $(SHELL_OUTPUT)
 	@make local.inventory.config
 
 include targets/*.mk
@@ -78,11 +78,6 @@ instance.ping: ve/bin/ansible-playbook  ### Performs a ping to your instance.
 	    * The instance might have been restricted under a previous IP of yours. To allow your current IP from accessing the instance run ${underline}${cyan}make instance.restrict${normal}."; \
 	    make error)
 
-image.create: instance.stop image.delete   ### Creates an image from your instance on GCP.
-	@echo "Creating a new devstack image from your GCP instance...    ${dim}($(IMAGE_NAME))${normal}"
-	@make NAME=$(IMAGE_NAME) image.create.command
-	@echo -e "${green}Your image has been successfully created${normal}"
-
 instance.restrict: instance.firewall.deny.refresh instance.firewall.allow.refresh  ### Restricts the access to your instance to you only by creating the necessary rules.
 ifeq ($(RESTRICT_INSTANCE),true)
 	$(eval MY_PUBLIC_IP := $(shell curl -s ifconfig.me))
@@ -90,15 +85,16 @@ ifeq ($(RESTRICT_INSTANCE),true)
 else
 	@echo -e "\n${yellow}The instance accepts requests from any IP now.${normal}    ${dim}(0.0.0.0/0)${normal}"
 endif
-	@echo -e "If this is not the expected behavior, consider toggling the instance restriction setting ${bold}RESTRICT_INSTANCE${normal} in your env file."
+	@echo -e "${dim}If this is not the expected behavior, consider toggling the instance restriction setting ${bold}RESTRICT_INSTANCE${normal}${dim} in your env file.${normal}"
 
 instance.setup: clean instance.delete instance.create instance.restrict local.hosts.update local.ssh.config instance.deploy devstack.provision  ### Setup a restricted instance for you on GCP contains a provisioned devstack.
 	@echo -e "${green}Your instance has been successfully created!${normal}"
 
-instance.setup.image: clean instance.delete ## Setup a restricted instance from an already created image for you on GCP (contains a devstack).
+instance.setup.image: clean instance.delete   ## Setup a restricted instance from an already created image for you on GCP (contains a devstack).
+	$(eval NAME ?= $(IMAGE_NAME))
 	@echo Setting up a new instance from your image...
 	@gcloud compute instances create $(INSTANCE_NAME) \
-		--image=$(IMAGE_NAME) \
+		--image=$(NAME) \
 		--image-project=$(PROJECT_ID) \
 		--boot-disk-size=$(DISK_SIZE) \
 		--machine-type=$(MACHINE_TYPE) \
@@ -109,22 +105,12 @@ instance.setup.image: clean instance.delete ## Setup a restricted instance from 
 	@make instance.restrict
 	@make local.hosts.update
 	@make local.ssh.config
+
+	@echo -e "Personalizing your instance..."
+	@. ve/bin/activate; ansible-playbook devstack.yml \
+		-i $(INVENTORY) \
+		--tags "reconfiguration,never"  \
+		-e "instance_name=$(INSTANCE_NAME) user=$(USER_NAME) working_directory=$(DEVSTACK_WORKSPACE)" &> $(SHELL_OUTPUT)
+
 	@echo -e "${green}Your instance has been successfully created!${normal} (From $(IMAGE_NAME))"
-	@echo -e "Run ${cyan}${underline}make instance.start${normal} and then ${cyan}${underline}make devstack.run${normal} to start devstack servers."
-
-instance.setup.image.master: clean instance.delete ## Setup a restricted instance from the master image.
-	@echo Setting up a new instance from the master image...
-	@gcloud compute instances create $(INSTANCE_NAME) \
-		--image=$(IMAGE_FAMILY) \
-		--image-project=$(PROJECT_ID) \
-		--boot-disk-size=$(DISK_SIZE) \
-		--machine-type=$(MACHINE_TYPE) \
-		--tags=devstack,http-server,$(INSTANCE_TAG) \
-		--zone=$(ZONE) \
-		--project=$(PROJECT_ID)
-
-	@make instance.restrict
-	@make local.hosts.update
-	@make local.ssh.config
-	@echo -e "${green}Your instance has been successfully created!${normal} (From $(IMAGE_FAMILY))"
 	@echo -e "Run ${cyan}${underline}make instance.start${normal} and then ${cyan}${underline}make devstack.run${normal} to start devstack servers."
