@@ -44,6 +44,7 @@
     "python-pip",
     "python3-pip",
     "virtualenv",
+    "python3-virtualenv",
     "python-setuptools"
   ]
   tags: [ server ]

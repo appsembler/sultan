@@ -4,6 +4,7 @@
   file:
     state: absent
     path: "{{ working_directory }}"
+  become: no
   tags: [ devstack ]
 
 - name: Create working directory
@@ -32,20 +33,21 @@
     version: "{{ git_repo_branch }}"
     dest: "{{ devstack_directory }}"
     accept_hostkey: yes
-  become: false
-  tags: [ devstack ]
-
-- name: Create devstack virtualenv
-  command:
-    cmd: virtualenv {{ virtual_env_dir }} -p python3
-    creates: "{{ working_directory }}/env"
-  become: false
+  become: no
   tags: [ devstack ]
 
 - name: Move devstack files to {{ user }} home
   shell: ". /etc/profile && mv $DEVSTACK_USER/* /home/{{ user }}"
   tags: [ never, devstack ]
   ignore_errors: yes
+
+- name: Install requirements
+  pip:
+    requirements: "{{ working_directory }}/devstack/requirements/base.txt"
+    virtualenv: "{{ working_directory }}/env"
+    virtualenv_python: python3
+  become: false
+  tags: [ devstack, env ]
 
 - name: Change '{{ working_directory }}' owner
   file:
