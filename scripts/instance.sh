@@ -21,8 +21,8 @@ restrict() {
   #  Restricts the access to your instance to you only by creating the        #
   #  necessary rules.                                                         #
   #############################################################################
-  ./sultan.sh firewall deny refresh
-  ./sultan.sh firewall allow refresh
+  ./sultan firewall deny refresh
+  ./sultan firewall allow refresh
 
   if [ $RESTRICT_INSTANCE == true ]; then
     public_ip=$(curl -s ifconfig.me)
@@ -40,8 +40,8 @@ delete() {
   #############################################################################
   message "Deleting your virtual machine from GCP..." $INSTANCE_NAME
 
-  ./sultan.sh local hosts revert
-	./sultan.sh firewall clean
+  ./sultan local hosts revert
+	./sultan firewall clean
 
 	(gcloud compute instances delete $INSTANCE_NAME \
 		--quiet \
@@ -84,10 +84,10 @@ provision() {
   #############################################################################
   # Provisions the devstack on your instance.                                 #
   #############################################################################
-	./sultan.sh devstack make requirements
-	./sultan.sh devstack make dev.clone
-	./sultan.sh devstack make dev.pull
-	./sultan.sh devstack make dev.provision
+	./sultan devstack make requirements
+	./sultan devstack make dev.clone
+	./sultan devstack make dev.pull
+	./sultan devstack make dev.provision
 
 	success "The devstack has been provisioned successfully!"
 	message "Run make devstack run to start devstack servers."
@@ -102,8 +102,8 @@ start() {
 		--zone=$ZONE \
 		--project $PROJECT_ID
 
-	./sultan.sh local hosts update
-	./sultan.sh local ssh config
+	./sultan local hosts update
+	./sultan local ssh config
 	success "Your virtual machine has been started successfully!"
 }
 
@@ -111,6 +111,8 @@ stop() {
   #############################################################################
   # Stops your instance on GCP, but doesn't delete it.                        #
   #############################################################################
+  ./sultan local hosts revert
+
 	message "Stopping your virtual machine on GCP..." $INSTANCE_NAME
 	gcloud compute instances stop $INSTANCE_NAME \
 		--zone=$ZONE \
@@ -119,12 +121,12 @@ stop() {
 }
 
 full_setup() {
-  ./sultan.sh local clean
+  ./sultan local clean
   delete
   create
   restrict
-	./sultan.sh local hosts update
-	./sultan.sh local ssh config
+	./sultan local hosts update
+	./sultan local ssh config
   deploy
   provision
 
@@ -137,7 +139,7 @@ image_setup() {
 	message "Setting up a new instance from your image..."
 
   # Clean local env and delete the current GCP instance if any
-  ./sultan.sh local clean
+  ./sultan local clean
   delete
 
   # Setting up the image
@@ -153,8 +155,8 @@ image_setup() {
   # Restrict VM to work with this machine only
   restrict
 
-	./sultan.sh local hosts update
-	./sultan.sh local ssh config
+	./sultan local hosts update
+	./sultan local ssh config
 
 	message "Personalizing your instance..."
 	$ACTIVATE; ansible-playbook devstack.yml \

@@ -47,7 +47,7 @@ clean() {
 	# Installing local environment requirements
 	requirements
 
-	message "Flush Ansible cache..."
+	message "Flushing Ansible cache..."
 	. $ACTIVATE; ansible-playbook local.yml --check --flush-cache &> $SHELL_OUTPUT
 }
 
@@ -65,8 +65,8 @@ hosts() {
   #############################################################################
   # Updates your hosts file by adding/removing the necessary hosts to it.     #
   #############################################################################
+  ./sultan local clean
 
-  # TODO: requirements ve/bin/ansible-playbook on all functions
   if [ $1 == revert ]; then
     message "Reverting made local changes..." "/etc/hosts, ~/.ssh/config"
 
@@ -84,7 +84,7 @@ hosts() {
   elif [ $1 == update ]; then
     message "Updating your hosts records..." "/etc/hosts"
 
-    IP_ADDRESS=$(./sultan.sh instance ip)
+    IP_ADDRESS=$(./sultan instance ip)
 
 	  # Check if sudo password is required
 	  sudocheck
@@ -104,7 +104,7 @@ hosts() {
 ssh() {
   if [ $1 == config ]; then
     message "Updating necessary records in SSH related files..." "~/.ssh/config, ~/.ssh/knwon_hosts"
-    IP_ADDRESS=$(./sultan.sh instance ip)
+    IP_ADDRESS=$(./sultan instance ip)
 
     . $ACTIVATE; ansible-playbook local.yml \
         --connection=local \

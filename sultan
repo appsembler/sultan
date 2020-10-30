@@ -1,0 +1,50 @@
+#!/bin/sh
+
+current_dir="$(dirname "$0")"
+
+# Source configurations variables
+source "$current_dir/configs/.configs"
+for f in $current_dir/configs/.configs.*; do source $f; done
+
+if [ $1 == '-v' ] || [ $1 == '--version' ]; then
+  printf "Sultan ${CYAN}v%s${NORAML}\n" $VERSION
+  exit 0
+fi
+
+if [ $1 == '-h' ] || [ $1 == '--help' ]; then
+  printf "Sultan ${CYAN}v%s${NORAML}\n" $VERSION
+  printf "${NORMAL}An Open edX Remote Devstack Toolkit by Appsembler\n\n\n\n
+  \n"
+
+  exit 0
+fi
+
+instance() {
+	$current_dir/scripts/instance.sh $@
+}
+
+devstack() {
+	$current_dir/scripts/devstack.sh $@
+}
+
+workflow() {
+	$current_dir/scripts/workflow.sh $@
+}
+
+image() {
+	$current_dir/scripts/image.sh $@
+}
+
+firewall() {
+	$current_dir/scripts/firewall.sh $@
+}
+
+local() {
+	$current_dir/scripts/local.sh $@
+}
+
+config() {
+	$current_dir/scripts/configurations.sh $@
+}
+
+"$@"

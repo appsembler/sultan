@@ -61,7 +61,7 @@ create() {
   done
 
   # Stop the instance
-  ./sultan.sh instance stop
+  ./sultan instance stop
 
 	message "Creating a new image from your devstack GCP instance..." $image_name
 	dim "This will remove any previous image with the same name. Press CTRL+C to abort..."

@@ -8,7 +8,7 @@ message() {
   #############################################################################
   # Format: message "message text" "extra info" $COLOR
   #############################################################################
-  if [ -z ${2+x} ]; then description="$2"; else description="[$2]"; fi
+  if [ -z ${2+x} ] || [ -z "$2" ]; then description="$2"; else description="[$2]"; fi
 
   ENDCOLS=`expr $COLS - ${#1}`
   printf '%s%s%*s%s\n' "$1" "${3:-$GRAY}" $ENDCOLS "$description" "$NORMAL"

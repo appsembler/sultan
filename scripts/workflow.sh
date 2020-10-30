@@ -1,6 +1,7 @@
 #!/bin/sh
 
 current_dir="$(dirname "$0")"
+source "$current_dir/messaging.sh"
 
 # Source configurations variables
 source configs/.configs
@@ -13,9 +14,9 @@ suspend() {
   #############################################################################
 	echo "Making a new image and stopping the instance..."
 
-  ./sultan.sh devstack stop
-  ./sultan.sh instance stop
-  ./sultan.sh image create
+  ./sultan devstack stop
+  ./sultan instance stop
+  ./sultan image create
 }
 
 resume() {
@@ -25,9 +26,9 @@ resume() {
   #############################################################################
 	message "Recreating instance from the image and starting it up..."
 
-  ./sultan.sh instance setup --image $IMAGE_NAME
-  ./sultan.sh devstack up
-  ./sultan.sh devstack mount
+  ./sultan instance setup --image $IMAGE_NAME
+  ./sultan devstack up
+  ./sultan devstack mount
 }
 
 "$@"

@@ -1,3 +1,5 @@
+VERSION=2.0.0
+
 # (PLEASE CHANGE) A key that has access to your edx-platform Github repos and to the GCP project you want to deploy the devstack in.
 SSH_KEY="$HOME/.ssh/id_rsa"
 
