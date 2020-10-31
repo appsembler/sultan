@@ -3,10 +3,6 @@
 current_dir="$(dirname "$0")"
 source "$current_dir/messaging.sh"
 
-# Source configurations variables
-source configs/.configs
-for f in configs/.configs.*; do source $f; done
-
 suspend() {
   #############################################################################
   # Suspends work by stopping the devstack, remove the mount, and create an   #

@@ -3,11 +3,6 @@
 current_dir="$(dirname "$0")"
 source "$current_dir/messaging.sh"
 
-# Source configurations variables
-source configs/.configs
-for f in configs/.configs.*; do source $f; done
-
-
 ping() {
   #############################################################################
   #  Performs a ping to your instance.                                        #
@@ -111,6 +106,7 @@ stop() {
   #############################################################################
   # Stops your instance on GCP, but doesn't delete it.                        #
   #############################################################################
+  ./sultan devstack stop
   ./sultan local hosts revert
 
 	message "Stopping your virtual machine on GCP..." $INSTANCE_NAME
@@ -120,7 +116,7 @@ stop() {
 	success "Your virtual machine has been stopped successfully!"
 }
 
-full_setup() {
+_full_setup() {
   ./sultan local clean
   delete
   create
@@ -133,7 +129,7 @@ full_setup() {
   success "Your instance has been successfully created!"
 }
 
-image_setup() {
+_image_setup() {
   image_name="${1:-$IMAGE_NAME}"
 
 	message "Setting up a new instance from your image..."
@@ -170,7 +166,7 @@ image_setup() {
 
 describe() {
   #############################################################################
-  # Describes your virtual machine instance                                   #
+  # Describes your virtual machine instance.                                   #
   #############################################################################
   gcloud compute instances describe $INSTANCE_NAME \
     --quiet \
@@ -204,9 +200,9 @@ setup() {
   done
 
   if [ $full_setup -eq 1 ]; then
-    full_setup
+    _full_setup
   else
-    image_setup $image
+    _image_setup $image
   fi
 }
 

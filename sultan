@@ -6,19 +6,6 @@ current_dir="$(dirname "$0")"
 source "$current_dir/configs/.configs"
 for f in $current_dir/configs/.configs.*; do source $f; done
 
-if [ $1 == '-v' ] || [ $1 == '--version' ]; then
-  printf "Sultan ${CYAN}v%s${NORAML}\n" $VERSION
-  exit 0
-fi
-
-if [ $1 == '-h' ] || [ $1 == '--help' ]; then
-  printf "Sultan ${CYAN}v%s${NORAML}\n" $VERSION
-  printf "${NORMAL}An Open edX Remote Devstack Toolkit by Appsembler\n\n\n\n
-  \n"
-
-  exit 0
-fi
-
 instance() {
 	$current_dir/scripts/instance.sh $@
 }
@@ -46,5 +33,175 @@ local() {
 config() {
 	$current_dir/scripts/configurations.sh $@
 }
+
+version_text() {
+  printf "Sultan ${CYAN}v%s${NORMAL}\n" $VERSION
+}
+
+help_text() {
+  version_text
+  # shellcheck disable=SC2059
+  printf "${NORMAL}An Open edX Remote Devstack Toolkit by Appsembler\n
+Usage:
+  sultan <options>
+  sultan <service> [argument(s)] [--option <argument>]
+
+options:
+  -h, --help        Print command help
+  -v, --version     Get current version
+
+service:
+  ${BOLD}${GREEN}config${NORMAL}
+    Handles your local Sultan configurations
+
+    ${BOLD}USAGE:${NORMAL}
+      sultan config <argument>
+
+    ${BOLD}ARGUMENTS:${NORMAL}
+      init      Creates a custom environment file for you where you
+                can personalize your instance's default settings.
+      debug     Prints the values of the environment variables to be
+                used in the make command as define in .configs.* files.
+
+    ${BOLD}EXAMPLES:${NORMAL}
+      sultan config init
+      sultan config debug
+
+
+  ${BOLD}${GREEN}devstack${NORMAL}
+    Manages the devstack on your remote machine.
+
+    ${BOLD}USAGE:${NORMAL}
+      sultan devstack <command> [argement]
+
+    ${BOLD}COMMANDS:${NORMAL}
+      unmount   Releases the devstack mount from your machine.
+      mount     Mounts devstack files from your GCP instance onto your
+                local machine.
+      up        Runs devstack servers.
+      stop      Stops and unmounts a devstack servers.
+      make      Performs a devstack make command on the GCP instance.
+
+    ${BOLD}EXAMPLES:${NORMAL}
+      sultan devstack up
+      sultan devstack stop
+      sultan devstack make lms-logs
+
+
+  ${BOLD}${GREEN}firewall${NORMAL}
+    Manages the firewall configurations on GCP. Firewall rules are created in
+    a sole purpose of restricting access to your instance to your machine only.
+    This behavior might block your machine from reaching your instance if your
+    IP changes, that could easily happen if your disconnect from and connect
+    to the internet back. To solve this issue, clean rule comes handy.
+
+    ${BOLD}USAGE:${NORMAL}
+      sultan firewall ( deny [action] | allow [action] | clean )
+
+    ${BOLD}RULES:${NORMAL}
+      deny      Manages deny firewall rules.
+      allow     Manages allow firewall rules.
+      clean     Remove all firewall rules from GCP.
+
+    ${BOLD}ACTIONS:${NORMAL}
+      create    Creates a GCP firewall rule defines how your gets accessed.
+      delete    Deletes a GCP firewall rule.
+      refresh   Refreshes the firewall rule by deleating and recreating it.
+
+    ${BOLD}EXAMPLES:${NORMAL}
+      sultan firewall clean
+      sultan firewall allow remove
+      sultan firewall deny create
+      sultan firewall allow refresh
+
+
+  ${BOLD}${GREEN}image${NORMAL}
+    Manages GCP images creation and deletion on GCP. All images you create are
+    being created from your machine.
+
+    ${BOLD}USAGE:${NORMAL}
+      sultan image <command> [OPTION]
+
+    ${BOLD}COMMANDS:${NORMAL}
+      create      Creates an image from your devstack instance on GCP.
+      delete      Deletes your image from GCP.
+
+    ${BOLD}OPTIONS:${NORMAL}
+      -n, --name  The name of the image you want to create. It defaults to
+                  the value of IMAGE_NAME in configurations file.
+
+
+  ${BOLD}${GREEN}instance${NORMAL}
+    Manages all of your GCP instance aspects.
+
+    ${BOLD}USAGE:${NORMAL}
+      sultan instance (<command> | setup [OPTIONS])
+
+    ${BOLD}COMMANDS:${NORMAL}
+      ping          Performs a ping to your instance.
+      restrict      Restricts the access to your instance to you only by
+                    creating the necessary rules.
+      delete        Deletes your instance from GCP.
+      create        Creates an empty instance for you on GCP.
+      deploy        Deploys the instance to install required libraries and
+                    software.
+      provision     Provisions the devstack on your instance.
+      start         Starts your stopped instance on GCP.
+      stop          Stops your instance on GCP, but doesn't delete it.
+      describe      Describes your virtual machine instance.
+      status        Shows the status of your running machine.
+      setup         Setup a restricted instance for you on GCP contains a
+                    provisioned devstack.
+      ip            Gets the external IP of your instance.
+      run           SSH into or run commands on your instance.
+
+    ${BOLD}OPTIONS:${NORMAL}
+      -i, --image   If supplied, the instance will be created from the image
+                    name you provide, or the IMAGE_NAME configuration value.
+
+    ${BOLD}EXAMPLES:${NORMAL}
+      sultan instance status
+      sultan instance ip
+      sultan instance setup
+      sultan instance setup --image
+      sultan instance setup --image devstack-juniper
+
+  ${BOLD}${GREEN}local${NORMAL}
+    Manages Sultan configurations.
+
+    ${BOLD}USAGE:${NORMAL}
+      sultan config (debug | init [OPTIONS])
+
+    ${BOLD}COMMANDS:${NORMAL}
+      init          Creates a custom environment file for you where you can
+                    personalize your instance's default settings.
+      debug         Prints the values of the environment variables to be used
+                    in the make command as define in .configs.* files.
+
+    ${BOLD}OPTIONS:${NORMAL}
+      -f, --force   Will override your current configurations file by removing
+                    the old assignments with the default ones.
+
+    ${BOLD}EXAMPLES:${NORMAL}
+      sultan config init -f
+      sultan config debug
+\n" | less
+}
+
+if [ $1 == '-v' ] || [ $1 == '--version' ]; then
+  version_text
+  exit 0
+fi
+
+if [ $1 == '-h' ] || [ $1 == '--help' ]; then
+  help_text
+  exit 0
+fi
+
+# Print help message if command is not found
+if ! type -t $1 | grep -i function > /dev/null; then
+  help_text
+  exit 1
+fi
 
 "$@"

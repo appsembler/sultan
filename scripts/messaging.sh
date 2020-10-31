@@ -1,8 +1,11 @@
 #!/bin/sh
 
+current_dir="$(dirname "$0")"
+configs_dir="$(dirname "$current_dir")/configs"
+
 # Source configurations variables
-source configs/.configs
-for f in configs/.configs.*; do source $f; done
+source $configs_dir/.configs
+for f in $configs_dir/.configs.*; do source $f; done
 
 message() {
   #############################################################################

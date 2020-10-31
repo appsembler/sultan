@@ -20,7 +20,7 @@ yellow = \033[33m
 
 help: ## This help message.
 	@echo -e "\n\
-	Sultan ${cyan}v$(VERSION)${noraml}\n\
+	Sultan ${cyan}v$(VERSION)${normal}\n\
 	An Open edX Remote Devstack Toolkit by Appsembler\n\n\n\n\
 	${bold}Main Targets${normal}\n\
 	=======================================================================================================\n\n\

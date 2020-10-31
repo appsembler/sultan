@@ -51,11 +51,18 @@ HOSTS_FILE=/etc/hosts
 # A comma-separated list of hostnames you'd like to use.
 EDX_HOST_NAMES=edx.devstack.lms
 
-# Verbosity of GCloud commands we are running. Options [debug, info, warning, error, critical, none]
-VERBOSITY=critical
+# Determines whether to hide/show commands verbose output on the terminal
+DEBUG=false
 
-# The location the toolkit is directing Ansible output to. To unhide it use `/dev/tty` instead.
-SHELL_OUTPUT=/dev/null
+# (DON'T CHANGE) VERBOSITY controls GCloud commands verbosity and SHELL_OUTPUT
+# is the location the toolkit is directing Ansible output to.
+if [ $DEBUG = true ]; then
+  VERBOSITY=debug
+  SHELL_OUTPUT=/dev/tty
+else
+  VERBOSITY=critical
+  SHELL_OUTPUT=/dev/null
+fi
 
 HOME_DIR=/home/$USER_NAME
 
@@ -77,7 +84,7 @@ SERVICE_KEY_PATH=/path/to/service/account.json
 DEVSTACK_REPO_URL=https://github.com/edx/devstack.git
 
 # The devstack branch you want to deploy.
-DEVSTACK_REPO_BRANCH=open-release/juniper.3
+DEVSTACK_REPO_BRANCH=open-release/juniper.master
 
 # To run the docker images for a named Open edX release.
 # To work on the master branches and latest images, unset OPENEDX_RELEASE or set it to an empty string.

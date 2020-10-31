@@ -3,11 +3,7 @@
 current_dir="$(dirname "$0")"
 source "$current_dir/messaging.sh"
 
-# Source configurations variables
-source configs/.configs
-for f in configs/.configs.*; do source $f; done
-
-delete_command() {
+_delete_command() {
 	(gcloud compute images delete $1 \
 		--project=$PROJECT_ID \
 		--verbosity $VERBOSITY \
@@ -15,7 +11,7 @@ delete_command() {
 	success "Image deleted successfully!") || dim "Couldn't find the image on GCP." "SKIPPING"
 }
 
-create_command() {
+_create_command() {
   (gcloud beta compute images create $1 \
 		--source-disk=$INSTANCE_NAME \
 		--source-disk-zone=$ZONE \
@@ -30,7 +26,7 @@ create_command() {
 
 delete() {
   #############################################################################
-  # Deletes your image from GCP.                               #
+  # Deletes your image from GCP.                                              #
   #############################################################################
   image_name=$IMAGE_NAME
 
@@ -43,7 +39,7 @@ delete() {
   done
 
   message "Removing image from GCP..." $image_name
-	delete_command $image_name
+	_delete_command $image_name
 }
 
 create() {
@@ -69,9 +65,9 @@ create() {
 	# Give a short time for user to hit CTRL+C before execution starts
 	sleep 10
 
-	delete_command $image_name
+	_delete_command $image_name
 	message "Image is being created..." $image_name
-	create_command $image_name
+	_create_command $image_name
 }
 
 "$@"

@@ -3,10 +3,6 @@
 current_dir="$(dirname "$0")"
 source "$current_dir/messaging.sh"
 
-# Source configurations variables
-source configs/.configs
-for f in configs/.configs.*; do source $f; done
-
 configure_inventory() {
   message "Updating your inventory credentials..." "dynamic-inventory/gce.ini"
 

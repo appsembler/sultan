@@ -3,11 +3,7 @@
 current_dir="$(dirname "$0")"
 source "$current_dir/messaging.sh"
 
-# Source configurations variables
-source configs/.configs
-for f in configs/.configs.*; do source $f; done
-
-create_deny_firewall() {
+_create_deny_firewall() {
   #############################################################################
   # Creates a GCP Firewall's rule to prevent all kind of access to your       #
   # instance.                                                                 #
@@ -30,7 +26,7 @@ create_deny_firewall() {
   fi
 }
 
-delete_deny_firewall()  {
+_delete_deny_firewall()  {
   #############################################################################
   # Deletes the GCP Firewall's rule that prevents accessing your instance     #
   # by all ways.                                                                 #
@@ -48,12 +44,12 @@ deny() {
   #############################################################################
 
   if [ $1 == create ]; then
-    create_deny_firewall
+    _create_deny_firewall
   elif [ $1 == delete ]; then
-    delete_deny_firewall
+    _delete_deny_firewall
   elif [ $1 == refresh ]; then
-    delete_deny_firewall
-    create_deny_firewall
+    _delete_deny_firewall
+    _create_deny_firewall
   	success "Deny rule has been updated on the firewall."
   else
     error "Unknown parameter passed: $1"
@@ -64,13 +60,13 @@ clean() {
   #############################################################################
   # Remove firewall rules from GCP.                                           #
   #############################################################################
-  delete_allow_firewall
-  delete_deny_firewall
+  _delete_allow_firewall
+  _delete_deny_firewall
 
   success "Firewall rules has been cleaned from GCP"
 }
 
-create_allow_firewall() {
+_create_allow_firewall() {
   #############################################################################
   # Creates a GCP Firewall's rule allowing your IP to access your instance.   #
   #############################################################################
@@ -94,9 +90,9 @@ create_allow_firewall() {
 		--project=$PROJECT_ID && success "ALLOW firewall has been successfully created!") || warn "Firewall already exists." "SKIPPING"
 }
 
-delete_allow_firewall() {
+_delete_allow_firewall() {
   #############################################################################
-  # Deletes the GCP Firewall's rule that allows your IP to access your        #
+  # Deletes the GCP firewall's rule that allows your IP to access your        #
   # instance.                                                                 #
   #############################################################################
 
@@ -113,12 +109,12 @@ allow() {
   # Manages allow firewall rules.                                             #
   #############################################################################
   if [ $1 == create ]; then
-    create_allow_firewall
+    _create_allow_firewall
   elif [ $1 == delete ]; then
-    delete_allow_firewall
+    _delete_allow_firewall
   elif [ $1 == refresh ]; then
-    delete_allow_firewall
-    create_allow_firewall
+    _delete_allow_firewall
+    _create_allow_firewall
 	  success "Allow rule has been updated on the firewall."
   else
     error "Unknown parameter passed: $1"
