@@ -18,7 +18,7 @@ Make sure you have [GCloud command-line tools](https://cloud.google.com/sdk/docs
 
 ## 2. Quick Start
 
-### 2.1. Steps to setup
+### 2.1. Clone and configure
 Follow the next steps to set up your Sultan devstack
 
 ```console
@@ -41,20 +41,12 @@ create your instance
 More about this later in [Working with configurations](#3-working-with-configurations)
 section.
 
-### 2.3. Optional stuff
+### 2.3. Create your first devstack
+Create an instance from a pre-packaged image
 
-#### 2.3.1. Accessing `sultan` from any directory on your machine 
-If you want to access `sultan` command line from any directory, add this repo 
-dir to your `PATH`
 ```console
-$ export PATH=$PATH:$(pwd)  # pwd should translate to /path/to/projects/sultan
+$ sultan instance create --image juniper-devstack
 ```
-
-#### 2.3.2. Check the best zone for your machine
-This is in order to have as small latency to your machine and mounted dirs as 
-possible. You can check it here: http://www.gcping.com/ Following example will 
-be how I’ve set it up (the ZONE value) in Europe.
-
 
 ## 3. Working with configurations
 
@@ -90,9 +82,20 @@ SERVICE_KEY_PATH=/Users/matej/Work/Appsembler/appsembler-devstack-30-104c123267b
 > - You should change the value `SERVICE_KEY_PATH` if you decided to copy and 
 > paste the configurations above.
 
-### 3.3. Optional nice configurations
+### 3.3. Optional configurations
 
-#### Zone
+#### Accessing `sultan` from any directory on your machine 
+If you want to access `sultan` command line from any directory, add this repo 
+dir to your `PATH`
+```console
+$ export PATH=$PATH:$(pwd)  # pwd should translate to /path/to/projects/sultan
+```
+
+#### Check the best zone for your machine
+This is in order to have as small latency to your machine and mounted dirs as 
+possible. You can check it here: http://www.gcping.com/ Following example will 
+be how I’ve set it up (the ZONE value) in Europe.
+
 For minimum latency. You can set `ZONE` value to match the nearest GCP zone to 
 you.
 ```shell
