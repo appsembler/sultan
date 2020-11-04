@@ -1,26 +1,27 @@
 #!/bin/bash
 
 current_dir="$(dirname "$0")"
+# shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
 
 _delete_command() {
-	(gcloud compute images delete $1 \
-		--project=$PROJECT_ID \
-		--verbosity $VERBOSITY \
+	(gcloud compute images delete "$1" \
+		--project="$PROJECT_ID" \
+		--verbosity "$VERBOSITY" \
 		--quiet && \
 	success "Image deleted successfully!") || dim "Couldn't find the image on GCP." "SKIPPING"
 }
 
 _create_command() {
-  (gcloud beta compute images create $1 \
-		--source-disk=$INSTANCE_NAME \
-		--source-disk-zone=$ZONE \
-		--family=$IMAGE_FAMILY \
-		--labels=user=$INSTANCE_NAME \
-		--project=$PROJECT_ID \
-		--verbosity $VERBOSITY \
+  (gcloud beta compute images create "$1" \
+		--source-disk="$INSTANCE_NAME" \
+		--source-disk-zone="$ZONE" \
+		--family="$IMAGE_FAMILY" \
+		--labels=user="$INSTANCE_NAME" \
+		--project="$PROJECT_ID" \
+		--verbosity "$VERBOSITY" \
 		--quiet && \
-	success "Your image has been created successfully!") || warn "Couldn't create an image on GCP." $1
+	success "Your image has been created successfully!") || warn "Couldn't create an image on GCP." "$1"
 }
 
 
@@ -28,29 +29,29 @@ delete() {
   #############################################################################
   # Deletes your image from GCP.                                              #
   #############################################################################
-  image_name=$IMAGE_NAME
+  img_name="$IMAGE_NAME"
 
   while [[ "$#" -gt 0 ]]; do
     case $1 in
-      -n|--name) image_name=$2; shift;;
+      -n|--name) img_name=$2; shift;;
       *) throw_error "Unknown parameter passed: $1" ;;
     esac
     shift
   done
 
-  message "Removing image from GCP..." $image_name
-	_delete_command $image_name
+  message "Removing image from GCP..." "$img_name"
+	_delete_command "$img_name"
 }
 
 create() {
   #############################################################################
   # Creates an image from your devstack instance on GCP.                               #
   #############################################################################
-  image_name=$IMAGE_NAME
+  img_name=$IMAGE_NAME
 
   while [[ "$#" -gt 0 ]]; do
     case $1 in
-      -n|--name) image_name=$2; shift;;
+      -n|--name) img_name=$2; shift;;
       *) error "Unknown parameter passed: $1" ;;
     esac
     shift
@@ -59,15 +60,15 @@ create() {
   # Stop the instance
   ./sultan instance stop
 
-	message "Creating a new image from your devstack GCP instance..." $image_name
+	message "Creating a new image from your devstack GCP instance..." "$img_name"
 	dim "This will remove any previous image with the same name. Press CTRL+C to abort..."
 
 	# Give a short time for user to hit CTRL+C before execution starts
 	sleep 10
 
-	_delete_command $image_name
-	message "Image is being created..." $image_name
-	_create_command $image_name
+	_delete_command "$img_name"
+	message "Image is being created..." "$img_name"
+	_create_command "$img_name"
 }
 
 "$@"

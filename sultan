@@ -4,38 +4,38 @@ current_dir="$(dirname "$0")"
 
 # Source configurations variables
 source "$current_dir/configs/.configs"
-for f in $current_dir/configs/.configs.*; do source $f; done
+for f in "$current_dir"/configs/.configs.*; do source "$f"; done
 
 instance() {
-	$current_dir/scripts/instance.sh $@
+	"$current_dir"/scripts/instance.sh "$@"
 }
 
 devstack() {
-	$current_dir/scripts/devstack.sh $@
+	"$current_dir"/scripts/devstack.sh "$@"
 }
 
 workflow() {
-	$current_dir/scripts/workflow.sh $@
+	"$current_dir"/scripts/workflow.sh "$@"
 }
 
 image() {
-	$current_dir/scripts/image.sh $@
+	"$current_dir"/scripts/image.sh "$@"
 }
 
 firewall() {
-	$current_dir/scripts/firewall.sh $@
+	"$current_dir"/scripts/firewall.sh "$@"
 }
 
 local() {
-	$current_dir/scripts/local.sh $@
+	"$current_dir"/scripts/local.sh "$@"
 }
 
 config() {
-	$current_dir/scripts/configurations.sh $@
+	"$current_dir"/scripts/configurations.sh "$@"
 }
 
 version_text() {
-  printf "Sultan ${CYAN}v%s${NORMAL}\n" $VERSION
+  printf "Sultan ${CYAN}v%s${NORMAL}\n" "$VERSION"
 }
 
 help_text() {
@@ -188,18 +188,18 @@ service:
 \n" | less
 }
 
-if [ $1 == '-v' ] || [ $1 == '--version' ]; then
+if [ "$1" == '-v' ] || [ "$1" == '--version' ]; then
   version_text
   exit 0
 fi
 
-if [ $1 == '-h' ] || [ $1 == '--help' ]; then
+if [ "$1" == '-h' ] || [ "$1" == '--help' ]; then
   help_text
   exit 0
 fi
 
 # Print help message if command is not found
-if ! type -t $1 | grep -i function > /dev/null; then
+if ! type -t "$1" | grep -i function > /dev/null; then
   help_text
   exit 1
 fi
