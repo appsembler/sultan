@@ -1,6 +1,7 @@
 #!/bin/bash
 
 current_dir="$(dirname "$0")"
+# shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
 
 make() {
@@ -19,7 +20,7 @@ up()  {
   #############################################################################
   make down
 	make dev.pull
-	make $DEVSTACK_RUN_COMMAND
+	make "$DEVSTACK_RUN_COMMAND"
 	success "The devstack is up and running."
 }
 
@@ -29,14 +30,14 @@ unmount() {
   #############################################################################
   UNMOUNT=$(eval ./sultan instance ip)
 
-  if [ $(uname -s) == Darwin ]; then
+  if [ "$(uname -s)" == Darwin ]; then
     UNMOUNT=diskutil
   else
     UNMOUNT=sudo
   fi
 
-	($UNMOUNT unmount force $MOUNT_DIR && \
-		rm -rf $MOUNT_DIR && \
+	("$UNMOUNT" unmount force "$MOUNT_DIR" && \
+		rm -rf "$MOUNT_DIR" && \
 		success "Workspace unmounted successfully.") \
 	|| warn "No mount found" "SKIPPING"
 }
@@ -56,11 +57,11 @@ mount() {
   #############################################################################
   IP_ADDRESS=$(eval ./sultan instance ip)
 
-	mkdir -p $MOUNT_DIR
-	message "Mount directory created." $MOUNT_DIR
+	mkdir -p "$MOUNT_DIR"
+	message "Mount directory created." "$MOUNT_DIR"
 	sshfs \
-	  -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,IdentityFile=$SSH_KEY \
-	  $USER_NAME@$IP_ADDRESS:$DEVSTACK_WORKSPACE $MOUNT_DIR
+	  -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,IdentityFile="$SSH_KEY" \
+	  "$USER_NAME@$IP_ADDRESS:$DEVSTACK_WORKSPACE" "$MOUNT_DIR"
 	success "Workspace has been mounted successfully."
 }
 

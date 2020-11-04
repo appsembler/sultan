@@ -1,6 +1,7 @@
 #!/bin/bash
 
 current_dir="$(dirname "$0")"
+# shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
 
 suspend() {
@@ -22,7 +23,7 @@ resume() {
   #############################################################################
 	message "Recreating instance from the image and starting it up..."
 
-  ./sultan instance setup --image $IMAGE_NAME
+  ./sultan instance setup --image "$IMAGE_NAME"
   ./sultan devstack up
   ./sultan devstack mount
 }
