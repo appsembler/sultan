@@ -11,7 +11,7 @@
     name: "{{ user }}"
     groups: "{{ docker_group_name }}"
     append: true
-  tags: [ docker ]
+  tags: [ docker, reconfiguration ]
 
 - name: Add GPG apt Key
   apt_key:

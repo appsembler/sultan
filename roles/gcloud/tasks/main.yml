@@ -18,14 +18,14 @@
   tags: [ gcloud ]
   become: no
 
-- name: add {{ gcloud_bin }} to path
+- name: Add {{ gcloud_bin }} to path
   lineinfile:
     dest: /etc/environment
     state: present
     backrefs: yes
     regexp: 'PATH=(["]*)((?!.*?{{gcloud_bin}}).*?)(["]*)$'
     line: "PATH={{ gcloud_bin }}:{{ ansible_env.PATH }}"
-  tags: [ gcloud ]
+  tags: [ gcloud, reconfiguration ]
 
 - name:  Install docker-credential-gcr
   expect:
@@ -53,3 +53,11 @@
     PATH: "{{ gcloud_bin }}:{{ ansible_env.PATH }}"
   become: no
   tags: [ gcloud ]
+
+- name: Add '{{ user }}' to 'google-sudoers' group
+  user:
+    name: "{{ user }}"
+    groups: google-sudoers
+    append: yes
+  tags: [ never, gcloud ]
+

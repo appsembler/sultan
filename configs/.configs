@@ -1,29 +1,31 @@
+VERSION=2.0.0
+
 # (PLEASE CHANGE) A key that has access to your edx-platform Github repos and to the GCP project you want to deploy the devstack in.
-SSH_KEY="$(HOME)/.ssh/id_rsa"
+SSH_KEY="$HOME/.ssh/id_rsa"
 
 # (PLEASE CHANGE) This is the project where the your instance will be created.
 PROJECT_ID="your-gcp-project-id"
 
 # This will be used while SSHing into your remote machine. Usually matches the one in the SSH Key.
-USER_NAME=$(USER)
+USER_NAME=$USER
 
 # Will be used to create a unique identifier on GCP.
-HOST_NAME=$(shell hostname | tr '[:upper:]' '[:lower:]')
+HOST_NAME=$(hostname | tr '[:upper:]' '[:lower:]')
 
 # The instance name on GCP, must be unique among all users.
-INSTANCE_NAME=$(USER)-at-$(subst .,-,$(HOST_NAME))
+INSTANCE_NAME=$USER-at-${HOST_NAME//./-}
 
-# The name of the image on GCP if you are going to create one.
-IMAGE_NAME=devstack-$(INSTANCE_NAME)
+# Default name of the image to create.
+IMAGE_NAME=devstack-$INSTANCE_NAME
 
 # (DON'T CHANGE) A unique tag for your GCP instance.
-INSTANCE_TAG=devstack-$(INSTANCE_NAME)
+INSTANCE_TAG=devstack-$INSTANCE_NAME
 
 # (DON'T CHANGE) The name of the deny rule on GCP firewall.
-DENY_FIREWALL=deny-$(INSTANCE_NAME)-webserver-access
+DENY_FIREWALL=deny-$INSTANCE_NAME-webserver-access
 
 # (DON'T CHANGE) The name of the allow rule on GCP firewall.
-ALLOW_FIREWALL=allow-$(INSTANCE_NAME)-webserver-access
+ALLOW_FIREWALL=allow-$INSTANCE_NAME-webserver-access
 
 # The size of the disk your instance is going to use in GB. We don't recommend it to be less than 50.
 DISK_SIZE=200
@@ -41,7 +43,7 @@ INVENTORY=dynamic-inventory/gce.py
 TMP_DIR=~/.devstack
 
 # The mount location.
-MOUNT_DIR=$(TMP_DIR)/mnt/
+MOUNT_DIR=$TMP_DIR/mnt/
 
 # (DON'T CHANGE) The hosts file location. You can change it for test purposes.
 HOSTS_FILE=/etc/hosts
@@ -49,16 +51,25 @@ HOSTS_FILE=/etc/hosts
 # A comma-separated list of hostnames you'd like to use.
 EDX_HOST_NAMES=edx.devstack.lms
 
-# Verbosity of GCloud commands we are running. Options [debug, info, warning, error, critical, none]
-VERBOSITY=critical
+# Determines whether to hide/show commands verbose output on the terminal
+DEBUG=false
 
-# The location the toolkit is directing Ansible output to. To unhide it use `/dev/tty` instead.
-SHELL_OUTPUT=/dev/null
+# (DON'T CHANGE) VERBOSITY controls GCloud commands verbosity and SHELL_OUTPUT
+# is the location the toolkit is directing Ansible output to.
+if [ $DEBUG = true ]; then
+  VERBOSITY=debug
+  SHELL_OUTPUT=/dev/tty
+else
+  VERBOSITY=critical
+  SHELL_OUTPUT=/dev/null
+fi
 
-HOME_DIR=/home/$(USER_NAME)
+HOME_DIR=/home/$USER_NAME
 
 # The location of devstack on the remote machine
-DEVSTACK_WORK_DIR=$(HOME_DIR)/workspace
+DEVSTACK_WORKSPACE=$HOME_DIR/workspace
+DEVSTACK_DIR=$DEVSTACK_WORKSPACE/devstack
+VIRTUAL_ENV=$DEVSTACK_WORKSPACE/env
 
 # Devstack image family
 IMAGE_FAMILY=devstack
@@ -73,11 +84,11 @@ SERVICE_KEY_PATH=/path/to/service/account.json
 DEVSTACK_REPO_URL=https://github.com/edx/devstack.git
 
 # The devstack branch you want to deploy.
-DEVSTACK_REPO_BRANCH=master
+DEVSTACK_REPO_BRANCH=open-release/juniper.master
 
 # To run the docker images for a named Open edX release.
 # To work on the master branches and latest images, unset OPENEDX_RELEASE or set it to an empty string.
-OPENEDX_RELEASE="$(subst open-release/,,${DEVSTACK_REPO_BRANCH})"
+OPENEDX_RELEASE="${DEVSTACK_REPO_BRANCH//open-release\//}"
 
 # The command that runs all of your devstack services (LMS, Studio, ...) Change it if you have a custom one.
 DEVSTACK_RUN_COMMAND=dev.up
@@ -85,5 +96,21 @@ DEVSTACK_RUN_COMMAND=dev.up
 # Whether to deny all IPs (except yours) from accessing your instance or not.
 RESTRICT_INSTANCE=true
 
-# Extra arguments to pass when creating an instance
-INSTANCE_EXTRA_ARGS=--preemptible
+# (DON'T CHANGE) Critical variables for our scripts.
+BOLD=$(tput bold)
+NORMAL=$(tput sgr0)
+WHITE=$(tput setaf 0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+PURPLE=$(tput setaf 5)
+CYAN=$(tput setaf 6)
+GRAY=$(tput setaf 7)
+DARK=$(tput setaf 8)
+PINK=$(tput setaf 9)
+
+COLS=$(tput cols)
+
+PIP=ve/bin/pip
+ACTIVATE=ve/bin/activate

@@ -1,12 +1,12 @@
 ---
 
 - hosts: "{{ instance_name }}"
-  become: true
+  become: yes
   vars_files:
     - server-vars.yml
   pre_tasks:
     - name: Get the username running the deploy
-      become: false
+      become: no
       local_action: command whoami
       register: whoami
 

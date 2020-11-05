@@ -10,8 +10,7 @@
         marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item }}"
       become: yes
       with_items: "{{ EDX_HOST_NAMES.split(',') }}"
-      tags:
-        - hosts_update
+      tags: [ hosts_update ]
 
     - name: Remove SSH configurations
       blockinfile:
@@ -20,8 +19,7 @@
         marker: "# {mark} ANSIBLE MANAGED BLOCK"
         block: ""
       become: yes
-      tags:
-        - hosts_revert
+      tags: [ hosts_revert ]
 
     - name: Remove mappings from /etc/hosts
       blockinfile:
@@ -31,8 +29,7 @@
         block: ""
       become: yes
       with_items: "{{ EDX_HOST_NAMES.split(',') }}"
-      tags:
-        - hosts_revert
+      tags: [ hosts_revert ]
 
     - name: Configure SSH agent forwarding
       blockinfile:
@@ -44,8 +41,7 @@
             User {{ USER }}
             IdentityFile {{ SSH_KEY }}
             ForwardAgent yes
-      tags:
-        - ssh_config
+      tags: [ ssh_config ]
 
     - name: Get the remote instance host key
       shell: ssh-keyscan -t rsa {{ IP_ADDRESS }}
@@ -53,23 +49,19 @@
       until: host_key.stdout.find(IP_ADDRESS) != -1
       retries: 10
       delay: 10
-      ignore_errors: yes
-      tags:
-        - ssh_config
+      ignore_errors: no
+      tags: [ ssh_config ]
 
     - name: Configure SSH known hosts
       blockinfile:
         path: ~/.ssh/known_hosts
         create: yes
         block: "{{ host_key.stdout }}"
-      tags:
-        - ssh_config
+      tags: [ ssh_config ]
 
     - name: Configure inventory variables
       template:
         src: dynamic-inventory/gce.ini.j2
         dest: dynamic-inventory/gce.ini
         mode: '0644'
-      tags:
-        - inventory
-
+      tags: [ inventory ]

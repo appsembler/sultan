@@ -1,5 +1,11 @@
 ---
 
+- name: Update apt
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  tags: [ server ]
+
 - name: Install aptitude using apt
   apt:
     name: aptitude
@@ -38,6 +44,7 @@
     "python-pip",
     "python3-pip",
     "virtualenv",
+    "python3-virtualenv",
     "python-setuptools"
   ]
   tags: [ server ]
@@ -46,10 +53,12 @@
   pip:
     name: pexpect
   become: yes
+  tags: [ server ]
 
-- name: set inotify watchers
+- name: Set inotify watchers
   sysctl:
     name=fs.inotify.max_user_watches
     value=524288
     state=present
     reload=yes
+  tags: [ server ]
