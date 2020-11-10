@@ -4,6 +4,30 @@ current_dir="$(dirname "$0")"
 # shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
 
+
+help_text="${NORMAL}An Open edX Remote Devstack Toolkit by Appsembler
+
+${BOLD}${GREEN}devstack${NORMAL}
+  Manages the devstack on your remote machine.
+
+  ${BOLD}USAGE:${NORMAL}
+    sultan devstack <command> [argement]
+
+  ${BOLD}COMMANDS:${NORMAL}
+    up        Runs devstack servers.
+    stop      Stops and unmounts a devstack servers.
+    make      Performs a devstack make command on the GCP instance.
+    unmount   Releases the devstack mount from your machine.
+    mount     Mounts devstack files from your GCP instance onto your
+              local machine.
+
+  ${BOLD}EXAMPLES:${NORMAL}
+    sultan devstack up
+    sultan devstack stop
+    sultan devstack make lms-logs
+"
+
+
 make() {
   #############################################################################
   # Performs a devstack make command on the GCP instance.                     #
@@ -64,5 +88,16 @@ mount() {
 	  "$USER_NAME@$IP_ADDRESS:$DEVSTACK_WORKSPACE" "$MOUNT_DIR"
 	success "Workspace has been mounted successfully."
 }
+
+help() {
+  # shellcheck disable=SC2059
+  printf "$help_text"
+}
+
+# Print help message if command is not found
+if ! type -t "$1" | grep -i function > /dev/null; then
+  help
+  exit 1
+fi
 
 "$@"

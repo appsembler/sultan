@@ -4,6 +4,26 @@ current_dir="$(dirname "$0")"
 # shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
 
+
+help_text="${NORMAL}An Open edX Remote Devstack Toolkit by Appsembler
+
+${BOLD}${GREEN}image${NORMAL}
+  Manages GCP images creation and deletion on GCP. All images you create are
+  being created from your machine.
+
+  ${BOLD}USAGE:${NORMAL}
+    sultan image <command> [OPTION]
+
+  ${BOLD}COMMANDS:${NORMAL}
+    create      Creates an image from your devstack instance on GCP.
+    delete      Deletes your image from GCP.
+
+  ${BOLD}OPTIONS:${NORMAL}
+    -n, --name  The name of the image you want to create. It defaults to
+                the value of IMAGE_NAME in configurations file.
+"
+
+
 _delete_command() {
 	(gcloud compute images delete "$1" \
 		--project="$PROJECT_ID" \
@@ -34,7 +54,7 @@ delete() {
   while [[ "$#" -gt 0 ]]; do
     case $1 in
       -n|--name) img_name=$2; shift;;
-      *) throw_error "Unknown parameter passed: $1" ;;
+      *) error "Unknown parameter passed: $1" "$help_text";;
     esac
     shift
   done
@@ -52,7 +72,7 @@ create() {
   while [[ "$#" -gt 0 ]]; do
     case $1 in
       -n|--name) img_name=$2; shift;;
-      *) error "Unknown parameter passed: $1" ;;
+      *) error "Unknown parameter passed: $1" "$help_text";;
     esac
     shift
   done
@@ -70,5 +90,16 @@ create() {
 	message "Image is being created..." "$img_name"
 	_create_command "$img_name"
 }
+
+help() {
+  # shellcheck disable=SC2059
+  printf "$help_text"
+}
+
+# Print help message if command is not found
+if ! type -t "$1" | grep -i function > /dev/null; then
+  help
+  exit 1
+fi
 
 "$@"

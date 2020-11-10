@@ -4,7 +4,6 @@ current_dir="$(dirname "$0")"
 
 # Source configurations variables
 source "$current_dir/configs/.configs"
-for f in "$current_dir"/configs/.configs.*; do source "$f"; done
 
 instance() {
 	"$current_dir"/scripts/instance.sh "$@"
@@ -34,14 +33,15 @@ config() {
 	"$current_dir"/scripts/configurations.sh "$@"
 }
 
-version_text() {
+version() {
   printf "Sultan ${CYAN}v%s${NORMAL}\n" "$VERSION"
 }
 
-help_text() {
-  version_text
+help() {
   # shellcheck disable=SC2059
-  printf "${NORMAL}An Open edX Remote Devstack Toolkit by Appsembler\n
+  printf "Sultan ${CYAN}v%s${NORMAL}\n" "$VERSION
+${NORMAL}An Open edX Remote Devstack Toolkit by Appsembler
+
 Usage:
   sultan <options>
   sultan <service> [argument(s)] [--option <argument>]
@@ -52,21 +52,24 @@ options:
 
 service:
   ${BOLD}${GREEN}config${NORMAL}
-    Handles your local Sultan configurations
+    Manages Sultan configurations.
 
     ${BOLD}USAGE:${NORMAL}
-      sultan config <argument>
+      sultan config (debug | init [OPTIONS])
 
-    ${BOLD}ARGUMENTS:${NORMAL}
-      init      Creates a custom environment file for you where you
-                can personalize your instance's default settings.
-      debug     Prints the values of the environment variables to be
-                used in the make command as define in .configs.* files.
+    ${BOLD}COMMANDS:${NORMAL}
+      init          Creates a custom environment file for you where you can
+                    personalize your instance's default settings.
+      debug         Prints the values of the environment variables to be used
+                    in the make command as define in .configs.* files.
+
+    ${BOLD}OPTIONS:${NORMAL}
+      -f, --force   Will override your current configurations file by removing
+                    the old assignments with the default ones.
 
     ${BOLD}EXAMPLES:${NORMAL}
-      sultan config init
+      sultan config init -f
       sultan config debug
-
 
   ${BOLD}${GREEN}devstack${NORMAL}
     Manages the devstack on your remote machine.
@@ -166,41 +169,63 @@ service:
       sultan instance setup --image
       sultan instance setup --image devstack-juniper
 
-  ${BOLD}${GREEN}local${NORMAL}
-    Manages Sultan configurations.
+
+  ${BOLD}${GREEN}workflow${NORMAL}
+    Helps you suspending and resuming working on your instance.
 
     ${BOLD}USAGE:${NORMAL}
-      sultan config (debug | init [OPTIONS])
+      sultan workflow <argument>
 
-    ${BOLD}COMMANDS:${NORMAL}
-      init          Creates a custom environment file for you where you can
-                    personalize your instance's default settings.
-      debug         Prints the values of the environment variables to be used
-                    in the make command as define in .configs.* files.
-
-    ${BOLD}OPTIONS:${NORMAL}
-      -f, --force   Will override your current configurations file by removing
-                    the old assignments with the default ones.
+    ${BOLD}ARGUMENTS:${NORMAL}
+      suspend       Suspends work by stopping the devstack, remove the mount,
+                    and create an GCP image for future use.
+      resume        Resumes suspended by creating an instance from the saved
+                    image, running the devstack, and mounting it locally.
 
     ${BOLD}EXAMPLES:${NORMAL}
-      sultan config init -f
-      sultan config debug
-\n" | less
+      sultan workflow suspend
+      sultan workflow resume
+
+
+  ${BOLD}${GREEN}local${NORMAL}
+    Takes care of configuring your local machine to be able communicate with
+    the remote one.
+
+    ${BOLD}USAGE:${NORMAL}
+      sultan local <argument> [OPTION]
+
+    ${BOLD}ARGUMENTS:${NORMAL}
+      clean         Cleans software and directory caches.
+      hosts         Updates your hosts file by adding/removing the necessary
+                    hosts to it.
+      ssh           Configures Sultan's SSH rules and connection on your
+                    machine.
+
+    ${BOLD}OPTIONS:${NORMAL}
+      revert        Reverts the changes made locally and restore all modified
+                    files to their original state.
+      update        Apply the required changes on local files.
+
+    ${BOLD}EXAMPLES:${NORMAL}
+      sultan local clean
+      sultan local hosts revert
+      sultan local ssh update
+" | less
 }
 
 if [ "$1" == '-v' ] || [ "$1" == '--version' ]; then
-  version_text
+  version
   exit 0
 fi
 
 if [ "$1" == '-h' ] || [ "$1" == '--help' ]; then
-  help_text
+  help
   exit 0
 fi
 
 # Print help message if command is not found
 if ! type -t "$1" | grep -i function > /dev/null; then
-  help_text
+  help
   exit 1
 fi
 
