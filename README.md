@@ -45,7 +45,7 @@ section.
 Create an instance from a pre-packaged image
 
 ```console
-$ sultan instance create --image juniper-devstack
+$ sultan instance setup --image juniper-devstack
 ```
 
 ## 3. Working with configurations

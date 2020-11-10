@@ -15,7 +15,7 @@ message() {
   #############################################################################
   if [ -z ${2+x} ] || [ -z "$2" ]; then description="$2"; else description="[$2]"; fi
 
-  ENDCOLS=$(( "$COLS" - ${#1}))
+  ENDCOLS=$((COLS - ${#1}))
   printf '%s%s%*s%s\n' "$1" "${3:-$GRAY}" $ENDCOLS "$description" "$NORMAL"
 }
 
