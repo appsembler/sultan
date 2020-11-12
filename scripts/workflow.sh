@@ -28,7 +28,7 @@ suspend() {
   # Suspends work by stopping the devstack, remove the mount, and create an   #
   # GCP image for future use                                                  #
   #############################################################################
-	echo "Making a new image and stopping the instance..."
+	message "Making a new image and stopping the instance..."
 
   ./sultan devstack stop
   ./sultan instance stop

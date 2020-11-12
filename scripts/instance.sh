@@ -22,8 +22,9 @@ ${BOLD}${GREEN}instance${NORMAL}
     deploy        Deploys the instance to install required libraries and
                   software.
     provision     Provisions the devstack on your instance.
-    start         Starts your stopped instance on GCP.
-    stop          Stops your instance on GCP, but doesn't delete it.
+    start         Starts your stopped virtual machine on GCP.
+    stop          Stops your virtual machine on GCP, but doesn't delete it.
+    restart       Restarts your virtual machine on GCP.
     describe      Describes your virtual machine instance.
     status        Shows the status of your running machine.
     setup         Setup a restricted instance for you on GCP contains a
@@ -118,7 +119,7 @@ deploy() {
 	-i "$INVENTORY" \
 	-e "instance_name=$INSTANCE_NAME working_directory=$DEVSTACK_WORKSPACE git_repo_url=$DEVSTACK_REPO_URL openedx_release=$OPENEDX_RELEASE git_repo_branch=$DEVSTACK_REPO_BRANCH virtual_env_dir=$VIRTUAL_ENV" &> "$SHELL_OUTPUT"
     success "Your virtual machine has been deployed successfully!"
-    message "Run devstack provision to start provisioning your devstack."
+    message "Run ${BOLD}${CYAN}sultan devstack provision${NORMAL}${MAGINTA} to start provisioning your devstack."
 }
 
 provision() {
@@ -131,7 +132,7 @@ provision() {
 	./sultan devstack make dev.provision
 
 	success "The devstack has been provisioned successfully!"
-	message "Run make devstack run to start devstack servers."
+	message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGINTA} to start devstack servers."
 }
 
 start() {
@@ -160,6 +161,15 @@ stop() {
 		--zone="$ZONE" \
 		--project "$PROJECT_ID"
 	success "Your virtual machine has been stopped successfully!"
+}
+
+restart() {
+  #############################################################################
+  # Restarts your virtual machine on GCP.                                            #
+  #############################################################################
+	message "Restarting your virtual machine on GCP..."
+  ./sultan instance stop
+  ./sultan instance start
 }
 
 _full_setup() {
@@ -194,8 +204,8 @@ _image_setup() {
 		--zone="$ZONE" \
 		--project="$PROJECT_ID"
 
-  # Restrict VM to work with this machine only
-  restrict
+  # Restarts the VM to apply env changes
+  ./sultan instance restart
 
 	./sultan local hosts config
 	./sultan local ssh config
@@ -208,7 +218,7 @@ _image_setup() {
 		-e "instance_name=$INSTANCE_NAME user=$USER_NAME working_directory=$DEVSTACK_WORKSPACE" &> "$SHELL_OUTPUT"
 
 	success "Your instance has been successfully created!" "From $IMAGE_NAME"
-	message "Run make instance.start and then make devstack run to start devstack servers."
+	message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGINTA} to start devstack servers."
 }
 
 describe() {
@@ -240,7 +250,7 @@ setup() {
   full_setup=1
   while [[ "$#" -gt 0 ]]; do
     case $1 in
-      -i|--image) image="$2"; full_setup=0 shift;;
+      -i|--image) image="$2"; full_setup=0; shift;;
       *) error "Unknown parameter passed: $1" "$help_text";;
     esac
     shift

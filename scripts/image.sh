@@ -53,7 +53,7 @@ delete() {
 
   while [[ "$#" -gt 0 ]]; do
     case $1 in
-      -n|--name) img_name=$2; shift;;
+      -n|--name) img_name="$2"; shift;;
       *) error "Unknown parameter passed: $1" "$help_text";;
     esac
     shift
@@ -71,7 +71,7 @@ create() {
 
   while [[ "$#" -gt 0 ]]; do
     case $1 in
-      -n|--name) img_name=$2; shift;;
+      -n|--name) img_name="$2"; shift;;
       *) error "Unknown parameter passed: $1" "$help_text";;
     esac
     shift

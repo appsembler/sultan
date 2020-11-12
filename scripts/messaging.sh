@@ -4,8 +4,10 @@ current_dir="$(dirname "$0")"
 configs_dir="$(dirname "$current_dir")/configs"
 
 # Source configurations variables
-# shellcheck disable=SC1090
-source "$configs_dir"/.configs
+for f in "$configs_dir"/.configs* ; do
+    # shellcheck disable=SC1090
+    source "$f"
+done
 
 message() {
   #############################################################################

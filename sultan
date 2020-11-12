@@ -3,7 +3,10 @@
 current_dir="$(dirname "$0")"
 
 # Source configurations variables
-source "$current_dir/configs/.configs"
+for f in "$current_dir"/configs/.configs* ; do
+    # shellcheck disable=SC1090
+    source "$f"
+done
 
 instance() {
 	"$current_dir"/scripts/instance.sh "$@"

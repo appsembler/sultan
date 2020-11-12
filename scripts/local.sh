@@ -57,7 +57,7 @@ requirements() {
   # requirements.txt file.                                                    #
   #############################################################################
 
-	message "Installing project requirements..."
+	message "Installing project requirements..." "ve/"
 	touch requirements.txt
 	virtualenv -p python3 ve &> "$SHELL_OUTPUT"
 	"$PIP" install -r requirements.txt&> "$SHELL_OUTPUT"
