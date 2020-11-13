@@ -28,7 +28,7 @@ ${BOLD}${GREEN}local${NORMAL}
   ${BOLD}EXAMPLES:${NORMAL}
     sultan local clean
     sultan local hosts revert
-    sultan local ssh update
+    sultan local ssh config
 "
 
 
