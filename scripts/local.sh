@@ -33,14 +33,14 @@ ${BOLD}${GREEN}local${NORMAL}
 
 
 configure_inventory() {
-  message "Updating your inventory credentials..." "dynamic-inventory/gce.ini"
+  message "Updating your inventory credentials..." "ansible/dynamic-inventory/gce.ini"
 
   ansible_vars="PROJECT_ID=$PROJECT_ID \
       SERVICE_ACCOUNT_EMAIL=$SERVICE_ACCOUNT_EMAIL \
       SERVICE_KEY_PATH=$SERVICE_KEY_PATH"
 
   # shellcheck disable=SC1090
-  . "$ACTIVATE"; ansible-playbook local.yml \
+  . "$ACTIVATE"; ansible-playbook ansible/local.yml \
 				  --connection=local \
 				  -i '127.0.0.1,' \
 				  --tags inventory \
@@ -70,14 +70,14 @@ clean() {
   #############################################################################
 	message "Flush pip packages..."
 	rm -rf ve
-	rm dynamic-inventory/gce.ini || printf '\n'
+	rm ansible/dynamic-inventory/gce.ini || printf '\n'
 
 	# Installing local environment requirements
 	requirements
 
 	message "Flushing Ansible cache..."
 	# shellcheck disable=SC1090
-	. "$ACTIVATE"; ansible-playbook local.yml \
+	. "$ACTIVATE"; ansible-playbook ansible/local.yml \
 	    --check --flush-cache &> "$SHELL_OUTPUT"
 }
 
@@ -110,7 +110,7 @@ hosts() {
            --connection=local \
            -i '127.0.0.1,' \
            -e "EDX_HOST_NAMES=$EDX_HOST_NAMES)" \
-           --tags hosts_revert local.yml > "$SHELL_OUTPUT" \
+           --tags hosts_revert ansible/local.yml > "$SHELL_OUTPUT" \
           || error "ERROR reverting local changes."
 
     success "Your local changes have been reverted successfully!"
@@ -129,7 +129,7 @@ hosts() {
          --connection=local \
          -i '127.0.0.1,' \
          --tags hosts_update \
-         -e "IP_ADDRESS=$IP_ADDRESS EDX_HOST_NAMES=$EDX_HOST_NAMES" local.yml > "$SHELL_OUTPUT" \
+         -e "IP_ADDRESS=$IP_ADDRESS EDX_HOST_NAMES=$EDX_HOST_NAMES" ansible/local.yml > "$SHELL_OUTPUT" \
         || error "ERROR configuring hosts records."
     success "Your hosts have been configured successfully!"
   else
@@ -147,7 +147,7 @@ ssh() {
     IP_ADDRESS=$(./sultan instance ip)
 
     # shellcheck disable=SC1090
-    . "$ACTIVATE"; ansible-playbook local.yml \
+    . "$ACTIVATE"; ansible-playbook ansible/local.yml \
         --connection=local \
         -i '127.0.0.1,' \
         --tags ssh_config \
