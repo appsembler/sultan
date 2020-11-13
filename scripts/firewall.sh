@@ -17,8 +17,8 @@ ${BOLD}${GREEN}firewall${NORMAL}
     sultan firewall ( deny [action] | allow [action] | clean )
 
   ${BOLD}RULES:${NORMAL}
-    deny      Manages deny firewall rules.
     allow     Manages allow firewall rules.
+    deny      Manages deny firewall rules.
     clean     Remove all firewall rules from GCP.
 
   ${BOLD}ACTIONS:${NORMAL}

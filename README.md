@@ -91,6 +91,17 @@ dir to your `PATH`
 $ export PATH=$PATH:$(pwd)  # pwd should translate to /path/to/projects/sultan
 ```
 
+#### Enabling auto completion 
+To enable auto completion
+```console
+$ source extras/sultan-completion.bash  # For bash shell
+$ source extras/sultan-completion.zsh   # For zsh shell
+```
+
+> **NOTE**
+>
+> You can add the command above to your ~/.bashrc or ~/.zshrc
+
 #### Check the best zone for your machine
 This is in order to have as small latency to your machine and mounted dirs as 
 possible. You can check it here: http://www.gcping.com/ Following example will 
