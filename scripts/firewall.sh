@@ -4,6 +4,35 @@ current_dir="$(dirname "$0")"
 # shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
 
+help_text="${NORMAL}An Open edX Remote Devstack Toolkit by Appsembler
+
+${BOLD}${GREEN}firewall${NORMAL}
+  Manages the firewall configurations on GCP. Firewall rules are created in
+  a sole purpose of restricting access to your instance to your machine only.
+  This behavior might block your machine from reaching your instance if your
+  IP changes, that could easily happen if your disconnect from and connect
+  to the internet back. To solve this issue, clean rule comes handy.
+
+  ${BOLD}USAGE:${NORMAL}
+    sultan firewall ( deny [action] | allow [action] | clean )
+
+  ${BOLD}RULES:${NORMAL}
+    allow     Manages allow firewall rules.
+    deny      Manages deny firewall rules.
+    clean     Remove all firewall rules from GCP.
+
+  ${BOLD}ACTIONS:${NORMAL}
+    create    Creates a GCP firewall rule defines how your gets accessed.
+    delete    Deletes a GCP firewall rule.
+    refresh   Refreshes the firewall rule by deleating and recreating it.
+
+  ${BOLD}EXAMPLES:${NORMAL}
+    sultan firewall clean
+    sultan firewall allow remove
+    sultan firewall deny create
+    sultan firewall allow refresh
+"
+
 _create_deny_firewall() {
   #############################################################################
   # Creates a GCP Firewall's rule to prevent all kind of access to your       #
@@ -53,7 +82,7 @@ deny() {
     _create_deny_firewall
   	success "Deny rule has been updated on the firewall."
   else
-    error "Unknown parameter passed: $1"
+    error "Unknown action passed: $1" "$help_text"
   fi
 }
 
@@ -118,8 +147,19 @@ allow() {
     _create_allow_firewall
 	  success "Allow rule has been updated on the firewall."
   else
-    error "Unknown parameter passed: $1"
+    error "Unknown action passed: $1" "$help_text"
   fi
 }
+
+help() {
+  # shellcheck disable=SC2059
+  printf "$help_text"
+}
+
+# Print help message if command is not found
+if ! type -t "$1" | grep -i function > /dev/null; then
+  help
+  exit 1
+fi
 
 "$@"

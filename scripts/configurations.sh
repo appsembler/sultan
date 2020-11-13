@@ -4,6 +4,30 @@ current_dir="$(dirname "$0")"
 # shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
 
+help_text="${NORMAL}An Open edX Remote Devstack Toolkit by Appsembler
+
+${BOLD}${GREEN}config${NORMAL}
+  Manages Sultan configurations.
+
+  ${BOLD}USAGE:${NORMAL}
+    sultan config (debug | init [OPTIONS])
+
+  ${BOLD}COMMANDS:${NORMAL}
+    init          Creates a custom environment file for you where you can
+                  personalize your instance's default settings.
+    debug         Prints the values of the environment variables to be used
+                  in the make command as define in .configs.* files.
+
+  ${BOLD}OPTIONS:${NORMAL}
+    -f, --force   Will override your current configurations file by removing
+                  the old assignments with the default ones.
+
+  ${BOLD}EXAMPLES:${NORMAL}
+    sultan config init -f
+    sultan config debug
+"
+
+
 init() {
   #############################################################################
   # Creates a custom environment file for you where you can personalize your  #
@@ -14,7 +38,7 @@ init() {
   while [[ "$#" -gt 0 ]]; do
     case $1 in
       -f|--force) force=1 ;;
-      *) error "Unknown parameter passed: $1" ;;
+      *) error "Unknown parameter passed: $1" "$help_text";;
     esac
     shift
   done
@@ -99,5 +123,16 @@ debug() {
 
   exit 0
 }
+
+help() {
+  # shellcheck disable=SC2059
+  printf "$help_text"
+}
+
+# Print help message if command is not found
+if ! type -t "$1" | grep -i function > /dev/null; then
+  help
+  exit 1
+fi
 
 "$@"

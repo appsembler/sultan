@@ -4,13 +4,57 @@ current_dir="$(dirname "$0")"
 # shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
 
+
+help_text="${NORMAL}An Open edX Remote Devstack Toolkit by Appsembler
+
+${BOLD}${GREEN}instance${NORMAL}
+  Manages all of your GCP instance aspects.
+
+  ${BOLD}USAGE:${NORMAL}
+    sultan instance (<command> | setup [OPTIONS])
+
+  ${BOLD}COMMANDS:${NORMAL}
+    ping          Performs a ping to your instance.
+    restrict      Restricts the access to your instance to you only by
+                  creating the necessary rules.
+    delete        Deletes your instance from GCP.
+    create        Creates an empty instance for you on GCP.
+    deploy        Deploys the instance to install required libraries and
+                  software.
+    provision     Provisions the devstack on your instance.
+    start         Starts your stopped virtual machine on GCP.
+    stop          Stops your virtual machine on GCP, but doesn't delete it.
+    restart       Restarts your virtual machine on GCP.
+    describe      Describes your virtual machine instance.
+    status        Shows the status of your running machine.
+    setup         Setup a restricted instance for you on GCP contains a
+                  provisioned devstack.
+    ip            Gets the external IP of your instance.
+    run           SSH into or run commands on your instance.
+
+  ${BOLD}OPTIONS:${NORMAL}
+    -i, --image   If supplied, the instance will be created from the image
+                  name you provide, or the IMAGE_NAME configuration value.
+
+  ${BOLD}EXAMPLES:${NORMAL}
+    sultan instance status
+    sultan instance ip
+    sultan instance setup
+    sultan instance setup --image
+    sultan instance setup --image devstack-juniper
+"
+
+
 ping() {
   #############################################################################
   #  Performs a ping to your instance.                                        #
   #############################################################################
     # shellcheck disable=SC1090
     . "$ACTIVATE"; ansible -i "$INVENTORY" "$INSTANCE_NAME" -m ping \
-	|| error "Unable to ping instance!"
+	|| error "Unable to ping instance!" "This might be caused by one of the following reasons:
+    * The instance is not set up yet. To set up an instance run ${BOLD}${CYAN}sultan instance setup${NORMAL}${MAGINTA}
+    * The instance was stopped. Check the status of your instance using ${BOLD}${CYAN}sultan instance status${NORMAL}${MAGINTA} and start it by running ${BOLD}${CYAN}sultan instance start${NORMAL}${MAGINTA}
+    * The instance might have been restricted under a previous IP of yours. To allow your current IP from accessing the instance run ${BOLD}${CYAN}sultan instance restrict${NORMAL}${MAGINTA}"
 }
 
 restrict() {
@@ -71,11 +115,11 @@ deploy() {
   #############################################################################
     message "Deploying your instance..." "$INSTANCE_NAME"
     # shellcheck disable=SC1090
-    . "$ACTIVATE"; ansible-playbook devstack.yml \
+    . "$ACTIVATE"; ansible-playbook ansible/devstack.yml \
 	-i "$INVENTORY" \
 	-e "instance_name=$INSTANCE_NAME working_directory=$DEVSTACK_WORKSPACE git_repo_url=$DEVSTACK_REPO_URL openedx_release=$OPENEDX_RELEASE git_repo_branch=$DEVSTACK_REPO_BRANCH virtual_env_dir=$VIRTUAL_ENV" &> "$SHELL_OUTPUT"
     success "Your virtual machine has been deployed successfully!"
-    message "Run devstack provision to start provisioning your devstack."
+    message "Run ${BOLD}${CYAN}sultan devstack provision${NORMAL}${MAGINTA} to start provisioning your devstack."
 }
 
 provision() {
@@ -88,7 +132,7 @@ provision() {
 	./sultan devstack make dev.provision
 
 	success "The devstack has been provisioned successfully!"
-	message "Run make devstack run to start devstack servers."
+	message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGINTA} to start devstack servers."
 }
 
 start() {
@@ -100,7 +144,7 @@ start() {
 		--zone="$ZONE" \
 		--project "$PROJECT_ID"
 
-	./sultan local hosts update
+	./sultan local hosts config
 	./sultan local ssh config
 	success "Your virtual machine has been started successfully!"
 }
@@ -119,12 +163,21 @@ stop() {
 	success "Your virtual machine has been stopped successfully!"
 }
 
+restart() {
+  #############################################################################
+  # Restarts your virtual machine on GCP.                                            #
+  #############################################################################
+	message "Restarting your virtual machine on GCP..."
+  ./sultan instance stop
+  ./sultan instance start
+}
+
 _full_setup() {
   ./sultan local clean
   delete
   create
   restrict
-	./sultan local hosts update
+	./sultan local hosts config
 	./sultan local ssh config
   deploy
   provision
@@ -151,21 +204,21 @@ _image_setup() {
 		--zone="$ZONE" \
 		--project="$PROJECT_ID"
 
-  # Restrict VM to work with this machine only
-  restrict
+  # Restarts the VM to apply env changes
+  ./sultan instance restart
 
-	./sultan local hosts update
+	./sultan local hosts config
 	./sultan local ssh config
 
 	message "Personalizing your instance..."
 	# shellcheck disable=SC1090
-	. "$ACTIVATE"; ansible-playbook devstack.yml \
+	. "$ACTIVATE"; ansible-playbook ansible/devstack.yml \
 		-i "$INVENTORY" \
 		--tags "reconfiguration,never"  \
 		-e "instance_name=$INSTANCE_NAME user=$USER_NAME working_directory=$DEVSTACK_WORKSPACE" &> "$SHELL_OUTPUT"
 
 	success "Your instance has been successfully created!" "From $IMAGE_NAME"
-	message "Run make instance.start and then make devstack run to start devstack servers."
+	message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGINTA} to start devstack servers."
 }
 
 describe() {
@@ -197,8 +250,8 @@ setup() {
   full_setup=1
   while [[ "$#" -gt 0 ]]; do
     case $1 in
-      -i|--image) image="$2"; full_setup=0 shift;;
-      *) error "Unknown parameter passed: $1" ;;
+      -i|--image) image="$2"; full_setup=0; shift;;
+      *) error "Unknown parameter passed: $1" "$help_text";;
     esac
     shift
   done
@@ -226,5 +279,16 @@ run() {
   #############################################################################
   ssh -tt devstack "$@"
 }
+
+help() {
+  # shellcheck disable=SC2059
+  printf "$help_text"
+}
+
+# Print help message if command is not found
+if ! type -t "$1" | grep -i function > /dev/null; then
+  help
+  exit 1
+fi
 
 "$@"
