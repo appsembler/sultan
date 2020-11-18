@@ -87,9 +87,9 @@ debug() {
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  DEVSTACK_REPO_URL" "$DEVSTACK_REPO_URL"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  DEVSTACK_RUN_COMMAND" "$DEVSTACK_RUN_COMMAND"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  DEVSTACK_WORKSPACE" "$DEVSTACK_WORKSPACE"
-  printf "${CYAN}%-30s${NORMAL} %-10s\n" "  DEVSTACK_WORKSPACE" "$DEVSTACK_WORKSPACE"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  EDX_HOST_NAMES" "$EDX_HOST_NAMES"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  OPENEDX_RELEASE" "$OPENEDX_RELEASE"
+  printf "${CYAN}%-30s${NORMAL} %-10s\n" "  VIRTUAL_ENV" "$VIRTUAL_ENV"
 
   printf "${PURPLE}%-30s${NORMAL}\n" "FIREWALL"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  ALLOW_FIREWALL" "$ALLOW_FIREWALL"
@@ -119,7 +119,6 @@ debug() {
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  SSH_KEY" "$SSH_KEY"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  TMP_DIR" "$TMP_DIR"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  USER_NAME" "$USER_NAME"
-  printf "${CYAN}%-30s${NORMAL} %-10s\n" "  VIRTUAL_ENV" "$VIRTUAL_ENV"
 
   exit 0
 }

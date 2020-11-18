@@ -146,6 +146,10 @@ start() {
 
 	./sultan local hosts config
 	./sultan local ssh config
+
+	# always restrict the instance after starting it.
+	restrict
+
 	success "Your virtual machine has been started successfully!"
 }
 
