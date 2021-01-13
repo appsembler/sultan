@@ -37,7 +37,7 @@ MACHINE_TYPE=n1-standard-2
 ZONE=us-central1-c
 
 # The inventory of your machine.
-INVENTORY=dynamic-inventory/gce.py
+INVENTORY=ansible/dynamic-inventory/gce.py
 
 # The base directoy the toolkit is going to use to store data.
 TMP_DIR=~/.devstack
