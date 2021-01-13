@@ -130,6 +130,7 @@ provision() {
   #############################################################################
 	$sultan devstack make requirements
 	$sultan devstack make dev.clone
+	$sultan devstack make dev.pull
 	$sultan devstack make dev.provision
 
 	success "The devstack has been provisioned successfully!"
