@@ -97,8 +97,6 @@ hosts() {
   #############################################################################
   # Updates your hosts file by adding/removing the necessary hosts to it.     #
   #############################################################################
-  $sultan local clean
-
   if [ "$1" == revert ]; then
       message "Reverting made local changes..." "/etc/hosts, ~/.ssh/config"
 
