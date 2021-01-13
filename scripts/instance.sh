@@ -1,6 +1,8 @@
 #!/bin/bash
 
 current_dir="$(dirname "$0")"
+sultan="$(dirname "$current_dir")"/sultan
+
 # shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
 
@@ -62,8 +64,8 @@ restrict() {
   #  Restricts the access to your instance to you only by creating the        #
   #  necessary rules.                                                         #
   #############################################################################
-  ./sultan firewall deny refresh
-  ./sultan firewall allow refresh
+  $sultan firewall deny refresh
+  $sultan firewall allow refresh
 
   if [ "$RESTRICT_INSTANCE" == true ]; then
     public_ip=$(curl -s ifconfig.me)
@@ -81,8 +83,8 @@ delete() {
   #############################################################################
   message "Deleting your virtual machine from GCP..." "$INSTANCE_NAME"
 
-  ./sultan local hosts revert
-	./sultan firewall clean
+  $sultan local hosts revert
+	$sultan firewall clean
 
 	(gcloud compute instances delete "$INSTANCE_NAME" \
 		--quiet \
@@ -119,17 +121,16 @@ deploy() {
 	-i "$INVENTORY" \
 	-e "instance_name=$INSTANCE_NAME working_directory=$DEVSTACK_WORKSPACE git_repo_url=$DEVSTACK_REPO_URL openedx_release=$OPENEDX_RELEASE git_repo_branch=$DEVSTACK_REPO_BRANCH virtual_env_dir=$VIRTUAL_ENV" &> "$SHELL_OUTPUT"
     success "Your virtual machine has been deployed successfully!"
-    message "Run ${BOLD}${CYAN}sultan devstack provision${NORMAL}${MAGINTA} to start provisioning your devstack."
+    message "Run ${BOLD}${CYAN}sultan instance provision${NORMAL}${MAGINTA} to start provisioning your devstack."
 }
 
 provision() {
   #############################################################################
   # Provisions the devstack on your instance.                                 #
   #############################################################################
-	./sultan devstack make requirements
-	./sultan devstack make dev.clone
-	./sultan devstack make dev.pull
-	./sultan devstack make dev.provision
+	$sultan devstack make requirements
+	$sultan devstack make dev.clone
+	$sultan devstack make dev.provision
 
 	success "The devstack has been provisioned successfully!"
 	message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGINTA} to start devstack servers."
@@ -144,8 +145,8 @@ start() {
 		--zone="$ZONE" \
 		--project "$PROJECT_ID"
 
-	./sultan local hosts config
-	./sultan local ssh config
+	$sultan local hosts config
+	$sultan local ssh config
 
 	# always restrict the instance after starting it.
 	restrict
@@ -157,8 +158,8 @@ stop() {
   #############################################################################
   # Stops your instance on GCP, but doesn't delete it.                        #
   #############################################################################
-  ./sultan devstack stop
-  ./sultan local hosts revert
+  $sultan devstack stop
+  $sultan local hosts revert
 
 	message "Stopping your virtual machine on GCP..." "$INSTANCE_NAME"
 	gcloud compute instances stop "$INSTANCE_NAME" \
@@ -172,17 +173,17 @@ restart() {
   # Restarts your virtual machine on GCP.                                            #
   #############################################################################
 	message "Restarting your virtual machine on GCP..."
-  ./sultan instance stop
-  ./sultan instance start
+  $sultan instance stop
+  $sultan instance start
 }
 
 _full_setup() {
-  ./sultan local clean
+  $sultan local clean
   delete
   create
   restrict
-	./sultan local hosts config
-	./sultan local ssh config
+	$sultan local hosts config
+	$sultan local ssh config
   deploy
   provision
 
@@ -195,7 +196,7 @@ _image_setup() {
 	message "Setting up a new instance from your image..."
 
   # Clean local env and delete the current GCP instance if any
-  ./sultan local clean
+  $sultan local clean
   delete
 
   # Setting up the image
@@ -209,10 +210,10 @@ _image_setup() {
 		--project="$PROJECT_ID"
 
   # Restarts the VM to apply env changes
-  ./sultan instance restart
+  $sultan instance restart
 
-	./sultan local hosts config
-	./sultan local ssh config
+	$sultan local hosts config
+	$sultan local ssh config
 
 	message "Personalizing your instance..."
 	# shellcheck disable=SC1090

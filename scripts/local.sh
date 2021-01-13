@@ -1,6 +1,8 @@
 #!/bin/bash
 
 current_dir="$(dirname "$0")"
+sultan="$(dirname "$current_dir")"/sultan
+
 # shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
 
@@ -95,7 +97,7 @@ hosts() {
   #############################################################################
   # Updates your hosts file by adding/removing the necessary hosts to it.     #
   #############################################################################
-  ./sultan local clean
+  $sultan local clean
 
   if [ "$1" == revert ]; then
       message "Reverting made local changes..." "/etc/hosts, ~/.ssh/config"
@@ -117,7 +119,7 @@ hosts() {
   elif [ "$1" == config ]; then
     message "Updating your hosts records..." "/etc/hosts"
 
-    IP_ADDRESS=$(./sultan instance ip)
+    IP_ADDRESS=$("$sultan" instance ip)
 
     # Check if sudo password is required
     sudocheck
@@ -144,7 +146,7 @@ ssh() {
 
   if [ "$1" == config ]; then
     message "Updating necessary records in SSH related files..." "$HOME/.ssh/config, $HOME/.ssh/knwon_hosts"
-    IP_ADDRESS=$(./sultan instance ip)
+    IP_ADDRESS=$("$sultan" instance ip)
 
     # shellcheck disable=SC1090
     . "$ACTIVATE"; ansible-playbook ansible/local.yml \

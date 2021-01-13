@@ -1,6 +1,8 @@
 #!/bin/bash
 
 current_dir="$(dirname "$0")"
+sultan="$(dirname "$current_dir")"/sultan
+
 # shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
 
@@ -49,7 +51,7 @@ init() {
       exit 1
   else
     # Clean local directory
-    ./sultan local clean
+    $sultan local clean
 
     # Create a new configs file for your username
     sed '/^#/! s/\(.*\)/\1/g' <configs/.configs > configs/.configs."$USER_NAME"
