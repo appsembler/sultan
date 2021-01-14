@@ -1,6 +1,8 @@
 #!/bin/bash
 
 current_dir="$(dirname "$0")"
+sultan="$(dirname "$current_dir")"/sultan
+
 # shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
 
@@ -78,7 +80,7 @@ create() {
   done
 
   # Stop the instance
-  ./sultan instance stop
+  $sultan instance stop
 
 	message "Creating a new image from your devstack GCP instance..." "$img_name"
 	dim "This will remove any previous image with the same name. Press CTRL+C to abort..."

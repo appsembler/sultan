@@ -1,6 +1,8 @@
 #!/bin/bash
 
 current_dir="$(dirname "$0")"
+sultan="$(dirname "$current_dir")"/sultan
+
 # shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
 
@@ -52,8 +54,6 @@ unmount() {
   #############################################################################
   # Releases the devstack mount from your machine.                            #
   #############################################################################
-  UNMOUNT=$(eval ./sultan instance ip)
-
   if [ "$(uname -s)" == Darwin ]; then
     UNMOUNT=diskutil
   else
@@ -79,7 +79,7 @@ mount() {
   #############################################################################
   # Mounts devstack files from your GCP instance onto your local machine.     #
   #############################################################################
-  IP_ADDRESS=$(eval ./sultan instance ip)
+  IP_ADDRESS=$(eval "$sultan" instance ip)
 
 	mkdir -p "$MOUNT_DIR"
 	message "Mount directory created." "$MOUNT_DIR"
