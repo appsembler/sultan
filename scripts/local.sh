@@ -143,7 +143,7 @@ ssh() {
   #############################################################################
 
   if [ "$1" == config ]; then
-    message "Updating necessary records in SSH related files..." "$HOME/.ssh/config, $HOME/.ssh/knwon_hosts"
+    message "Updating necessary records in SSH related files..." "$HOME/.ssh/config, $HOME/.ssh/known_hosts"
     IP_ADDRESS=$("$sultan" instance ip)
 
     # shellcheck disable=SC1090
