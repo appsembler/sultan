@@ -54,9 +54,9 @@ ping() {
     # shellcheck disable=SC1090
     . "$ACTIVATE"; ansible -i "$INVENTORY" "$INSTANCE_NAME" -m ping \
 	|| error "Unable to ping instance!" "This might be caused by one of the following reasons:
-    * The instance is not set up yet. To set up an instance run ${BOLD}${CYAN}sultan instance setup${NORMAL}${MAGINTA}
-    * The instance was stopped. Check the status of your instance using ${BOLD}${CYAN}sultan instance status${NORMAL}${MAGINTA} and start it by running ${BOLD}${CYAN}sultan instance start${NORMAL}${MAGINTA}
-    * The instance might have been restricted under a previous IP of yours. To allow your current IP from accessing the instance run ${BOLD}${CYAN}sultan instance restrict${NORMAL}${MAGINTA}"
+    * The instance is not set up yet. To set up an instance run ${BOLD}${CYAN}sultan instance setup${NORMAL}${MAGENTA}
+    * The instance was stopped. Check the status of your instance using ${BOLD}${CYAN}sultan instance status${NORMAL}${MAGENTA} and start it by running ${BOLD}${CYAN}sultan instance start${NORMAL}${MAGENTA}
+    * The instance might have been restricted under a previous IP of yours. To allow your current IP from accessing the instance run ${BOLD}${CYAN}sultan instance restrict${NORMAL}${MAGENTA}"
 }
 
 restrict() {
@@ -121,7 +121,7 @@ deploy() {
 	-i "$INVENTORY" \
 	-e "instance_name=$INSTANCE_NAME working_directory=$DEVSTACK_WORKSPACE git_repo_url=$DEVSTACK_REPO_URL openedx_release=$OPENEDX_RELEASE git_repo_branch=$DEVSTACK_REPO_BRANCH virtual_env_dir=$VIRTUAL_ENV" &> "$SHELL_OUTPUT"
     success "Your virtual machine has been deployed successfully!"
-    message "Run ${BOLD}${CYAN}sultan instance provision${NORMAL}${MAGINTA} to start provisioning your devstack."
+    message "Run ${BOLD}${CYAN}sultan instance provision${NORMAL}${MAGENTA} to start provisioning your devstack."
 }
 
 provision() {
@@ -134,7 +134,7 @@ provision() {
 	$sultan devstack make dev.provision
 
 	success "The devstack has been provisioned successfully!"
-	message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGINTA} to start devstack servers."
+	message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGENTA} to start devstack servers."
 }
 
 start() {
@@ -224,7 +224,7 @@ _image_setup() {
 		-e "instance_name=$INSTANCE_NAME user=$USER_NAME working_directory=$DEVSTACK_WORKSPACE" &> "$SHELL_OUTPUT"
 
 	success "Your instance has been successfully created!" "From $IMAGE_NAME"
-	message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGINTA} to start devstack servers."
+	message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGENTA} to start devstack servers."
 }
 
 describe() {
