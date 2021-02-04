@@ -2,3 +2,4 @@ ve/
 *.retry
 configs/.configs.*
 ansible/dynamic-inventory/gce.ini
+dynamic-inventory/gce.ini
