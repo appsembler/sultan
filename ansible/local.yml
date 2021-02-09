@@ -59,9 +59,15 @@
         block: "{{ host_key.stdout }}"
       tags: [ ssh_config ]
 
+    - name: Ensures {{ inventory_configs_dir }} dir exists
+      file:
+        path: "{{ inventory_configs_dir }}"
+        state: directory
+      tags: [ inventory ]
+
     - name: Configure inventory variables
       template:
         src: dynamic-inventory/gce.ini.j2
-        dest: dynamic-inventory/gce.ini
+        dest: "{{ inventory_configs_dir }}/gce.ini"
         mode: '0644'
       tags: [ inventory ]

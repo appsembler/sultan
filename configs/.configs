@@ -36,14 +36,16 @@ MACHINE_TYPE=n1-standard-2
 # The zone of your machine.
 ZONE=us-central1-c
 
+# Sultan directory, this can be any path you want to store scripts
+# generated files in.
+SULTAN_HOME=$HOME/.sultan
+
 # The inventory of your machine.
 INVENTORY=ansible/dynamic-inventory/gce.py
-
-# The base directoy the toolkit is going to use to store data.
-TMP_DIR=~/.devstack
+INVENTORY_CONFIGS_DIR=$SULTAN_HOME/ansible/dynamic-inventory
 
 # The mount location.
-MOUNT_DIR=$TMP_DIR/mnt/
+MOUNT_DIR=$SULTAN_HOME/mnt/
 
 # (DON'T CHANGE) The hosts file location. You can change it for test purposes.
 HOSTS_FILE=/etc/hosts
@@ -112,5 +114,6 @@ PINK=$(tput setaf 9)
 
 COLS=$(tput cols)
 
-PIP=ve/bin/pip
-ACTIVATE=ve/bin/activate
+SULTAN_ENV=$SULTAN_HOME/ve
+PIP=$SULTAN_ENV/bin/pip
+ACTIVATE=$SULTAN_ENV/bin/activate

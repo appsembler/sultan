@@ -1,7 +1,8 @@
 #!/bin/bash
 
 current_dir="$(dirname "$0")"
-sultan="$(dirname "$current_dir")"/sultan
+sultan_dir="$(dirname "$current_dir")"
+sultan="$sultan_dir"/sultan
 
 # shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
@@ -35,14 +36,15 @@ ${BOLD}${GREEN}local${NORMAL}
 
 
 configure_inventory() {
-  message "Updating your inventory credentials..." "ansible/dynamic-inventory/gce.ini"
+  message "Updating your inventory credentials..." "$INVENTORY_CONFIGS_DIR/gce.ini"
 
   ansible_vars="PROJECT_ID=$PROJECT_ID \
       SERVICE_ACCOUNT_EMAIL=$SERVICE_ACCOUNT_EMAIL \
+      inventory_configs_dir=$INVENTORY_CONFIGS_DIR \
       SERVICE_KEY_PATH=$SERVICE_KEY_PATH"
 
   # shellcheck disable=SC1090
-  . "$ACTIVATE"; ansible-playbook ansible/local.yml \
+  . "$ACTIVATE"; ansible-playbook "$sultan_dir"/ansible/local.yml \
 				  --connection=local \
 				  -i '127.0.0.1,' \
 				  --tags inventory \
@@ -59,10 +61,12 @@ requirements() {
   # requirements.txt file.                                                    #
   #############################################################################
 
-	message "Installing project requirements..." "ve/"
+	message "Installing project requirements..." "$SULTAN_ENV"
+
 	touch requirements.txt
-	virtualenv -p python3 ve &> "$SHELL_OUTPUT"
-	"$PIP" install -r requirements.txt&> "$SHELL_OUTPUT"
+
+	virtualenv -p python3.7 "$SULTAN_ENV" &> "$SHELL_OUTPUT"
+	"$PIP" install -r requirements.txt &> "$SHELL_OUTPUT"
   configure_inventory
 }
 
@@ -70,16 +74,15 @@ clean() {
   #############################################################################
   # Cleans software and directory caches.                                     #
   #############################################################################
-	message "Flush pip packages..."
-	rm -rf ve
-	rm ansible/dynamic-inventory/gce.ini || printf '\n'
+	message "Remove sultan files..." "$SULTAN_HOME"
+	rm -rf $SULTAN_HOME
 
 	# Installing local environment requirements
 	requirements
 
 	message "Flushing Ansible cache..."
 	# shellcheck disable=SC1090
-	. "$ACTIVATE"; ansible-playbook ansible/local.yml \
+	. "$ACTIVATE"; ansible-playbook "$sultan_dir"/ansible/local.yml \
 	    --check --flush-cache &> "$SHELL_OUTPUT"
 }
 
@@ -104,13 +107,11 @@ hosts() {
       sudocheck
 
       # shellcheck disable=SC1090
-      . "$ACTIVATE"
-      # shellcheck disable=SC2024
-      sudo ansible-playbook \
+      . "$ACTIVATE"; sudo ansible-playbook \
            --connection=local \
            -i '127.0.0.1,' \
            -e "EDX_HOST_NAMES=$EDX_HOST_NAMES)" \
-           --tags hosts_revert ansible/local.yml > "$SHELL_OUTPUT" \
+           --tags hosts_revert "$sultan_dir"/ansible/local.yml > "$SHELL_OUTPUT" \
           || error "ERROR reverting local changes."
 
     success "Your local changes have been reverted successfully!"
@@ -129,7 +130,7 @@ hosts() {
          --connection=local \
          -i '127.0.0.1,' \
          --tags hosts_update \
-         -e "IP_ADDRESS=$IP_ADDRESS EDX_HOST_NAMES=$EDX_HOST_NAMES" ansible/local.yml > "$SHELL_OUTPUT" \
+         -e "IP_ADDRESS=$IP_ADDRESS EDX_HOST_NAMES=$EDX_HOST_NAMES" "$sultan_dir"/ansible/local.yml > "$SHELL_OUTPUT" \
         || error "ERROR configuring hosts records."
     success "Your hosts have been configured successfully!"
   else
@@ -147,7 +148,7 @@ ssh() {
     IP_ADDRESS=$("$sultan" instance ip)
 
     # shellcheck disable=SC1090
-    . "$ACTIVATE"; ansible-playbook ansible/local.yml \
+    . "$ACTIVATE"; ansible-playbook "$sultan_dir"/ansible/local.yml \
         --connection=local \
         -i '127.0.0.1,' \
         --tags ssh_config \

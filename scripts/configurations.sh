@@ -117,9 +117,11 @@ debug() {
   printf "${PURPLE}%-30s${NORMAL}\n" "LOCAL"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  HOSTS_FILE" "$HOSTS_FILE"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  INVENTORY" "$INVENTORY"
+  printf "${CYAN}%-30s${NORMAL} %-10s\n" "  INVENTORY_CONFIGS_DIR" "$INVENTORY_CONFIGS_DIR"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  MOUNT_DIR" "$MOUNT_DIR"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  SSH_KEY" "$SSH_KEY"
-  printf "${CYAN}%-30s${NORMAL} %-10s\n" "  TMP_DIR" "$TMP_DIR"
+  printf "${CYAN}%-30s${NORMAL} %-10s\n" "  SULTAN_ENV" "$SULTAN_ENV"
+  printf "${CYAN}%-30s${NORMAL} %-10s\n" "  SULTAN_HOME" "$SULTAN_HOME"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  USER_NAME" "$USER_NAME"
 
   exit 0
