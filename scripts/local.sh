@@ -71,8 +71,8 @@ clean() {
   # Cleans software and directory caches.                                     #
   #############################################################################
 	message "Flush pip packages..."
-	rm -rf ve
-	rm ansible/dynamic-inventory/gce.ini || printf '\n'
+	test -f ve/.keepme || rm -rf ve
+	rm -rf ansible/dynamic-inventory/gce.ini || printf '\n'
 
 	# Installing local environment requirements
 	requirements
