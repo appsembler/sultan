@@ -64,7 +64,7 @@ config() {
   # requirements mentioned in requirements.txt file.                         #
   #############################################################################
 	message "Remove sultan files..." "$SULTAN_HOME"
-	rm -rf $SULTAN_HOME
+	rm -rf "$SULTAN_HOME"
 
 	message "Installing project requirements..." "$SULTAN_ENV"
 	pip install -r "$sultan_dir"/requirements.txt &> "$SHELL_OUTPUT"
@@ -92,12 +92,11 @@ hosts() {
       # Check if sudo password is required
       sudocheck
 
-      # shellcheck disable=SC1090
-      sudo ansible-playbook \
+      ansible-playbook \
            --connection=local \
            -i '127.0.0.1,' \
            -e "EDX_HOST_NAMES=$EDX_HOST_NAMES" \
-           --tags hosts_revert "$sultan_dir"/ansible/local.yml > "$SHELL_OUTPUT" \
+           --tags hosts_revert "$sultan_dir"/ansible/local.yml | sudo tee "$SHELL_OUTPUT" > /dev/null \
           || error "ERROR reverting local changes."
 
     success "Your local changes have been reverted successfully!"
