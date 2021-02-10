@@ -17,7 +17,8 @@ ${BOLD}${GREEN}local${NORMAL}
     sultan local <argument> [OPTION]
 
   ${BOLD}ARGUMENTS:${NORMAL}
-    clean         Cleans software and directory caches.
+    config        Cleans software and directory caches, and installs the
+                  project requirements mentioned in requirements.txt file.
     hosts         Updates your hosts file by adding/removing the necessary
                   hosts to it.
     ssh           Configures Sultan's SSH rules and connection on your
@@ -29,7 +30,7 @@ ${BOLD}${GREEN}local${NORMAL}
     update        Apply the required changes on local files.
 
   ${BOLD}EXAMPLES:${NORMAL}
-    sultan local clean
+    sultan local config
     sultan local hosts revert
     sultan local ssh config
 "
@@ -46,7 +47,7 @@ configure_inventory() {
       SERVICE_KEY_PATH=$SERVICE_KEY_PATH"
 
   # shellcheck disable=SC1090
-  . "$ACTIVATE"; ansible-playbook "$sultan_dir"/ansible/local.yml \
+  ansible-playbook "$sultan_dir"/ansible/local.yml \
 				  --connection=local \
 				  -i '127.0.0.1,' \
 				  --tags inventory \
@@ -57,35 +58,18 @@ configure_inventory() {
   success "Your inventory has been configured successfully!"
 }
 
-requirements() {
+config() {
   #############################################################################
-  # Creates env directory and installs the project requirements mentioned in  #
-  # requirements.txt file.                                                    #
-  #############################################################################
-
-	message "Installing project requirements..." "$SULTAN_ENV"
-
-	touch requirements.txt
-
-	virtualenv -p python3.7 "$SULTAN_ENV" &> "$SHELL_OUTPUT"
-	"$PIP" install -r requirements.txt &> "$SHELL_OUTPUT"
-  configure_inventory
-}
-
-clean() {
-  #############################################################################
-  # Cleans software and directory caches.                                     #
+  # Cleans software and directory caches, and installs the project            #
+  # requirements mentioned in requirements.txt file.                         #
   #############################################################################
 	message "Remove sultan files..." "$SULTAN_HOME"
 	rm -rf $SULTAN_HOME
 
-	# Installing local environment requirements
-	requirements
+	message "Installing project requirements..." "$SULTAN_ENV"
+	pip install -r "$sultan_dir"/requirements.txt &> "$SHELL_OUTPUT"
 
-	message "Flushing Ansible cache..."
-	# shellcheck disable=SC1090
-	. "$ACTIVATE"; ansible-playbook "$sultan_dir"/ansible/local.yml \
-	    --check --flush-cache &> "$SHELL_OUTPUT"
+	configure_inventory
 }
 
 sudocheck ()  {
@@ -109,7 +93,7 @@ hosts() {
       sudocheck
 
       # shellcheck disable=SC1090
-      . "$ACTIVATE"; sudo ansible-playbook \
+      sudo ansible-playbook \
            --connection=local \
            -i '127.0.0.1,' \
            -e "EDX_HOST_NAMES=$EDX_HOST_NAMES" \
@@ -125,8 +109,6 @@ hosts() {
     # Check if sudo password is required
     sudocheck
 
-    # shellcheck disable=SC1090
-    . "$ACTIVATE"
     # shellcheck disable=SC2024
     sudo ansible-playbook \
          --connection=local \
@@ -150,7 +132,7 @@ ssh() {
     IP_ADDRESS=$("$sultan" instance ip)
 
     # shellcheck disable=SC1090
-    . "$ACTIVATE"; ansible-playbook "$sultan_dir"/ansible/local.yml \
+    ansible-playbook "$sultan_dir"/ansible/local.yml \
         --connection=local \
         -i '127.0.0.1,' \
         --tags ssh_config \

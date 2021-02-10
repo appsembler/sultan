@@ -114,6 +114,4 @@ PINK=$(tput setaf 9)
 
 COLS=$(tput cols)
 
-SULTAN_ENV=$SULTAN_HOME/ve
-PIP=$SULTAN_ENV/bin/pip
-ACTIVATE=$SULTAN_ENV/bin/activate
+SULTAN_ENV=$(which python)

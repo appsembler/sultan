@@ -53,7 +53,7 @@ ping() {
   #  Performs a ping to your instance.                                        #
   #############################################################################
     # shellcheck disable=SC1090
-    . "$ACTIVATE"; ansible -i "$INVENTORY" "$INSTANCE_NAME" -m ping \
+    ansible -i "$INVENTORY" "$INSTANCE_NAME" -m ping \
 	|| error "Unable to ping instance!" "This might be caused by one of the following reasons:
     * The instance is not set up yet. To set up an instance run ${BOLD}${CYAN}sultan instance setup${NORMAL}${MAGENTA}
     * The instance was stopped. Check the status of your instance using ${BOLD}${CYAN}sultan instance status${NORMAL}${MAGENTA} and start it by running ${BOLD}${CYAN}sultan instance start${NORMAL}${MAGENTA}
@@ -118,7 +118,7 @@ deploy() {
   #############################################################################
     message "Deploying your instance..." "$INSTANCE_NAME"
     # shellcheck disable=SC1090
-    . "$ACTIVATE"; ansible-playbook "$sultan_dir"/ansible/devstack.yml \
+    ansible-playbook "$sultan_dir"/ansible/devstack.yml \
       -i "$INVENTORY" \
       -e "instance_name=$INSTANCE_NAME working_directory=$DEVSTACK_WORKSPACE git_repo_url=$DEVSTACK_REPO_URL openedx_release=$OPENEDX_RELEASE git_repo_branch=$DEVSTACK_REPO_BRANCH virtual_env_dir=$VIRTUAL_ENV" &> "$SHELL_OUTPUT"
         success "Your virtual machine has been deployed successfully!"
@@ -219,7 +219,7 @@ _image_setup() {
 
 	message "Personalizing your instance..."
 	# shellcheck disable=SC1090
-	. "$ACTIVATE"; ansible-playbook "$sultan_dir"/ansible/devstack.yml \
+	ansible-playbook "$sultan_dir"/ansible/devstack.yml \
 		-i "$INVENTORY" \
 		--tags "reconfiguration,never"  \
 		-e "instance_name=$INSTANCE_NAME user=$USER_NAME working_directory=$DEVSTACK_WORKSPACE" &> "$SHELL_OUTPUT"
