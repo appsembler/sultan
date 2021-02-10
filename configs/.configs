@@ -41,8 +41,8 @@ ZONE=us-central1-c
 SULTAN_HOME=$HOME/.sultan
 
 # The inventory of your machine.
-INVENTORY=ansible/dynamic-inventory/gce.py
 INVENTORY_CONFIGS_DIR=$SULTAN_HOME/ansible/dynamic-inventory
+INVENTORY=$INVENTORY_CONFIGS_DIR/inventory.compute.gcp.yml
 
 # The mount location.
 MOUNT_DIR=$SULTAN_HOME/mnt/

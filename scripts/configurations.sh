@@ -89,6 +89,7 @@ debug() {
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  DEVSTACK_REPO_URL" "$DEVSTACK_REPO_URL"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  DEVSTACK_RUN_COMMAND" "$DEVSTACK_RUN_COMMAND"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  DEVSTACK_WORKSPACE" "$DEVSTACK_WORKSPACE"
+  printf "${CYAN}%-30s${NORMAL} %-10s\n" "  DEVSTACK_DIR" "$DEVSTACK_DIR"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  EDX_HOST_NAMES" "$EDX_HOST_NAMES"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  OPENEDX_RELEASE" "$OPENEDX_RELEASE"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  VIRTUAL_ENV" "$VIRTUAL_ENV"

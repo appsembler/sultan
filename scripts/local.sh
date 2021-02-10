@@ -41,6 +41,8 @@ configure_inventory() {
   ansible_vars="PROJECT_ID=$PROJECT_ID \
       SERVICE_ACCOUNT_EMAIL=$SERVICE_ACCOUNT_EMAIL \
       inventory_configs_dir=$INVENTORY_CONFIGS_DIR \
+      inventory_target=$INVENTORY \
+      ZONE=$ZONE \
       SERVICE_KEY_PATH=$SERVICE_KEY_PATH"
 
   # shellcheck disable=SC1090
@@ -110,7 +112,7 @@ hosts() {
       . "$ACTIVATE"; sudo ansible-playbook \
            --connection=local \
            -i '127.0.0.1,' \
-           -e "EDX_HOST_NAMES=$EDX_HOST_NAMES)" \
+           -e "EDX_HOST_NAMES=$EDX_HOST_NAMES" \
            --tags hosts_revert "$sultan_dir"/ansible/local.yml > "$SHELL_OUTPUT" \
           || error "ERROR reverting local changes."
 
