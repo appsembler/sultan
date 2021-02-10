@@ -51,7 +51,7 @@ init() {
       exit 1
   else
     # Clean local directory
-    $sultan local clean
+    $sultan local config
 
     # Create a new configs file for your username
     sed '/^#/! s/\(.*\)/\1/g' <configs/.configs > configs/.configs."$USER_NAME"
