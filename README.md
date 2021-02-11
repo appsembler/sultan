@@ -12,9 +12,9 @@ Some available and ready-to-use devstack images are going to help you running th
 An extensive documentation on the architecture and the toolkit commands can be found in the repo's wiki page [here](https://github.com/appsembler/sultan/wiki).
 
 ## 1. Before you start
-Make sure you have your SSH key added into our GCP Appsembler Devstack (appsembler-devstack-30) project. You can check that at GCP [Compute Metadata](https://console.cloud.google.com/compute/metadata/sshKeys?project=appsembler-devstack-30).
-Make sure you have [GCloud command-line tools](https://cloud.google.com/sdk/docs/install) installed.
- 
+- Make sure you have your SSH key added into our GCP Appsembler Devstack (appsembler-devstack-30) project. You can check that at GCP [Compute Metadata](https://console.cloud.google.com/compute/metadata/sshKeys?project=appsembler-devstack-30).
+- Make sure you have [GCloud command-line tools](https://cloud.google.com/sdk/docs/install) installed.
+- Make sure you have a working python 3.7 environment. 
 
 ## 2. Quick Start
 
@@ -24,9 +24,14 @@ Follow the next steps to set up your Sultan devstack
 ```console
 $ git clone git@github.com:appsembler/sultan.git
 $ cd sultan
-$ sultan config init
+$ sultan config init  # Make sure you're in the correct python environment, this will install the required package immediatly one you run it.
 ## configs/.configs.username is created
 ```
+
+> **NOTE**
+>
+> All the generated files will exist in `$SULTAN_HOME`, you can change the value of this from you configurations file.
+
 
 ### 2.2. Required configurations
 The following configurations must be overridden in your recently-created config 
