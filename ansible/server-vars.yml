@@ -6,3 +6,6 @@ docker_group_name: "docker"
 
 user_home: "/home/{{ user }}"
 gcloud_bin: "{{ user_home }}/google-cloud-sdk/bin"
+
+docker_compose_version: 1.28.2
+docker_compose_path: /usr/local/bin/docker-compose
