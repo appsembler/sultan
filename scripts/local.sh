@@ -1,7 +1,8 @@
 #!/bin/bash
 
 current_dir="$(dirname "$0")"
-sultan="$(dirname "$current_dir")"/sultan
+sultan_dir="$(dirname "$current_dir")"
+sultan="$sultan_dir"/sultan
 
 # shellcheck source=scripts/messaging.sh
 source "$current_dir/messaging.sh"
@@ -16,7 +17,8 @@ ${BOLD}${GREEN}local${NORMAL}
     sultan local <argument> [OPTION]
 
   ${BOLD}ARGUMENTS:${NORMAL}
-    clean         Cleans software and directory caches.
+    config        Cleans software and directory caches, and installs the
+                  project requirements mentioned in requirements.txt file.
     hosts         Updates your hosts file by adding/removing the necessary
                   hosts to it.
     ssh           Configures Sultan's SSH rules and connection on your
@@ -28,21 +30,24 @@ ${BOLD}${GREEN}local${NORMAL}
     update        Apply the required changes on local files.
 
   ${BOLD}EXAMPLES:${NORMAL}
-    sultan local clean
+    sultan local config
     sultan local hosts revert
     sultan local ssh config
 "
 
 
 configure_inventory() {
-  message "Updating your inventory credentials..." "ansible/dynamic-inventory/gce.ini"
+  message "Updating your inventory credentials..." "$INVENTORY_CONFIGS_DIR/gce.ini"
 
   ansible_vars="PROJECT_ID=$PROJECT_ID \
       SERVICE_ACCOUNT_EMAIL=$SERVICE_ACCOUNT_EMAIL \
+      inventory_configs_dir=$INVENTORY_CONFIGS_DIR \
+      inventory_target=$INVENTORY \
+      ZONE=$ZONE \
       SERVICE_KEY_PATH=$SERVICE_KEY_PATH"
 
   # shellcheck disable=SC1090
-  . "$ACTIVATE"; ansible-playbook ansible/local.yml \
+  ansible-playbook "$sultan_dir"/ansible/local.yml \
 				  --connection=local \
 				  -i '127.0.0.1,' \
 				  --tags inventory \
@@ -53,34 +58,18 @@ configure_inventory() {
   success "Your inventory has been configured successfully!"
 }
 
-requirements() {
+config() {
   #############################################################################
-  # Creates env directory and installs the project requirements mentioned in  #
-  # requirements.txt file.                                                    #
+  # Cleans software and directory caches, and installs the project            #
+  # requirements mentioned in requirements.txt file.                         #
   #############################################################################
+	message "Remove sultan files..." "$SULTAN_HOME"
+	rm -rf "$SULTAN_HOME"
 
-	message "Installing project requirements..." "ve/"
-	touch requirements.txt
-	virtualenv -p python3 ve &> "$SHELL_OUTPUT"
-	"$PIP" install -r requirements.txt&> "$SHELL_OUTPUT"
-  configure_inventory
-}
+	message "Installing project requirements..." "$SULTAN_ENV"
+	pip install -r "$sultan_dir"/requirements.txt &> "$SHELL_OUTPUT"
 
-clean() {
-  #############################################################################
-  # Cleans software and directory caches.                                     #
-  #############################################################################
-	message "Flush pip packages..."
-	rm -rf ve
-	rm ansible/dynamic-inventory/gce.ini || printf '\n'
-
-	# Installing local environment requirements
-	requirements
-
-	message "Flushing Ansible cache..."
-	# shellcheck disable=SC1090
-	. "$ACTIVATE"; ansible-playbook ansible/local.yml \
-	    --check --flush-cache &> "$SHELL_OUTPUT"
+	configure_inventory
 }
 
 sudocheck ()  {
@@ -103,14 +92,11 @@ hosts() {
       # Check if sudo password is required
       sudocheck
 
-      # shellcheck disable=SC1090
-      . "$ACTIVATE"
-      # shellcheck disable=SC2024
-      sudo ansible-playbook \
+      ansible-playbook \
            --connection=local \
            -i '127.0.0.1,' \
-           -e "EDX_HOST_NAMES=$EDX_HOST_NAMES)" \
-           --tags hosts_revert ansible/local.yml > "$SHELL_OUTPUT" \
+           -e "EDX_HOST_NAMES=$EDX_HOST_NAMES" \
+           --tags hosts_revert "$sultan_dir"/ansible/local.yml | sudo tee "$SHELL_OUTPUT" > /dev/null \
           || error "ERROR reverting local changes."
 
     success "Your local changes have been reverted successfully!"
@@ -122,14 +108,12 @@ hosts() {
     # Check if sudo password is required
     sudocheck
 
-    # shellcheck disable=SC1090
-    . "$ACTIVATE"
     # shellcheck disable=SC2024
     sudo ansible-playbook \
          --connection=local \
          -i '127.0.0.1,' \
          --tags hosts_update \
-         -e "IP_ADDRESS=$IP_ADDRESS EDX_HOST_NAMES=$EDX_HOST_NAMES" ansible/local.yml > "$SHELL_OUTPUT" \
+         -e "IP_ADDRESS=$IP_ADDRESS EDX_HOST_NAMES=$EDX_HOST_NAMES" "$sultan_dir"/ansible/local.yml > "$SHELL_OUTPUT" \
         || error "ERROR configuring hosts records."
     success "Your hosts have been configured successfully!"
   else
@@ -147,7 +131,7 @@ ssh() {
     IP_ADDRESS=$("$sultan" instance ip)
 
     # shellcheck disable=SC1090
-    . "$ACTIVATE"; ansible-playbook ansible/local.yml \
+    ansible-playbook "$sultan_dir"/ansible/local.yml \
         --connection=local \
         -i '127.0.0.1,' \
         --tags ssh_config \

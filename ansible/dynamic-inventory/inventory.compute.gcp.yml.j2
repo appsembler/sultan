@@ -1,0 +1,14 @@
+plugin: google.cloud.gcp_compute
+projects:
+  - {{ PROJECT_ID }}
+zones:
+  - {{ ZONE }}
+filters: []
+hostnames:
+  - name
+compose:
+  # Set an inventory parameter to use the Public IP address to connect to the host
+  # For Private ip use "networkInterfaces[0].networkIP"
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP
+auth_kind: serviceaccount
+service_account_file: {{ SERVICE_KEY_PATH }}

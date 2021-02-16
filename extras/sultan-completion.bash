@@ -416,7 +416,7 @@ _main_local ()
   while [[ $subcommand_index -lt $COMP_CWORD ]]; do
     local s="${COMP_WORDS[subcommand_index]}"
     case "$s" in
-      clean)
+      config)
         COMPREPLY=()
         return
         ;;
@@ -438,7 +438,7 @@ _main_local ()
 
   local cur="${COMP_WORDS[COMP_CWORD]}"
   local commands="
-  clean
+  config
   help
   hosts
   ssh
