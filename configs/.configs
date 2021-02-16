@@ -117,4 +117,4 @@ COLS=$(tput cols)
 # Set the Sultan Python environment - if a virtualenv exists, use that, otherwise use the global default
 PYENV=$(pyenv local)
 PYTHV=$(which python)
-SULTAN_ENV=${PYENV:-PYTHV}RED
+SULTAN_ENV=${PYENV:-PYTHV}
