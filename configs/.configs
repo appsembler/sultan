@@ -27,6 +27,14 @@ DENY_FIREWALL=deny-$INSTANCE_NAME-webserver-access
 # (DON'T CHANGE) The name of the allow rule on GCP firewall.
 ALLOW_FIREWALL=allow-$INSTANCE_NAME-webserver-access
 
+# (DON'T CHANGE unless necessary) The list of ports to be exposed:
+# lms:18000,studio:18010, forum:44567, discovery:18381, ecommerce:18130,
+# credentials:18150, edx_notes_api:18120, frontend-app-publisher:18400,
+# gradebook:1994, registrar:18734, program-console:1976,
+# frontend-app-learning:2000, frontend-app-library-authoring:3001,
+# course-authoring:2001, xqueue:18040, amc:13000
+EXPOSED_PORTS=22,18000,18010,44567,13000
+
 # The size of the disk your instance is going to use in GB. We don't recommend it to be less than 50.
 DISK_SIZE=200
 

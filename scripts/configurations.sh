@@ -98,6 +98,7 @@ debug() {
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  ALLOW_FIREWALL" "$ALLOW_FIREWALL"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  DENY_FIREWALL" "$DENY_FIREWALL"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  RESTRICT_INSTANCE" "$RESTRICT_INSTANCE"
+  printf "${CYAN}%-30s${NORMAL} %-10s\n" "  EXPOSED_PORTS" "$EXPOSED_PORTS"
 
   printf "${PURPLE}%-30s${NORMAL}\n" "Google Cloud Platform"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  PROJECT_ID" "$PROJECT_ID"
