@@ -1,0 +1,124 @@
+VERSION=2.0.0
+
+# (PLEASE CHANGE) A key that has access to your edx-platform Github repos and to the GCP project you want to deploy the devstack in.
+SSH_KEY="/root/.ssh/id_ed25519"
+
+# (PLEASE CHANGE) This is the project where the your instance will be created.
+PROJECT_ID="appsembler-devstack-30"
+
+# This will be used while SSHing into your remote machine. Usually matches the one in the SSH Key.
+USER_NAME=cloudbuild
+
+# Will be used to create a unique identifier on GCP.
+HOST_NAME=$(hostname | tr '[:upper:]' '[:lower:]')
+
+# The instance name on GCP, must be unique among all users.
+# we hardcode this instead of using `hostname` to avoid an explosion
+# of firewall rules. Try to use a different one for each type
+# of environment we build so they can run simultaneously without
+# conflicting.
+INSTANCE_NAME=$USER-at-juniper
+
+# Default name of the image to create.
+IMAGE_NAME=devstack-$INSTANCE_NAME
+
+# (DON'T CHANGE) A unique tag for your GCP instance.
+INSTANCE_TAG=devstack-$INSTANCE_NAME
+
+# (DON'T CHANGE) The name of the deny rule on GCP firewall.
+DENY_FIREWALL=deny-$INSTANCE_NAME-webserver-access
+
+# (DON'T CHANGE) The name of the allow rule on GCP firewall.
+ALLOW_FIREWALL=allow-$INSTANCE_NAME-webserver-access
+
+# The size of the disk your instance is going to use in GB. We don't recommend it to be less than 50.
+DISK_SIZE=200
+
+# Determines the specifications of your machine. EdX here recommends 2 vCPUs and 8GB of memory. https://github.com/edx/devstack#getting-started
+MACHINE_TYPE=n1-standard-2
+
+# The zone of your machine.
+ZONE=us-central1-c
+
+# Sultan directory, this can be any path you want to store scripts
+# generated files in.
+SULTAN_HOME=/workspace/.sultan
+
+# The inventory of your machine.
+INVENTORY_CONFIGS_DIR=$SULTAN_HOME/ansible/dynamic-inventory
+INVENTORY=$INVENTORY_CONFIGS_DIR/inventory.compute.gcp.yml
+
+# The mount location.
+MOUNT_DIR=$SULTAN_HOME/mnt/
+
+# (DON'T CHANGE) The hosts file location. You can change it for test purposes.
+HOSTS_FILE=/etc/hosts
+
+# A comma-separated list of hostnames you'd like to use.
+EDX_HOST_NAMES=edx.devstack.lms
+
+# Determines whether to hide/show commands verbose output on the terminal
+DEBUG=false
+
+# (DON'T CHANGE) VERBOSITY controls GCloud commands verbosity and SHELL_OUTPUT
+# is the location the toolkit is directing Ansible output to.
+if [ $DEBUG = true ]; then
+  VERBOSITY=debug
+  SHELL_OUTPUT=/tmp/output # no /dev/tty in cloud build
+else
+  VERBOSITY=critical
+  SHELL_OUTPUT=/dev/null
+fi
+
+HOME_DIR=/home/cloudbuild
+
+# The location of devstack on the remote machine
+DEVSTACK_WORKSPACE=$HOME_DIR/workspace
+DEVSTACK_DIR=$DEVSTACK_WORKSPACE/devstack
+VIRTUAL_ENV=$DEVSTACK_WORKSPACE/env
+
+# Devstack image family
+IMAGE_FAMILY=devstack
+
+# (PLEASE CHANGE) This is the service account's email address that is provisioned during creation or granted to you by an admin.
+SERVICE_ACCOUNT_EMAIL=devstack@appsembler-devstack-30.iam.gserviceaccount.com
+
+# (PLEASE CHANGE) The downloaded JSON file key of your GCP project.
+SERVICE_KEY_PATH=/workspace/devstack.json
+
+# The devstack repository URL. Change this if you want to use another clone.
+DEVSTACK_REPO_URL=https://github.com/edx/devstack.git
+
+# The devstack branch you want to deploy.
+DEVSTACK_REPO_BRANCH=open-release/juniper.master
+
+# To run the docker images for a named Open edX release.
+# To work on the master branches and latest images, unset OPENEDX_RELEASE or set it to an empty string.
+OPENEDX_RELEASE="${DEVSTACK_REPO_BRANCH//open-release\//}"
+
+# The command that runs all of your devstack services (LMS, Studio, ...) Change it if you have a custom one.
+DEVSTACK_RUN_COMMAND=dev.up
+
+# Whether to deny all IPs (except yours) from accessing your instance or not.
+RESTRICT_INSTANCE=true
+
+# (DON'T CHANGE) Critical variables for our scripts.
+BOLD=$(tput bold)
+NORMAL=$(tput sgr0)
+WHITE=$(tput setaf 0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+PURPLE=$(tput setaf 5)
+CYAN=$(tput setaf 6)
+GRAY=$(tput setaf 7)
+DARK=$(tput setaf 8)
+PINK=$(tput setaf 9)
+
+COLS=$(tput cols)
+
+SULTAN_ENV=$(which python)
+
+# CI/CloudBuild hack. Do not enable unless you understand what it does.
+ETC_HOSTS_HACK=true
