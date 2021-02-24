@@ -63,3 +63,17 @@
     path: "/etc/profile"
     block: "export DEVSTACK_USER={{ user_home }}"
   tags: [ server, reconfiguration ]
+
+- name: Configure .profile file
+  blockinfile:
+    path: "{{ home_dir }}/.profile"
+    block: |
+      export DEVSTACK_WORKSPACE={{ working_directory }}
+      export VIRTUAL_ENV={{ virtual_env_dir }}
+      export OPENEDX_RELEASE={{ openedx_release }}
+
+      source {{ virtual_env_dir }}/bin/activate
+      cd $DEVSTACK_WORKSPACE
+    marker: "# {mark} SULTAN MANAGED BLOCK"
+
+  tags: [ server, reconfiguration ]
