@@ -115,6 +115,7 @@ debug() {
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  INSTANCE_NAME" "$INSTANCE_NAME"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  INSTANCE_TAG" "$INSTANCE_TAG"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  MACHINE_TYPE" "$MACHINE_TYPE"
+  printf "${CYAN}%-30s${NORMAL} %-10s\n" "  PREEMPTIBLE" "$PREEMPTIBLE"
 
   printf "${PURPLE}%-30s${NORMAL}\n" "LOCAL"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  HOSTS_FILE" "$HOSTS_FILE"

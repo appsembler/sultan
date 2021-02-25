@@ -52,6 +52,10 @@ SULTAN_HOME=$HOME/.sultan
 INVENTORY_CONFIGS_DIR=$SULTAN_HOME/ansible/dynamic-inventory
 INVENTORY=$INVENTORY_CONFIGS_DIR/inventory.compute.gcp.yml
 
+# Short-lived compute instances. Preemptible VMs offer the same machine types
+# and options as regular compute instances and last for up to 24 hours.
+PREEMPTIBLE=false
+
 # The mount location.
 MOUNT_DIR=$SULTAN_HOME/mnt/
 

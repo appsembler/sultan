@@ -99,16 +99,38 @@ create() {
   #############################################################################
   # Creates an empty instance for you on GCP.                                 #
   #############################################################################
+
+  while [[ "$#" -gt 0 ]]; do
+    case $1 in
+      -i|--image) image="$2"; shift;;
+      *) error "Unknown parameter passed: $1" "$help_text";;
+    esac
+    shift
+  done
+
   message "Creating your virtual machine on GCP..." "$INSTANCE_NAME"
-	gcloud compute instances create "$INSTANCE_NAME" \
-		--image-family=ubuntu-1804-lts \
-		--image-project=gce-uefi-images \
-		--boot-disk-size="$DISK_SIZE" \
-		--machine-type="$MACHINE_TYPE" \
-		--tags=devstack,http-server,"$INSTANCE_TAG" \
-		--zone="$ZONE" \
-		--verbosity="$VERBOSITY" \
-		--project="$PROJECT_ID"
+	cmd=(
+	    "gcloud" "compute" "instances" "create" "$INSTANCE_NAME"
+	    "--boot-disk-size=$DISK_SIZE"
+	    "--machine-type=$MACHINE_TYPE"
+	    "--tags=devstack,http-server,$INSTANCE_TAG"
+	    "--zone=$ZONE"
+	    "--verbosity=$VERBOSITY"
+	    "--project=$PROJECT_ID"
+    )
+
+
+    if [ "$PREEMPTIBLE" == true ]; then
+        cmd+=( --preemptible )
+    fi
+
+    if [ -n "$image" ]; then
+        cmd+=( --image="$image" --image-project="$PROJECT_ID" )
+    else
+        cmd+=( --image-project=ubuntu-os-cloud --image-family=ubuntu-1804-lts )
+    fi
+
+    "${cmd[@]}" || error "Something went wrong while creating your instance."
 	success "Your virtual machine has been successfully created!"
 }
 
@@ -184,8 +206,8 @@ _full_setup() {
   delete
   create
   restrict
-	$sultan local hosts config
-	$sultan local ssh config
+  $sultan local hosts config
+  $sultan local ssh config
   deploy
   provision
 
@@ -193,39 +215,29 @@ _full_setup() {
 }
 
 _image_setup() {
-  image_name="${1:-$IMAGE_NAME}"
-
-	message "Setting up a new instance from your image..."
+  message "Setting up a new instance from your image..."
 
   # Clean local env and delete the current GCP instance if any
   $sultan local config
   delete
 
-  # Setting up the image
-	gcloud compute instances create "$INSTANCE_NAME" \
-		--image="$image_name" \
-		--image-project="$PROJECT_ID" \
-		--boot-disk-size="$DISK_SIZE" \
-		--machine-type="$MACHINE_TYPE" \
-		--tags=devstack,http-server,"$INSTANCE_TAG" \
-		--zone="$ZONE" \
-		--project="$PROJECT_ID"
+  create --image "${1:-$IMAGE_NAME}"
 
   # Restarts the VM to apply env changes
   $sultan instance restart
 
-	$sultan local hosts config
-	$sultan local ssh config
+  $sultan local hosts config
+  $sultan local ssh config
 
-	message "Personalizing your instance..."
-	# shellcheck disable=SC1090
-	ansible-playbook "$sultan_dir"/ansible/devstack.yml \
-		-i "$INVENTORY" \
-		--tags "reconfiguration,never"  \
-		-e "openedx_release=$OPENEDX_RELEASE virtual_env_dir=$VIRTUAL_ENV home_dir=$HOME_DIR instance_name=$INSTANCE_NAME user=$USER_NAME working_directory=$DEVSTACK_WORKSPACE" &> "$SHELL_OUTPUT"
+  message "Personalizing your instance..."
+  # shellcheck disable=SC1090
+  ansible-playbook "$sultan_dir"/ansible/devstack.yml \
+  -i "$INVENTORY" \
+  --tags "reconfiguration,never"  \
+  -e "openedx_release=$OPENEDX_RELEASE virtual_env_dir=$VIRTUAL_ENV home_dir=$HOME_DIR instance_name=$INSTANCE_NAME user=$USER_NAME working_directory=$DEVSTACK_WORKSPACE" &> "$SHELL_OUTPUT"
 
-	success "Your instance has been successfully created!" "From $IMAGE_NAME"
-	message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGENTA} to start devstack servers."
+  success "Your instance has been successfully created!" "From $IMAGE_NAME"
+  message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGENTA} to start devstack servers."
 }
 
 describe() {
