@@ -93,7 +93,7 @@ clean() {
   _delete_allow_firewall
   _delete_deny_firewall
 
-  success "Firewall rules has been cleaned from GCP"
+  success "Firewall rules have been cleaned from GCP"
 }
 
 _create_allow_firewall() {
