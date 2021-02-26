@@ -102,6 +102,20 @@ recommend using them with `sultan instance setup --image` command. If you
 noticed a freeze in your machine's shell, it means that your machine got 
 interrupted, and you might have to restart the session again.
 
+#### Machine lifespan
+When you create a sultan instance, the instance will be configured to run for 
+a specific amount of time configured in `ALIVE_TIME` in the configurations 
+file. We sat the default lifespan to 6 hours, when your machine powers off
+you can start it again using 
+```
+$ sultan instance start
+```
+
+To stop the machine manually before the timeout use
+```shell
+$ sultan instance stop
+```
+
 #### Exposed ports
 For security reasons, Sultan firewall will restrict access to the ports in
 `EXPOSED_PORTS` in your .configs file. Here's the full list of the ports you

@@ -56,6 +56,10 @@ INVENTORY=$INVENTORY_CONFIGS_DIR/inventory.compute.gcp.yml
 # and options as regular compute instances and last for up to 24 hours.
 PREEMPTIBLE=false
 
+# The time the machine will be alive before a shutdown trigger gets fired.
+# We default it to 6 hours.
+ALIVE_TIME="$(expr 6 \* 60 \* 60)"
+
 # The mount location.
 MOUNT_DIR=$SULTAN_HOME/mnt/
 
