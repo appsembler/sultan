@@ -66,8 +66,9 @@ MOUNT_DIR=$SULTAN_HOME/mnt/
 # (DON'T CHANGE) The hosts file location. You can change it for test purposes.
 HOSTS_FILE=/etc/hosts
 
-# A comma-separated list of hostnames you'd like to use.
-EDX_HOST_NAMES=edx.devstack.lms
+# A space-separated list of hostnames you would like to use to access the
+# remote machine.
+EDX_HOST_NAMES="edx.devstack.site tahoe.devstack.site edx.devstack.lms"
 
 # Determines whether to hide/show commands verbose output on the terminal
 DEBUG=false

@@ -251,37 +251,30 @@ $ curl -I edx.devstack.lms:18010  ## Curls your LMS site.
 
 Our Devstack automatically creates your initial site:
 
-| Property | Value               |
-|:---------|:--------------------|
-| LMS URL  | red.localhost:18000 |
-| Username | red                 |
-| Email    | red@example.com     |
-| Password | red                 |
-
-
-> **Hey, I cannot access red.localhost:18000!**
->
-> Are you using Chrome? I was too. For some godforsaken reason it doesn’t work for me there (other URLs that are not localhost do). But in Firefox it does!
+| Property  | Value           |
+|:----------|:----------------|
+| LMS Port  | 18000           |
+| Username  | red             |
+| Email     | red@example.com |
+| Password  | red             |
 
 
 Other information:
 
-| Property                              | Value                                         |
-|:--------------------------------------|:----------------------------------------------|
-| AMC URL (Django-served)               | http://tahoe.devstack.amc:29000               |
-| AMC Signup Wizard URL (Django-served) | http://tahoe.devstack.amc:29000/signup-wizard |
-| LMS admin username                    | edx                                           |
-| LMS admin password                    | edx                                           |
-| AMC admin username                    | amc                                           |
-| AMC admin password                    | amc                                           |
-| Studio URL                            | http://amc.devstack.cms:18010                 |
+| Property                 | Value                       |
+|:-------------------------|:----------------------------|
+| Studio Port              | 18010                       |
+| EDX admin username       | edx                         |
+| EDX admin password       | edx                         |
+| AMC Port (Django-served) | 29000                       |
+| AMC Signup Wizard URL    | <domain:29000>/signup-wizard |
+| AMC admin username       | amc                         |
+| AMC admin password       | amc                         |
+
 
 ### 4.3. Optionally create your own site
-During the config we have added a `test.localhost` entry. So if you create a 
-new site just set the site name to `test` and you’ll automatically be 
-good to go.
-
-To skip the wizard and to create your site from command line (Good as it doesn't require email)   
+You can skip AMC's create site wizard, and create your site from command line
+(Good as it doesn't require email verification)   
 
 ```console
 $ sultan devstack make lms-shell

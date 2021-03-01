@@ -122,7 +122,7 @@ hosts() {
              --connection=local \
              -i '127.0.0.1,' \
              --tags hosts_update \
-             -e "IP_ADDRESS=$IP_ADDRESS EDX_HOST_NAMES=$EDX_HOST_NAMES" "$sultan_dir"/ansible/local.yml > "$SHELL_OUTPUT" \
+             -e "IP_ADDRESS=$IP_ADDRESS EDX_HOST_NAMES='$EDX_HOST_NAMES'" "$sultan_dir"/ansible/local.yml > "$SHELL_OUTPUT" \
             || error "ERROR configuring hosts records."
     fi
     success "Your hosts have been configured successfully!"
