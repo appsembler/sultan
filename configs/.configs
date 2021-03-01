@@ -131,3 +131,8 @@ PINK=$(tput setaf 9)
 COLS=$(tput cols)
 
 SULTAN_ENV=$(which python)
+
+# Hack to deal with unwritable /etc/hosts files on Cloud Build
+# Do not enable this unless you understand exactly what it does,
+# why it is needed, and how it will break things in other environments
+ETC_HOSTS_HACK=false

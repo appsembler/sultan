@@ -108,13 +108,23 @@ hosts() {
     # Check if sudo password is required
     sudocheck
 
-    # shellcheck disable=SC2024
-    sudo ansible-playbook \
-         --connection=local \
-         -i '127.0.0.1,' \
-         --tags hosts_update \
-         -e "IP_ADDRESS=$IP_ADDRESS EDX_HOST_NAMES=$EDX_HOST_NAMES" "$sultan_dir"/ansible/local.yml > "$SHELL_OUTPUT" \
-        || error "ERROR configuring hosts records."
+    if [ "$ETC_HOSTS_HACK" == true ]; then
+        # DANGER: cloudbuild/docker specific hack. DO NOT USE ELSEWHERE.
+        # in a container, /etc/hosts can't be overwritten
+        # via `os.rename()` and ansible breaks. We can modify the existing
+        # file though. Since it's an ephemeral environment anyway, we just
+        # do a simple append and don't worry about being able to clean it
+        # up later
+        echo "$IP_ADDRESS $EDX_HOST_NAMES" >> /etc/hosts
+    else
+        # shellcheck disable=SC2024
+        sudo ansible-playbook \
+             --connection=local \
+             -i '127.0.0.1,' \
+             --tags hosts_update \
+             -e "IP_ADDRESS=$IP_ADDRESS EDX_HOST_NAMES=$EDX_HOST_NAMES" "$sultan_dir"/ansible/local.yml > "$SHELL_OUTPUT" \
+            || error "ERROR configuring hosts records."
+    fi
     success "Your hosts have been configured successfully!"
   else
     error "Unknown parameter passed: $1" "$help_text"
