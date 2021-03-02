@@ -117,7 +117,7 @@ create() {
 	    "--zone=$ZONE"
 	    "--verbosity=$VERBOSITY"
 	    "--project=$PROJECT_ID"
-      "--metadata=startup-script=/bin/bash -c '( sleep $ALIVE_TIME; sudo poweroff -p --no-wall ) &'"
+            "--metadata=startup-script=\"/bin/bash -c '( sleep $ALIVE_TIME; sudo poweroff -p --no-wall ) &'"\"
     )
 
 
