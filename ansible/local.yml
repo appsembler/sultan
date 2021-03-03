@@ -6,10 +6,9 @@
       blockinfile:
         path: /etc/hosts
         block: |
-          {{ IP_ADDRESS }} {{ item }}
-        marker: "# {mark} SULTAN MANAGED BLOCK {{ item }}"
+          {{ IP_ADDRESS }} {{ EDX_HOST_NAMES }}
+        marker: "# {mark} SULTAN MANAGED HOST"
       become: yes
-      with_items: "{{ EDX_HOST_NAMES.split(',') }}"
       tags: [ hosts_update ]
 
     - name: Remove SSH configurations
@@ -18,16 +17,14 @@
         path: ~/.ssh/config
         marker: "# {mark} SULTAN MANAGED HOST"
         block: ""
-      become: yes
       tags: [ hosts_revert ]
 
     - name: Remove mappings from /etc/hosts
       blockinfile:
         path: /etc/hosts
-        marker: "# {mark} SULTAN MANAGED BLOCK {{ item }}"
+        marker: "# {mark} SULTAN MANAGED HOST"
         content: ""
       become: yes
-      with_items: "{{ EDX_HOST_NAMES.split(',') }}"
       tags: [ hosts_revert ]
 
     - name: Configure SSH agent forwarding
