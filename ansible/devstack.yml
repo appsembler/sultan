@@ -1,7 +1,7 @@
 ---
 
 - hosts: "{{ instance_name }}"
-  remote_user: cloudbuild
+  remote_user: "{{ username }}"
   become: yes
   vars_files:
     - server-vars.yml
