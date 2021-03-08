@@ -58,7 +58,7 @@ HOSTS_FILE=/etc/hosts
 EDX_HOST_NAMES=edx.devstack.lms
 
 # Determines whether to hide/show commands verbose output on the terminal
-DEBUG=false
+DEBUG=true
 
 # (DON'T CHANGE) VERBOSITY controls GCloud commands verbosity and SHELL_OUTPUT
 # is the location the toolkit is directing Ansible output to.
