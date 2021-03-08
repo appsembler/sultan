@@ -34,11 +34,11 @@ cp cloudbuild/configs."$CONFIG" configs/.configs.cloudbuild
 echo "CONFIG DEBUG:"
 ./sultan config debug
 
-echo "INSTANCE SETUP"
+echo "INSTANCE SETUP:"
 if [[ "$IMAGE" ]]; then
-    ./sultan instance setup --image "$IMAGE"
+  ./sultan instance setup --image "$IMAGE"
 else
-    ./sultan instance setup
+  ./sultan instance setup
 fi
 
 echo "ROOT SSH CONFIG:"
@@ -53,20 +53,18 @@ echo "INSTANCE IP:"
 echo "INSTANCE STATUS:"
 ./sultan instance status
 
-echo "BRINGING UP THE DEVSTACK"
+echo "BRINGING UP THE DEVSTACK:"
 ./sultan devstack up
 
-echo "TEST IT"
+echo "TEST IT:"
 # have to wait a while for it to start
 n=0
-until [ "$n" -ge 5 ]
-do
-   curl -i -v http://edx.devstack.lms:18010/heartbeat && break
-   n=$((n+1))
-   sleep 30
+until [ "$n" -ge 5 ]; do
+  curl -i -v http://edx.devstack.lms:18010/heartbeat && break
+  n=$((n + 1))
+  sleep 30
 done
 
-
-echo "CLEANING UP"
+echo "CLEANING UP:"
 ./sultan instance stop
 ./sultan instance delete

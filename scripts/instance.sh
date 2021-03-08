@@ -143,7 +143,14 @@ deploy() {
     # shellcheck disable=SC1090
     ansible-playbook "$sultan_dir"/ansible/devstack.yml \
       -i "$INVENTORY" \
-      -e "username=$USER_NAME home_dir=$HOME_DIR instance_name=$INSTANCE_NAME working_directory=$DEVSTACK_WORKSPACE git_repo_url=$DEVSTACK_REPO_URL openedx_release=$OPENEDX_RELEASE git_repo_branch=$DEVSTACK_REPO_BRANCH virtual_env_dir=$VIRTUAL_ENV" &> "$SHELL_OUTPUT"
+      -e "username=$USER_NAME
+          home_dir=$HOME_DIR
+          instance_name=$INSTANCE_NAME
+          working_directory=$DEVSTACK_WORKSPACE
+          git_repo_url=$DEVSTACK_REPO_URL
+          openedx_release=$OPENEDX_RELEASE
+          git_repo_branch=$DEVSTACK_REPO_BRANCH
+          virtual_env_dir=$VIRTUAL_ENV" &> "$SHELL_OUTPUT"
         success "Your virtual machine has been deployed successfully!"
         message "Run ${BOLD}${CYAN}sultan instance provision${NORMAL}${MAGENTA} to start provisioning your devstack."
 }
@@ -235,7 +242,13 @@ _image_setup() {
   ansible-playbook "$sultan_dir"/ansible/devstack.yml \
   -i "$INVENTORY" \
   --tags "reconfiguration,never"  \
-  -e "username=$USER_NAME openedx_release=$OPENEDX_RELEASE virtual_env_dir=$VIRTUAL_ENV home_dir=$HOME_DIR instance_name=$INSTANCE_NAME user=$USER_NAME working_directory=$DEVSTACK_WORKSPACE" &> "$SHELL_OUTPUT"
+  -e "username=$USER_NAME
+      openedx_release=$OPENEDX_RELEASE
+      virtual_env_dir=$VIRTUAL_ENV
+      home_dir=$HOME_DIR
+      instance_name=$INSTANCE_NAME
+      user=$USER_NAME
+      working_directory=$DEVSTACK_WORKSPACE" &> "$SHELL_OUTPUT"
 
   success "Your instance has been successfully created!" "From $IMAGE_NAME"
   message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGENTA} to start devstack servers."
