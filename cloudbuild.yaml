@@ -37,4 +37,4 @@ steps:
 timeout: 3600s
 substitutions:
   _CONFIG: "juniper"
-  _IMAGE: "devstack.juniper"
+  _IMAGE: "devstack-juniper"
