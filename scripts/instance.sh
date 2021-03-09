@@ -53,7 +53,7 @@ ping() {
   #  Performs a ping to your instance.                                        #
   #############################################################################
     # shellcheck disable=SC1090
-    ansible -i "$INVENTORY" "$INSTANCE_NAME" -m ping \
+    ansible -i "$INVENTORY" "$INSTANCE_NAME" -u "$USER_NAME" -m ping \
 	|| error "Unable to ping instance!" "This might be caused by one of the following reasons:
     * The instance is not set up yet. To set up an instance run ${BOLD}${CYAN}sultan instance setup${NORMAL}${MAGENTA}
     * The instance was stopped. Check the status of your instance using ${BOLD}${CYAN}sultan instance status${NORMAL}${MAGENTA} and start it by running ${BOLD}${CYAN}sultan instance start${NORMAL}${MAGENTA}
