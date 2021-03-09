@@ -13,7 +13,7 @@ USER_NAME=$USER
 HOST_NAME=$(hostname | tr '[:upper:]' '[:lower:]')
 
 # The instance name on GCP, must be unique among all users.
-INSTANCE_NAME=$USER-at-${HOST_NAME//./-}
+INSTANCE_NAME=$USER_NAME-at-${HOST_NAME//./-}
 
 # Default name of the image to create.
 IMAGE_NAME=devstack-$INSTANCE_NAME
