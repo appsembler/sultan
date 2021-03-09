@@ -35,6 +35,13 @@ ALLOW_FIREWALL=allow-$INSTANCE_NAME-webserver-access
 # course-authoring:2001, xqueue:18040, amc:13000
 EXPOSED_PORTS=22,18000,18010,44567,13000
 
+# When you configure a zonal or regional persistent disk, you can select one of
+# the following disk types"
+#   - Standard persistent disks (pd-standard) HDD.
+#   - Balanced persistent disks (pd-balanced) They are an alternative to SSD persistent disks that balance performance and cost.
+#   - SSD persistent disks (pd-ssd) are backed by solid-state drives (SSD).
+BOOT_DISK_TYPE=pd-ssd
+
 # The size of the disk your instance is going to use in GB. We don't recommend it to be less than 50.
 DISK_SIZE=200
 

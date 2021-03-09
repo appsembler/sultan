@@ -111,6 +111,7 @@ debug() {
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  IMAGE_NAME" "$IMAGE_NAME"
 
   printf "${PURPLE}%-30s${NORMAL}\n" "INSTANCE"
+  printf "${CYAN}%-30s${NORMAL} %-10s\n" "  BOOT_DISK_TYPE" "$BOOT_DISK_TYPE"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  DISK_SIZE" "$DISK_SIZE"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  INSTANCE_NAME" "$INSTANCE_NAME"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  INSTANCE_TAG" "$INSTANCE_TAG"

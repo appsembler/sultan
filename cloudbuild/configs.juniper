@@ -31,6 +31,13 @@ DENY_FIREWALL=deny-$INSTANCE_NAME-webserver-access
 # (DON'T CHANGE) The name of the allow rule on GCP firewall.
 ALLOW_FIREWALL=allow-$INSTANCE_NAME-webserver-access
 
+# When you configure a zonal or regional persistent disk, you can select one of
+# the following disk types"
+#   - Standard persistent disks (pd-standard) HDD.
+#   - Balanced persistent disks (pd-balanced) They are an alternative to SSD persistent disks that balance performance and cost.
+#   - SSD persistent disks (pd-ssd) are backed by solid-state drives (SSD).
+BOOT_DISK_TYPE=pd-ssd
+
 # The size of the disk your instance is going to use in GB. We don't recommend it to be less than 50.
 DISK_SIZE=200
 

@@ -112,6 +112,7 @@ create() {
 	cmd=(
 	    "gcloud" "compute" "instances" "create" "$INSTANCE_NAME"
 	    "--boot-disk-size=$DISK_SIZE"
+	    "--boot-disk-type=$BOOT_DISK_TYPE"
 	    "--machine-type=$MACHINE_TYPE"
 	    "--tags=devstack,http-server,$INSTANCE_TAG"
 	    "--zone=$ZONE"
