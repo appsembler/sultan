@@ -457,7 +457,68 @@ $ sultan devstack up
 
 That should fix the problem.
 
-## 9. To conclude
+## 9. Variables tree
+
+```
+┌── VERSION
+├── EXPOSED_PORTS
+├── BOOT_DISK_TYPE
+├── DISK_SIZE
+│                                         ┌── INVENTORY_CONFIGS_DIR ── INVENTORY
+│                       ┌─── SULTAN_HOME ─┤
+├──  HOME ──────────────┤                 └── MOUNT_DIR
+│                       └─── SSH_KEY
+│
+│                       ┌─── VERBOSITY
+├── DEBUG ──────────────┤
+│                       └─── SHELL_OUTPUT
+│
+├── DEVSTACK_REPO_BRANCH ─── OPENEDX_RELEASE
+│                                                             ┌── DEVSTACK_DIR
+│                       ┌─── HOME_DIR ── DEVSTACK_WORKSPACE ──┤
+│                       │                                     └── VIRTUAL_ENV
+├── USER_NAME ──────────┤
+│                       └──┐                                  ┌── ALLOW_FIREWALL
+│                          │                                  ├── DENY_FIREWALL
+│                          ├─────────── INSTANCE_NAME ────────┤
+│                          │                                  ├── INSTANCE_TAG
+│                          │                                  └── IMAGE_NAME
+├── HOST_NAME ─────────────┘
+├── PROJECT_ID
+├── EXPOSED_PORTS
+├── BOOT_DISK_TYPE
+├── DISK_SIZE
+├── MACHINE_TYPE
+├── ZONE
+├── PREEMPTIBLE
+├── ALIVE_TIME
+├── HOSTS_FILE
+├── IMAGE_FAMILY
+├── EDX_HOST_NAMES
+├── SERVICE_ACCOUNT_EMAIL
+├── DEVSTACK_REPO_URL
+├── SERVICE_KEY_PATH
+├── DEVSTACK_RUN_COMMAND
+├── RESTRICT_INSTANCE
+├── RESTRICT_INSTANCE
+├── BOLD
+├── NORMAL
+├── WHITE
+├── RED
+├── GREEN
+├── YELLOW
+├── BLUE
+├── PURPLE
+├── CYAN
+├── GRAY
+├── DARK
+├── PINK
+├── COLS
+├── SULTAN_ENV
+└── ETC_HOSTS_HACK
+```
+
+## 10. To conclude
 Please add more stuff to this doc as you discover helpful information. Let’s 
 all strive for a bright future where an engineer can follow a couple easy 
 steps here and BOOM it’s done.
