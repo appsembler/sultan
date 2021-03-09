@@ -17,6 +17,7 @@ chmod 600 /root/.ssh/id_ed25519
 apt-get update
 apt-get install -y sudo
 
+# TODO: distinct firewall, image, and instance names
 export USER=cloudbuild
 export HOME=/root
 export TERM=dumb  # make tput shut up
@@ -57,13 +58,23 @@ echo "BRINGING UP THE DEVSTACK:"
 ./sultan devstack up
 
 echo "TEST IT:"
+echo "Make sure the instance is pingable"
+./sultan instance ping
+
+echo "Checking the heartbeat"
 # have to wait a while for it to start
 n=0
+HEARTBEAT=
 until [ "$n" -ge 5 ]; do
-  curl -i -v http://edx.devstack.lms:18010/heartbeat && break
+  HEARTBEAT=$(curl -i -v http://edx.devstack.lms:18010/heartbeat) && break
   n=$((n + 1))
   sleep 30
 done
+
+[[ "$HEARTBEAT" = *"HTTP/1.1 200 OK"* ]] && echo "Heartbeat status OK :)"
+
+echo "Create image:"
+./sultan image create
 
 echo "CLEANING UP:"
 ./sultan instance stop
