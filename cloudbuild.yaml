@@ -31,6 +31,7 @@ steps:
         export CONFIG=${_CONFIG}
         export PROJECT_ID=${PROJECT_ID}
         export IMAGE=${_IMAGE}
+        export CUSTOM_INSTANCE_NAME=${REPO_NAME}-${BRANCH_NAME}-at-${SHORT_SHA}
         './cloudbuild/build.sh'
     timeout: 3600s
     

@@ -17,7 +17,9 @@ chmod 600 /root/.ssh/id_ed25519
 apt-get update
 apt-get install -y sudo
 
-# TODO: distinct firewall, image, and instance names
+# TODO: change INSTANCE_NAME
+# TODO: custom devstack branch
+
 export USER=cloudbuild
 export HOME=/root
 export TERM=dumb  # make tput shut up
@@ -75,6 +77,8 @@ echo "$HEARTBEAT"
 [[ "$HEARTBEAT" = *"HTTP/1.1 200 OK"* ]] && echo "Heartbeat status OK :)"
 
 echo "Create image:"
+# TODO: custom IMAGE_NAME
+# TODO: only if variables are in default
 ./sultan image create
 
 echo "CLEANING UP:"
