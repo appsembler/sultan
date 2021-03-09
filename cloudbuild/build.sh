@@ -58,10 +58,9 @@ echo "BRINGING UP THE DEVSTACK:"
 ./sultan devstack up
 
 echo "TEST IT:"
-echo "Make sure the instance is pingable"
+echo "Make sure the instance is pingable:"
 ./sultan instance ping
 
-echo "Checking the heartbeat"
 # have to wait a while for it to start
 n=0
 HEARTBEAT=
@@ -71,6 +70,8 @@ until [ "$n" -ge 5 ]; do
   sleep 30
 done
 
+echo "Checking the heartbeat:"
+echo "$HEARTBEAT"
 [[ "$HEARTBEAT" = *"HTTP/1.1 200 OK"* ]] && echo "Heartbeat status OK :)"
 
 echo "Create image:"

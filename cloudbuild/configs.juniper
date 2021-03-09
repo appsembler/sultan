@@ -104,7 +104,7 @@ DEVSTACK_REPO_BRANCH=open-release/juniper.master
 OPENEDX_RELEASE="${DEVSTACK_REPO_BRANCH//open-release\//}"
 
 # The command that runs all of your devstack services (LMS, Studio, ...) Change it if you have a custom one.
-DEVSTACK_RUN_COMMAND=dev.up
+DEVSTACK_RUN_COMMAND="HOST=tahoe.devstack.site dev.up"
 
 # Whether to deny all IPs (except yours) from accessing your instance or not.
 RESTRICT_INSTANCE=true
