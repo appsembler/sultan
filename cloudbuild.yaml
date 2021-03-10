@@ -33,6 +33,7 @@ steps:
         export IMAGE=${_IMAGE}
         export CUSTOM_INSTANCE_NAME=${REPO_NAME}-${BRANCH_NAME}-at-${SHORT_SHA}
         export BRANCH_NAME=${BRANCH_NAME}
+        export DEVSTACK_BRANCH=${_DEVSTACK_BRANCH}
         ./cloudbuild/build.sh;
         export PREVIOUS_EXIT="$?";
         ./cloudbuild/clean.sh
