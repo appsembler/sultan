@@ -43,3 +43,6 @@ timeout: 3600s
 substitutions:
   _CONFIG: "juniper"
   _IMAGE: "devstack-juniper"
+  # Defaulting to empty to make sure we are not changing the behavior
+  # of Sultan too much.
+  _DEVSTACK_BRANCH: ""

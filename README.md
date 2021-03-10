@@ -413,13 +413,28 @@ $ sultan config debug
 ```
 
 ## 7. Tool help
-To check the commands documentation run
+To check sultan commands' documentation run
 ```console
 $ sultan -h
 $ sultan --help
 ```
 
-## 8. Errors
+## 8. CI/CD
+This repo is now being used to ensure builds on our edX services are passing
+on devstack expectations. To trigger the builds locally, you can use the 
+follwoing command:
+
+```console
+$ sultan ci build
+```
+
+`build` will automatically grab some information for you in order for the build
+to be easily spot on GCP. This information includes:
+- Your current sultan branch.
+- The current short SHA on sultan repo.
+- Your username.
+
+## 9. Errors
 Errors are possible all the time. If an error's fired while executing commands 
 from this toolkit it is recommended to do a little bit more debugging.
 While this might be an issue with the tool, we just want you to make sure that 
