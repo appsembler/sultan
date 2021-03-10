@@ -73,7 +73,7 @@ echo "Checking the heartbeat:"
 echo "$HEARTBEAT"
 [[ "$HEARTBEAT" == *"HTTP/1.1 200 OK"* ]] || exit 2
 
-if [ "$BRANCH_NAME" == "master" ]; then
+if [ "$BRANCH_NAME" == "master" ] && [ "$DEVSTACK_BRANCH" == "juniper" ]; then
   # The condition needs to be changed when more repos are involved.
   echo "Create image:"
   ./sultan image create --name "${IMAGE}"
