@@ -94,14 +94,14 @@ SERVICE_ACCOUNT_EMAIL=devstack@appsembler-devstack-30.iam.gserviceaccount.com
 SERVICE_KEY_PATH=/workspace/devstack.json
 
 # The devstack repository URL. Change this if you want to use another clone.
-DEVSTACK_REPO_URL=https://github.com/edx/devstack.git
+DEVSTACK_REPO_URL=https://github.com/appsembler/devstack.git
 
 # The devstack branch you want to deploy.
 DEVSTACK_REPO_BRANCH=${DEVSTACK_BRANCH:-open-release/juniper.master}
 
 # To run the docker images for a named Open edX release.
 # To work on the master branches and latest images, unset OPENEDX_RELEASE or set it to an empty string.
-OPENEDX_RELEASE="${DEVSTACK_REPO_BRANCH//open-release\//}"
+OPENEDX_RELEASE="juniper.master"
 
 # The command that runs all of your devstack services (LMS, Studio, ...) Change it if you have a custom one.
 DEVSTACK_RUN_COMMAND="HOST=tahoe.devstack.site dev.up"

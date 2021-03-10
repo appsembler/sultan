@@ -71,7 +71,7 @@ done
 
 echo "Checking the heartbeat:"
 echo "$HEARTBEAT"
-[[ "$HEARTBEAT" == *"HTTP/1.1 200 OK"* ]] && echo "Heartbeat status OK :)"
+[[ "$HEARTBEAT" == *"HTTP/1.1 200 OK"* ]] || exit 2
 
 if [ "$BRANCH_NAME" == "master" ]; then
   # The condition needs to be changed when more repos are involved.
