@@ -33,7 +33,9 @@ steps:
         export IMAGE=${_IMAGE}
         export CUSTOM_INSTANCE_NAME=${REPO_NAME}-${BRANCH_NAME}-at-${SHORT_SHA}
         export BRANCH_NAME=${BRANCH_NAME}
-        ./cloudbuild/build.sh; export PREVIOUS_EXIT="$?"; ./cloudbuild/clean.sh
+        ./cloudbuild/build.sh;
+        export PREVIOUS_EXIT="$?";
+        ./cloudbuild/clean.sh
     timeout: 3600s
 
 timeout: 3600s
