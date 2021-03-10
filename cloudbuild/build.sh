@@ -17,12 +17,9 @@ chmod 600 /root/.ssh/id_ed25519
 apt-get update
 apt-get install -y sudo
 
-# TODO: change INSTANCE_NAME
-# TODO: custom devstack branch
-
 export USER=cloudbuild
 export HOME=/root
-export TERM=dumb  # make tput shut up
+export TERM=dumb # make tput shut up
 
 # cloudbuild environment requires some trickiness
 mkdir /tmp/.ansible
@@ -56,6 +53,7 @@ echo "INSTANCE IP:"
 echo "INSTANCE STATUS:"
 ./sultan instance status
 
+exit 1
 echo "BRINGING UP THE DEVSTACK:"
 ./sultan devstack up
 
@@ -74,13 +72,10 @@ done
 
 echo "Checking the heartbeat:"
 echo "$HEARTBEAT"
-[[ "$HEARTBEAT" = *"HTTP/1.1 200 OK"* ]] && echo "Heartbeat status OK :)"
+[[ "$HEARTBEAT" == *"HTTP/1.1 200 OK"* ]] && echo "Heartbeat status OK :)"
 
-echo "Create image:"
-# TODO: custom IMAGE_NAME
-# TODO: only if variables are in default
-./sultan image create
-
-echo "CLEANING UP:"
-./sultan instance stop
-./sultan instance delete
+if [ "$BRANCH_NAME" == "master" ]; then
+  # The condition needs to be changed when more repos are involved.
+  echo "Create image:"
+  ./sultan image create --name "${IMAGE}"
+fi
