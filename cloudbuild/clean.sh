@@ -1,12 +1,8 @@
 #!/bin/bash
 
-export TERM=dumb # make tput shut up
-
-# use our config
-cp cloudbuild/configs."$CONFIG" configs/.configs.cloudbuild
-
-echo "CONFIG DEBUG:"
-./sultan config debug
+echo "Build script exited with status $PREVIOUS_EXIT"
 
 echo "CLEANING UP:"
 ./sultan instance delete
+
+exit "$PREVIOUS_EXIT"

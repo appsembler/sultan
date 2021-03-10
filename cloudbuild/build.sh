@@ -53,7 +53,6 @@ echo "INSTANCE IP:"
 echo "INSTANCE STATUS:"
 ./sultan instance status
 
-exit 1
 echo "BRINGING UP THE DEVSTACK:"
 ./sultan devstack up
 
