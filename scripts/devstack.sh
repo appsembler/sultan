@@ -60,7 +60,7 @@ unmount() {
     UNMOUNT=sudo
   fi
 
-	("$UNMOUNT" unmount force "$MOUNT_DIR" && \
+	("$UNMOUNT" umount force "$MOUNT_DIR" && \
 		rm -rf "$MOUNT_DIR" && \
 		success "Workspace unmounted successfully.") \
 	|| warn "No mount found" "SKIPPING"

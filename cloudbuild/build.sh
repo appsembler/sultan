@@ -19,7 +19,7 @@ apt-get install -y sudo
 
 export USER=cloudbuild
 export HOME=/root
-export TERM=dumb  # make tput shut up
+export TERM=dumb # make tput shut up
 
 # cloudbuild environment requires some trickiness
 mkdir /tmp/.ansible
@@ -34,11 +34,11 @@ cp cloudbuild/configs."$CONFIG" configs/.configs.cloudbuild
 echo "CONFIG DEBUG:"
 ./sultan config debug
 
-echo "INSTANCE SETUP"
+echo "INSTANCE SETUP:"
 if [[ "$IMAGE" ]]; then
-    ./sultan instance setup --image "$IMAGE"
+  ./sultan instance setup --image "$IMAGE"
 else
-    ./sultan instance setup
+  ./sultan instance setup
 fi
 
 echo "ROOT SSH CONFIG:"
@@ -53,20 +53,28 @@ echo "INSTANCE IP:"
 echo "INSTANCE STATUS:"
 ./sultan instance status
 
-echo "BRINGING UP THE DEVSTACK"
+echo "BRINGING UP THE DEVSTACK:"
 ./sultan devstack up
 
-echo "TEST IT"
+echo "TEST IT:"
+echo "Make sure the instance is pingable:"
+./sultan instance ping
+
 # have to wait a while for it to start
 n=0
-until [ "$n" -ge 5 ]
-do
-   curl -i -v http://edx.devstack.lms:18010/heartbeat && break
-   n=$((n+1))
-   sleep 30
+HEARTBEAT=
+until [ "$n" -ge 5 ]; do
+  HEARTBEAT=$(curl -i -v http://edx.devstack.lms:18010/heartbeat) && break
+  n=$((n + 1))
+  sleep 30
 done
 
+echo "Checking the heartbeat:"
+echo "$HEARTBEAT"
+[[ "$HEARTBEAT" == *"HTTP/1.1 200 OK"* ]] || exit 2
 
-echo "CLEANING UP"
-./sultan instance stop
-./sultan instance delete
+if [ "$BRANCH_NAME" == "master" ] && [ "$DEVSTACK_BRANCH" == "juniper" ]; then
+  # The condition needs to be changed when more repos are involved.
+  echo "Create image:"
+  ./sultan image create --name "${IMAGE}"
+fi

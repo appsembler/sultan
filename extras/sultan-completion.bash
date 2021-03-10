@@ -26,6 +26,7 @@ _main() {
 
     local commands="
     config
+    ci
     devstack
     firewall
     help
@@ -47,6 +48,7 @@ _main() {
   # subcommands have their own completion functions
   case "$cmd" in
     config) _main_config ;;
+    ci) _main_ci ;;
     devstack) _main_devstack ;;
     firewall) _main_firewall ;;
     image) _main_image ;;
@@ -529,6 +531,35 @@ _main_workflow ()
   help
   resume
   suspend
+  "
+
+  COMPREPLY=()
+  compgen -W "$commands" -- "$cur" | while IFS="" read -r line; do COMPREPLY+=("$line"); done
+
+  return # return early if we're still completing the 'current' command
+}
+
+_main_ci ()
+{
+  while [[ $subcommand_index -lt $COMP_CWORD ]]; do
+    local s="${COMP_WORDS[subcommand_index]}"
+    case "$s" in
+      build)
+        COMPREPLY=()
+        return
+        ;;
+      help)
+        COMPREPLY=()
+        return
+        ;;
+    esac
+    (( subcommand_index++ ))
+  done
+
+  local cur="${COMP_WORDS[COMP_CWORD]}"
+  local commands="
+  build
+  help
   "
 
   COMPREPLY=()
