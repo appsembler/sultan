@@ -1,4 +1,4 @@
-# Sultan
+# Demo
 
 ### An Open edX Remote Devstack by Appsembler
 
