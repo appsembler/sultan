@@ -71,7 +71,7 @@ DEBUG=true
 # is the location the toolkit is directing Ansible output to.
 if [ $DEBUG = true ]; then
   VERBOSITY=debug
-  SHELL_OUTPUT=/tmp/output # no /dev/tty in cloud build
+  SHELL_OUTPUT=/dev/stdout # no /dev/tty in cloud build
 else
   VERBOSITY=critical
   SHELL_OUTPUT=/dev/null
