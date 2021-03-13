@@ -244,6 +244,9 @@ _image_setup() {
   -i "$INVENTORY" \
   --tags "reconfiguration,never"  \
   -e "username=$USER_NAME
+      ci_build=$ETC_HOSTS_HACK
+      git_repo_url=$DEVSTACK_REPO_URL
+      git_repo_branch=$DEVSTACK_REPO_BRANCH
       openedx_release=$OPENEDX_RELEASE
       virtual_env_dir=$VIRTUAL_ENV
       home_dir=$HOME_DIR
