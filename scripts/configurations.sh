@@ -124,6 +124,7 @@ debug() {
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  INVENTORY" "$INVENTORY"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  INVENTORY_CONFIGS_DIR" "$INVENTORY_CONFIGS_DIR"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  MOUNT_DIR" "$MOUNT_DIR"
+  printf "${CYAN}%-30s${NORMAL} %-10s\n" "  SSH_AGENT_HOST_NAME" "$SSH_AGENT_HOST_NAME"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  SSH_KEY" "$SSH_KEY"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  SULTAN_ENV" "$SULTAN_ENV"
   printf "${CYAN}%-30s${NORMAL} %-10s\n" "  SULTAN_HOME" "$SULTAN_HOME"

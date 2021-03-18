@@ -145,7 +145,7 @@ ssh() {
         --connection=local \
         -i '127.0.0.1,' \
         --tags ssh_config \
-        -e "IP_ADDRESS=$IP_ADDRESS USER=$USER_NAME SSH_KEY=$SSH_KEY" > "$SHELL_OUTPUT" \
+        -e "agent_host=$SSH_AGENT_HOST_NAME IP_ADDRESS=$IP_ADDRESS USER=$USER_NAME SSH_KEY=$SSH_KEY" > "$SHELL_OUTPUT" \
       || error "ERROR configuring SSH connection in your machine."
 
     ssh-add "$SSH_KEY"

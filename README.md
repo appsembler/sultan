@@ -507,6 +507,7 @@ That should fix the problem.
 ├── ZONE
 ├── PREEMPTIBLE
 ├── ALIVE_TIME
+├── SSH_AGENT_HOST_NAME
 ├── HOSTS_FILE
 ├── IMAGE_FAMILY
 ├── EDX_HOST_NAMES
