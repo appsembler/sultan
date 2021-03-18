@@ -71,7 +71,7 @@ DEBUG=true
 # is the location the toolkit is directing Ansible output to.
 if [ $DEBUG = true ]; then
   VERBOSITY=debug
-  SHELL_OUTPUT=/tmp/output # no /dev/tty in cloud build
+  SHELL_OUTPUT=/dev/stdout # no /dev/tty in cloud build
 else
   VERBOSITY=critical
   SHELL_OUTPUT=/dev/null
@@ -97,7 +97,7 @@ SERVICE_KEY_PATH=/workspace/devstack.json
 DEVSTACK_REPO_URL=https://github.com/appsembler/devstack.git
 
 # The devstack branch you want to deploy.
-DEVSTACK_REPO_BRANCH=${DEVSTACK_BRANCH:-open-release/juniper.master}
+DEVSTACK_REPO_BRANCH=${DEVSTACK_BRANCH:-juniper}
 
 # To run the docker images for a named Open edX release.
 # To work on the master branches and latest images, unset OPENEDX_RELEASE or set it to an empty string.

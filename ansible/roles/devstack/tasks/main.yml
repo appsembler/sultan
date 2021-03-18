@@ -75,5 +75,17 @@
       source {{ virtual_env_dir }}/bin/activate
       cd $DEVSTACK_WORKSPACE
     marker: "# {mark} SULTAN MANAGED BLOCK"
-
   tags: [ server, reconfiguration ]
+
+- name: Checkout Github branch
+  git:
+    repo: "{{ git_repo_url }}"
+    version: "{{ git_repo_branch }}"
+    dest: "{{ devstack_directory }}"
+    accept_hostkey: yes
+  become: no
+  # Most of the time developers don't need this behavior. However, it's
+  # necessary for Sultan CI jobs.
+  when: ci_build == "true"
+  tags: [ never, devstack ]
+
