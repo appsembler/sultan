@@ -19,7 +19,9 @@ apt-get install -y sudo
 
 export USER=cloudbuild
 export HOME=/root
-export TERM=dumb # make tput shut up
+export TERM=xterm-256color # make tput shut up
+
+eval "$(ssh-agent -s)" # Start the SSH agent
 
 # cloudbuild environment requires some trickiness
 mkdir /tmp/.ansible
