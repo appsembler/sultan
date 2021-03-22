@@ -70,9 +70,14 @@ stop()  {
   #############################################################################
   # Stops and unmounts a devstack servers.                                                   #
   #############################################################################
-  unmount
-  make stop
-	success "Your devstack stopped successfully."
+  if nc -z "$SSH_AGENT_HOST_NAME" 22 2>/dev/null; then
+    unmount
+    make stop
+    success "Your devstack stopped successfully."
+  else
+    warn "$SSH_AGENT_HOST_NAME is unreachable." "SKIPPING"
+    dim "This happens because of a misconfiguration in ${BOLD}~/.ssh/config${NORMAL}"
+  fi
 }
 
 mount() {

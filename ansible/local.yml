@@ -33,7 +33,7 @@
         marker: "# {mark} SULTAN MANAGED HOST"
         create: yes
         block: |
-          Host devstack
+          Host {{ agent_host }}
             HostName {{ IP_ADDRESS }}
             User {{ USER }}
             IdentityFile {{ SSH_KEY }}

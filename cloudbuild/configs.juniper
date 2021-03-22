@@ -58,6 +58,9 @@ INVENTORY=$INVENTORY_CONFIGS_DIR/inventory.compute.gcp.yml
 # The mount location.
 MOUNT_DIR=$SULTAN_HOME/mnt/
 
+# The hostname for SSH agent forwarding rule in ~/.ssh/config
+SSH_AGENT_HOST_NAME=devstack
+
 # (DON'T CHANGE) The hosts file location. You can change it for test purposes.
 HOSTS_FILE=/etc/hosts
 
