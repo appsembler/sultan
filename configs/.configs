@@ -78,7 +78,7 @@ HOSTS_FILE=/etc/hosts
 
 # A space-separated list of hostnames you would like to use to access the
 # remote machine.
-EDX_HOST_NAMES="edx.devstack.site tahoe.devstack.site edx.devstack.lms"
+EDX_HOST_NAMES="edx.devstack.lms devstack.tahoe"
 
 # Determines whether to hide/show commands verbose output on the terminal
 DEBUG=false

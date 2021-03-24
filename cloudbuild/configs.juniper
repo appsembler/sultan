@@ -64,8 +64,9 @@ SSH_AGENT_HOST_NAME=devstack
 # (DON'T CHANGE) The hosts file location. You can change it for test purposes.
 HOSTS_FILE=/etc/hosts
 
-# A comma-separated list of hostnames you'd like to use.
-EDX_HOST_NAMES=edx.devstack.lms
+# A space-separated list of hostnames you would like to use to access the
+# remote machine.
+EDX_HOST_NAMES="edx.devstack.lms devstack.tahoe"
 
 # Determines whether to hide/show commands verbose output on the terminal
 DEBUG=true
@@ -107,7 +108,7 @@ DEVSTACK_REPO_BRANCH=${DEVSTACK_BRANCH:-juniper}
 OPENEDX_RELEASE="juniper.master"
 
 # The command that runs all of your devstack services (LMS, Studio, ...) Change it if you have a custom one.
-DEVSTACK_RUN_COMMAND="HOST=tahoe.devstack.site dev.up"
+DEVSTACK_RUN_COMMAND="HOST=devstack.tahoe dev.up"
 
 # Whether to deny all IPs (except yours) from accessing your instance or not.
 RESTRICT_INSTANCE=true
