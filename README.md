@@ -239,7 +239,7 @@ $ sultan instance ping  ## Verifies that Ansible is able to reach your instance.
 ```
 To verify that your devstack is running:
 ```console
-$ curl -I edx.devstack.lms:18010  ## Curls your LMS site.
+$ curl -I devstack.tahoe:18010  ## Curls your Studio site.
 ```
 
 > **NOTE**

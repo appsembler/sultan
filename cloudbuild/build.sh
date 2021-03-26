@@ -66,7 +66,7 @@ echo "Make sure the instance is pingable:"
 n=0
 HEARTBEAT=
 until [ "$n" -ge 5 ]; do
-  HEARTBEAT=$(curl -i -v http://edx.devstack.lms:18010/heartbeat) && break
+  HEARTBEAT=$(curl -i -v http://devstack.tahoe:18010/heartbeat) && break
   n=$((n + 1))
   sleep 30
 done
