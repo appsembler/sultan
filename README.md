@@ -19,13 +19,21 @@ An extensive documentation on the architecture and the toolkit commands can be f
 ## 2. Quick Start
 
 ### 2.1. Clone and configure
-Follow the next steps to set up your Sultan devstack
+If you're on Linux, follow the next steps to set up your Sultan devstack
 
 ```console
 $ git clone git@github.com:appsembler/sultan.git
 $ cd sultan
 $ sultan config init  # Make sure you're in the correct python environment, this will install the required package immediatly one you run it.
 ## configs/.configs.username is created
+```
+
+If you're on macOS, follow the steps to set up your Sultan devstack
+
+```console
+$ git clone git@github.com:appsembler/sultan.git
+$ cd sultan
+$ ./sultan config init
 ```
 
 > **NOTE**
