@@ -11,6 +11,8 @@ Some available and ready-to-use devstack images are going to help you running th
 ## Documentation
 An extensive documentation on the architecture and the toolkit commands can be found in the repo's wiki page [here](https://github.com/appsembler/sultan/wiki).
 
+Appsembler Internal Doc [here](https://appsembler.atlassian.net/wiki/spaces/~869427582/pages/1556250675/Sultan+Appsembler).
+
 ## 1. Before you start
 - Make sure you have your SSH key added into our GCP Appsembler Devstack (appsembler-devstack-30) project. You can check that at GCP [Compute Metadata](https://console.cloud.google.com/compute/metadata/sshKeys?project=appsembler-devstack-30).
 - Make sure you have [GCloud command-line tools](https://cloud.google.com/sdk/docs/install) installed.
@@ -19,21 +21,13 @@ An extensive documentation on the architecture and the toolkit commands can be f
 ## 2. Quick Start
 
 ### 2.1. Clone and configure
-If you're on Linux, follow the next steps to set up your Sultan devstack
+Follow the next steps to set up your Sultan devstack
 
 ```console
 $ git clone git@github.com:appsembler/sultan.git
 $ cd sultan
 $ sultan config init  # Make sure you're in the correct python environment, this will install the required package immediatly one you run it.
 ## configs/.configs.username is created
-```
-
-If you're on macOS, follow the steps to set up your Sultan devstack
-
-```console
-$ git clone git@github.com:appsembler/sultan.git
-$ cd sultan
-$ ./sultan config init
 ```
 
 > **NOTE**
@@ -255,7 +249,7 @@ $ curl -I devstack.tahoe:18010  ## Curls your Studio site.
 > LMS and Studio might take up to 3 minutes to fully spin. You can check their
 > logs by running `sultan devstack make lms-logs`. 
 
-#### Accessing the default created site, AMC, Studio, edx admin, AMC admin
+#### Accessing the default created LMS site, Studio, edx admin
 
 Our Devstack automatically creates your initial site:
 
@@ -274,33 +268,10 @@ Other information:
 | Studio Port              | 18010                       |
 | EDX admin username       | edx                         |
 | EDX admin password       | edx                         |
-| AMC Port (Django-served) | 29000                       |
-| AMC Signup Wizard URL    | <domain:29000>/signup-wizard |
-| AMC admin username       | amc                         |
-| AMC admin password       | amc                         |
 
 
-### 4.3. Optionally create your own site
-You can skip AMC's create site wizard, and create your site from command line
-(Good as it doesn't require email verification)   
 
-```console
-$ sultan devstack make lms-shell
-$ ./manage.py lms create_devstack_site test
-$ exit
-$ sultan devstack make amc-shell
-$ ./manage.py create_devstack_site test 
-$ exit
-```
-
-> If the signup wizard doesn’t progress from step 1 for you, go and check the 
-> AMC logs (method above). If you see an error logged referring to Terms and 
-> Conditions, it’s a lingering issue where the pip package was updated to a 
-> new version that doesn’t work. We have reverted that in the meantime, but in 
-> case it occurs to you, exit the logs and do a `make amc-shell`, 
-> then `pip install django-termsandconditions==1.1.9`
-
-### 4.5. Everything works, you’re happy? SAVE IT.
+### 4.3. Everything works, you’re happy? SAVE IT.
 
 Once you’ve got everything set up the way you like it and it’s working 
 super-duper, you’ll want to save this sweet sweet and highly unlikely state of 
@@ -324,7 +295,7 @@ $ sultan image create --name my-lovely-image
 > you wanna retrieve it: `sultan instance setup --image my-lovely-image`.
 
 
-### 4.6. Starting/stopping your Devstack
+### 4.4. Starting/stopping your Devstack
 
 To start your Devstack once it’s set up:
 ```console
