@@ -270,7 +270,6 @@ Other information:
 | EDX admin password       | edx                         |
 
 
-
 ### 4.3. Everything works, you’re happy? SAVE IT.
 
 Once you’ve got everything set up the way you like it and it’s working 
