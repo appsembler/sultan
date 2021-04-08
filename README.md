@@ -278,10 +278,10 @@ You can skip AMC's create site wizard, and create your site from command line
 
 ```console
 $ sultan devstack make lms-shell
-$ ./manage.py lms create_devstack_site test
+$ ./manage.py lms create_devstack_site <org> <host>  # your site will be available at org.host
 $ exit
 $ sultan devstack make amc-shell
-$ ./manage.py create_devstack_site test 
+$ ./manage.py create_devstack_site <org> <host>   # your site will be available at org.host
 $ exit
 ```
 
