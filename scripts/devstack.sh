@@ -34,7 +34,7 @@ make() {
   #############################################################################
   # Performs a devstack make command on the GCP instance.                     #
   #############################################################################
-  ssh -tt devstack "
+  ssh -tt $SSH_AGENT_HOST_NAME "
     cd $DEVSTACK_DIR &&
     source $VIRTUAL_ENV/bin/activate &&
     make DEVSTACK_WORKSPACE=$DEVSTACK_WORKSPACE OPENEDX_RELEASE=$OPENEDX_RELEASE VIRTUAL_ENV=$VIRTUAL_ENV $1"
@@ -70,13 +70,15 @@ stop()  {
   #############################################################################
   # Stops and unmounts a devstack servers.                                                   #
   #############################################################################
-  if nc -z "$SSH_AGENT_HOST_NAME" 22 2>/dev/null; then
+  HOST=$(echo "$EDX_HOST_NAMES" | head -n1 | awk '{print $1;}')
+
+  if nc -z "$HOST" 22 2>/dev/null; then
     unmount
     make stop
     success "Your devstack stopped successfully."
   else
-    warn "$SSH_AGENT_HOST_NAME is unreachable." "SKIPPING"
-    dim "This happens because of a misconfiguration in ${BOLD}~/.ssh/config${NORMAL}"
+    warn "$HOST is unreachable." "SKIPPING"
+    dim "This happens because of a misconfiguration in ${BOLD}$HOME/.ssh/config${NORMAL}"
   fi
 }
 
