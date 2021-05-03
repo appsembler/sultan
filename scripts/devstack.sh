@@ -34,7 +34,7 @@ make() {
   #############################################################################
   # Performs a devstack make command on the GCP instance.                     #
   #############################################################################
-  ssh -tt $SSH_AGENT_HOST_NAME "
+  ssh -tt "$SSH_AGENT_HOST_NAME" "
     cd $DEVSTACK_DIR &&
     source $VIRTUAL_ENV/bin/activate &&
     make DEVSTACK_WORKSPACE=$DEVSTACK_WORKSPACE OPENEDX_RELEASE=$OPENEDX_RELEASE VIRTUAL_ENV=$VIRTUAL_ENV $1"
