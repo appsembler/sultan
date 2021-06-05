@@ -101,8 +101,9 @@ create() {
   # Creates an empty instance for you on GCP.                                 #
   #############################################################################
 
-  image="$IMAGE_NAME";
+  # shellcheck disable=SC2153
   alive_time="$ALIVE_TIME"
+  image="$IMAGE_NAME"
   while [[ "$#" -gt 0 ]]; do
     case $1 in
       -i|--image)
