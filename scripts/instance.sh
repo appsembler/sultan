@@ -14,37 +14,38 @@ ${BOLD}${GREEN}instance${NORMAL}
   Manages all of your GCP instance aspects.
 
   ${BOLD}USAGE:${NORMAL}
-    sultan instance (<command> | setup [OPTIONS])
+    sultan instance (<command> | setup [OPTIONS] | create [OPTIONS])
 
   ${BOLD}COMMANDS:${NORMAL}
-    ping          Performs a ping to your instance.
-    restrict      Restricts the access to your instance to you only by
-                  creating the necessary rules.
-    delete        Deletes your instance from GCP.
-    create        Creates an empty instance for you on GCP.
-    deploy        Deploys the instance to install required libraries and
-                  software.
-    provision     Provisions the devstack on your instance.
-    start         Starts your stopped virtual machine on GCP.
-    stop          Stops your virtual machine on GCP, but doesn't delete it.
-    restart       Restarts your virtual machine on GCP.
-    describe      Describes your virtual machine instance.
-    status        Shows the status of your running machine.
-    setup         Setup a restricted instance for you on GCP contains a
-                  provisioned devstack.
-    ip            Gets the external IP of your instance.
-    run           SSH into or run commands on your instance.
+    ping              Performs a ping to your instance.
+    restrict          Restricts the access to your instance to you only by
+                      creating the necessary rules.
+    delete            Deletes your instance from GCP.
+    create            Creates an empty instance for you on GCP.
+    deploy            Deploys the instance to install required libraries and
+                      software.
+    provision         Provisions the devstack on your instance.
+    start             Starts your stopped virtual machine on GCP.
+    stop              Stops your virtual machine on GCP, but doesn't delete it.
+    restart           Restarts your virtual machine on GCP.
+    describe          Describes your virtual machine instance.
+    status            Shows the status of your running machine.
+    setup             Setup a restricted instance for you on GCP contains a
+                      provisioned devstack.
+    ip                Gets the external IP of your instance.
+    run               SSH into or run commands on your instance.
 
   ${BOLD}OPTIONS:${NORMAL}
-    -i, --image   If supplied, the instance will be created from the image
-                  name you provide, or the IMAGE_NAME configuration value.
+    -i, --image       If supplied, the instance will be created from the image
+                      name you provide, or the IMAGE_NAME configuration value.
+    -a, --alive-time  Override the value of ALIVE_TIME configuration.
 
   ${BOLD}EXAMPLES:${NORMAL}
     sultan instance status
     sultan instance ip
     sultan instance setup
     sultan instance setup --image
-    sultan instance setup --image devstack-juniper
+    sultan instance setup --image devstack-juniper --alive-time 240
 "
 
 
@@ -100,15 +101,29 @@ create() {
   # Creates an empty instance for you on GCP.                                 #
   #############################################################################
 
+  image="$IMAGE_NAME";
+  alive_time="$ALIVE_TIME"
   while [[ "$#" -gt 0 ]]; do
     case $1 in
-      -i|--image) image="$2"; shift;;
+      -i|--image)
+        if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+          image="$2";
+          shift
+        fi
+        ;;
+      -a|--alive-time)
+        if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+          alive_time="$2";
+          shift
+        fi
+        ;;
       *) error "Unknown parameter passed: $1" "$help_text";;
     esac
     shift
   done
 
   message "Creating your virtual machine on GCP..." "$INSTANCE_NAME"
+  message "Instance will be stopped after: ${BOLD}$alive_time${NORMAL}s"
 	cmd=(
 	    "gcloud" "compute" "instances" "create" "$INSTANCE_NAME"
 	    "--boot-disk-size=$DISK_SIZE"
@@ -118,7 +133,7 @@ create() {
 	    "--zone=$ZONE"
 	    "--verbosity=$VERBOSITY"
 	    "--project=$PROJECT_ID"
-            "--metadata=startup-script=\"/bin/bash -c '( sleep $ALIVE_TIME; sudo poweroff -p --no-wall ) &'"\"
+      "--metadata=startup-script=/bin/bash -c '( sleep $alive_time; sudo poweroff -p --no-wall ) &'"
     )
 
 
@@ -213,7 +228,7 @@ restart() {
 _full_setup() {
   $sultan local config
   delete
-  create
+  create --alive-time "${1:-$ALIVE_TIME}"
   restrict
   $sultan local hosts config
   $sultan local ssh config
@@ -230,7 +245,7 @@ _image_setup() {
   $sultan local config
   delete
 
-  create --image "${1:-$IMAGE_NAME}"
+  create --image "${1:-$IMAGE_NAME}" --alive-time "${2:-$ALIVE_TIME}"
 
   # Restarts the VM to apply env changes
   $sultan instance restart
@@ -285,18 +300,33 @@ status() {
 
 setup() {
   full_setup=1
+  image="$IMAGE_NAME";
+  alive_time="$ALIVE_TIME"
+
   while [[ "$#" -gt 0 ]]; do
     case $1 in
-      -i|--image) image="$2"; full_setup=0; shift;;
+      -i|--image)
+        full_setup=0;
+        if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+          image="$2";
+          shift
+        fi
+        ;;
+      -a|--alive-time)
+        if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+          alive_time="$2";
+          shift
+        fi
+        ;;
       *) error "Unknown parameter passed: $1" "$help_text";;
     esac
     shift
   done
 
   if [ "$full_setup" -eq 1 ]; then
-    _full_setup
+    _full_setup "$alive_time"
   else
-    _image_setup "$image"
+    _image_setup "$image" "$alive_time"
   fi
 }
 
@@ -319,7 +349,7 @@ run() {
 
 help() {
   # shellcheck disable=SC2059
-  printf "$help_text"
+  printf "$help_text" | less
 }
 
 # Print help message if command is not found
