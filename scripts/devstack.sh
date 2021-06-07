@@ -96,7 +96,7 @@ mount() {
 
 help() {
   # shellcheck disable=SC2059
-  printf "$help_text"
+  printf "$help_text" | less
 }
 
 # Print help message if command is not found

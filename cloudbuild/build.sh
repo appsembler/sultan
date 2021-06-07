@@ -75,6 +75,22 @@ echo "Checking the heartbeat:"
 echo "$HEARTBEAT"
 [[ "$HEARTBEAT" == *"HTTP/1.1 200 OK"* ]] || exit 2
 
+echo "Checking instance alive time:"
+n=0
+ALIVE_TIME=240
+./sultan instance setup --image "${IMAGE}" --alive-time "$ALIVE_TIME"
+
+until [ "$n" -ge 3 ]; do
+  echo "Reading instance status"
+  INSTANCE_STATUS=$(./sultan instance status)
+  n=$((n + 1))
+  if [ "$INSTANCE_STATUS" != "TERMINATED" ]; then
+    sleep $ALIVE_TIME
+  fi
+done
+[[ "$INSTANCE_STATUS" == "TERMINATED" ]] || (echo "Instance failed to terminate itself. Status: $INSTANCE_STATUS" exit 3)
+echo "Instance terminated itself successfully."
+
 if [ "$BRANCH_NAME" == "master" ] && [ "$DEVSTACK_BRANCH" == "juniper" ]; then
   # The condition needs to be changed when more repos are involved.
   echo "Create image:"
