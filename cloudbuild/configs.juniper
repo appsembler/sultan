@@ -17,7 +17,7 @@ HOST_NAME=$(hostname | tr '[:upper:]' '[:lower:]')
 # of firewall rules. Try to use a different one for each type
 # of environment we build so they can run simultaneously without
 # conflicting.
-INSTANCE_NAME=$(echo "$CUSTOM_INSTANCE_NAME" | sed 's/[\/_]/\-/g')
+INSTANCE_NAME=$(echo "dependabot/pip/ansible-2.10.7" | sed 's/[\/_\.]/\-/g')
 
 # Default name of the image to create.
 IMAGE_NAME=devstack-$INSTANCE_NAME
