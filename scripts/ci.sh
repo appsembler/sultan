@@ -35,7 +35,7 @@ build() {
 	BRANCH_NAME=$(cd "$sultan_dir" || exit 1; git branch --show-current)
 	message "Fetched branch name" "$BRANCH_NAME"
 
-	gcloud builds submit \
+	cd "$sultan_dir" || exit 1; gcloud builds submit \
 	  --config=cloudbuild.yaml \
 	  --config=cloudbuild.yaml \
 	  --substitutions="REPO_NAME=sultan-$USER_NAME,BRANCH_NAME=$BRANCH_NAME,SHORT_SHA=$SHORT_SHA" \
