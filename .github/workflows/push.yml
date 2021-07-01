@@ -4,7 +4,7 @@ name: 'Trigger: Push action'
 
 jobs:
   shellcheck:
-    name: Shellcheck
+    name: Linter
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -14,3 +14,83 @@ jobs:
         SHELLCHECK_OPTS: -e SC1090
       with:
         check_together: 'yes'
+  test:
+    name: Test Sultan
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.SERVICE_ACCOUNT_FILE }}
+        export_default_credentials: true
+    - name: Get our service key file out of secret manager
+      run: gcloud secrets versions access latest --secret=${{ secrets.SERVICE_KEY_SECRET_NAME }} --project="$GCLOUD_PROJECT" > ${{ secrets.SERVICE_KEY_LOCATION }}
+    - name: Install SSH key
+      run: |
+        mkdir $HOME/.ssh/;
+        chmod 700 $HOME/.ssh;
+        echo "$(gcloud secrets versions access latest --secret=${{ secrets.SSH_KEY_SECRET_NAME }} --project=$GCLOUD_PROJECT)" > ${{ secrets.SSH_KEY_LOCATION }};
+        chmod 600 ${{ secrets.SSH_KEY_LOCATION }};
+    - name: Checkout the branch
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Use our config
+      run: cp ./tests/configs.test ./configs/.configs.$USER
+    - name: "Set environmental variables"
+      run: |
+        echo "CUSTOM_INSTANCE_NAME=sultan-${GITHUB_SHA:0:7}-$(date +%s)" >> $GITHUB_ENV
+        echo "IMAGE=devstack-juniper" >> $GITHUB_ENV
+        echo "DEVSTACK_BRANCH=" >> $GITHUB_ENV
+        echo "TERM=xterm-256color" >> $GITHUB_ENV
+        echo "SERVICE_KEY_LOCATION=${{ secrets.SERVICE_KEY_LOCATION }}" >> $GITHUB_ENV
+        echo "SSH_KEY_LOCATION=${{ secrets.SSH_KEY_LOCATION }}" >> $GITHUB_ENV
+        echo "SERVICE_ACCOUNT_EMAIL=${{ secrets.SERVICE_ACCOUNT_EMAIL }}" >> $GITHUB_ENV
+    - name: "Mask secrets"
+      run: |
+        echo "::add-mask::$SERVICE_KEY_LOCATION"
+        echo "::add-mask::$SSH_KEY_LOCATION"
+        echo "::add-mask::$SERVICE_ACCOUNT_EMAIL"
+
+    - name: Debug the env
+      run: env
+    - name: Configure sudo
+      run: |
+        sudo apt-get update;
+        sudo apt-get install -y sudo
+
+    - name: Sultan Configs
+      run: ./sultan config debug
+
+    - name: Test Instance Setup
+      run: ./tests/test_instance_setup.sh
+
+    - name: Debug ssh config
+      run: cat "$HOME/.ssh/config"
+    - name: Debug hosts
+      run: cat /etc/hosts
+    - name: Debug instance status
+      run: ./sultan instance status
+    - name: Debug instance IP
+      run: ./sultan instance ip
+
+    - name: Test devstack
+      run: ./tests/test_devstack.sh
+
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v8.4
+
+    - name: Test alive time
+      run: ./tests/test_alive_time.sh
+      if: contains(steps.changed-files.outputs.modified_files, 'instance.sh') || contains(steps.changed-files.outputs.modified_files, 'test_alive_time.sh')
+
+    - name: Create image
+      run: ./tests/test_create_image.sh
+      if: ${{ github.ref == 'refs/heads/master' && (env.DEVSTACK_BRANCH == 'juniper' || env.DEVSTACK_BRANCH =='') }}
+
+    - name: Clean up
+      run: ./tests/cleanup.sh
+      if: always()

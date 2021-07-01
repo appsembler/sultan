@@ -86,9 +86,9 @@ to generate a key for your service account).
 ```shell
 ## File configs/.configs.$USER
 SSH_KEY="$(HOME)/.ssh/id_rsa"
-PROJECT_ID="appsembler-devstack-30"
-SERVICE_ACCOUNT_EMAIL=devstack@appsembler-devstack-30.iam.gserviceaccount.com
-SERVICE_KEY_PATH=/Users/matej/Work/Appsembler/appsembler-devstack-30-104c123267bf.json
+PROJECT_ID=<gcp-project-id>
+SERVICE_ACCOUNT_EMAIL=email@<gcp-project-id>.iam.gserviceaccount.com
+SERVICE_KEY_PATH=/path/to/service/key.json
 ```
 
 > **NOTE**
@@ -406,19 +406,11 @@ $ sultan --help
 ```
 
 ## 8. CI/CD
-This repo is now being used to ensure builds on our edX services are passing
-on devstack expectations. To trigger the builds locally, you can use the 
-follwoing command:
+This repo is now being used to ensure our edX services work under our devstack
+expectations.
 
-```console
-$ sultan ci build
-```
-
-`build` will automatically grab some information for you in order for the build
-to be easily spot on GCP. This information includes:
-- Your current sultan branch.
-- The current short SHA on sultan repo.
-- Your username.
+All CI/CD is currently done on GitHub. CD will run everytime we have a build 
+triggered from the master branch on Sultan.
 
 ## 9. Errors
 Errors are possible all the time. If an error's fired while executing commands 

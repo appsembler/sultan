@@ -70,7 +70,7 @@ stop()  {
   #############################################################################
   # Stops and unmounts a devstack servers.                                                   #
   #############################################################################
-  if nc -z "$(sultan instance ip)" 22 2>/dev/null; then
+  if nc -z "$("$sultan" instance ip)" 22 2>/dev/null; then
     unmount
     make stop
     success "Your devstack stopped successfully."

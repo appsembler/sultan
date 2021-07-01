@@ -1,13 +1,13 @@
 VERSION=2.0.0
 
 # (PLEASE CHANGE) A key that has access to your edx-platform Github repos and to the GCP project you want to deploy the devstack in.
-SSH_KEY="/root/.ssh/id_ed25519"
+SSH_KEY="$SSH_KEY_LOCATION"
 
 # (PLEASE CHANGE) This is the project where the your instance will be created.
-PROJECT_ID="appsembler-devstack-30"
+PROJECT_ID="$GCLOUD_PROJECT"
 
 # This will be used while SSHing into your remote machine. Usually matches the one in the SSH Key.
-USER_NAME=cloudbuild
+USER_NAME=$USER
 
 # Will be used to create a unique identifier on GCP.
 HOST_NAME=$(hostname | tr '[:upper:]' '[:lower:]')
@@ -49,7 +49,7 @@ ZONE=us-central1-c
 
 # Sultan directory, this can be any path you want to store scripts
 # generated files in.
-SULTAN_HOME=/workspace/.sultan
+SULTAN_HOME=$HOME_DIR/.sultan
 
 # The inventory of your machine.
 INVENTORY_CONFIGS_DIR=$SULTAN_HOME/ansible/dynamic-inventory
@@ -81,7 +81,7 @@ else
   SHELL_OUTPUT=/dev/null
 fi
 
-HOME_DIR=/home/cloudbuild
+HOME_DIR=$HOME
 
 # The location of devstack on the remote machine
 DEVSTACK_WORKSPACE=$HOME_DIR/workspace
@@ -92,10 +92,10 @@ VIRTUAL_ENV=$DEVSTACK_WORKSPACE/env
 IMAGE_FAMILY=devstack
 
 # (PLEASE CHANGE) This is the service account's email address that is provisioned during creation or granted to you by an admin.
-SERVICE_ACCOUNT_EMAIL=devstack@appsembler-devstack-30.iam.gserviceaccount.com
+SERVICE_ACCOUNT_EMAIL=$SERVICE_ACCOUNT_EMAIL
 
 # (PLEASE CHANGE) The downloaded JSON file key of your GCP project.
-SERVICE_KEY_PATH=/workspace/devstack.json
+SERVICE_KEY_PATH=$SERVICE_KEY_LOCATION
 
 # The devstack repository URL. Change this if you want to use another clone.
 DEVSTACK_REPO_URL=https://github.com/appsembler/devstack.git
@@ -131,5 +131,5 @@ COLS=$(tput cols)
 
 SULTAN_ENV=$(which python)
 
-# CI/CloudBuild hack. Do not enable unless you understand what it does.
+# CI hack. Do not enable unless you understand what it does.
 ETC_HOSTS_HACK=true
