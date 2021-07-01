@@ -31,7 +31,7 @@ steps:
         export CONFIG=${_CONFIG}
         export PROJECT_ID=${PROJECT_ID}
         export IMAGE=${_IMAGE}
-        export CUSTOM_INSTANCE_NAME=${REPO_NAME}-${BRANCH_NAME}-at-${SHORT_SHA}
+        export CUSTOM_INSTANCE_NAME=sultan-${SHORT_SHA}-$(date +%s)
         export BRANCH_NAME=${BRANCH_NAME}
         export DEVSTACK_BRANCH=${_DEVSTACK_BRANCH}
         ./cloudbuild/build.sh;
