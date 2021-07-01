@@ -4,7 +4,7 @@ name: 'Trigger: Push action'
 
 jobs:
   shellcheck:
-    name: Shellcheck
+    name: Linter
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -14,3 +14,27 @@ jobs:
         SHELLCHECK_OPTS: -e SC1090
       with:
         check_together: 'yes'
+  test:
+    name: Test Sultan
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.SERVICE_ACCOUNT_FILE }}
+        export_default_credentials: true
+    - name: Run test scripts
+      uses: actions/checkout@v2
+      env:
+        GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        CONFIG_FILE: ${{ secrets.CONFIG_FILE }}
+    - run: |
+        export CONFIG=juniper
+        export IMAGE=devstack-juniper
+        export CUSTOM_INSTANCE_NAME=sultan-${GITHUB_SHA:0:7}-$(date +%s)
+        export CONFIGS=$CONFIG_FILE
+        export DEVSTACK_BRANCH=
+        ./cloudbuild/build.sh;
+#        export PREVIOUS_EXIT="$?";
+#        ./cloudbuild/clean.sh
