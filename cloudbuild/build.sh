@@ -91,7 +91,7 @@ done
 [[ "$INSTANCE_STATUS" == "TERMINATED" ]] || (echo "Instance failed to terminate itself. Status: $INSTANCE_STATUS" exit 3)
 echo "Instance terminated itself successfully."
 
-if [ "$BRANCH_NAME" == "master" ] && [ "$DEVSTACK_BRANCH" == "juniper" ]; then
+if [ "$BRANCH_NAME" == "master" ] && { [ "$DEVSTACK_BRANCH" == "juniper" ] || [ -z "$DEVSTACK_BRANCH" ]; }; then
   # The condition needs to be changed when more repos are involved.
   echo "Create image:"
   ./sultan image create --name "${IMAGE}"
