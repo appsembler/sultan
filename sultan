@@ -36,10 +36,6 @@ config() {
 	bash -eo pipefail "$current_dir"/scripts/configurations.sh "$@"
 }
 
-ci() {
-	bash -eo pipefail "$current_dir"/scripts/ci.sh "$@"
-}
-
 version() {
   printf "Sultan ${CYAN}v%s${NORMAL}\n" "$VERSION"
 }
@@ -58,7 +54,6 @@ OPTIONS:
   -v, --version     Get current version
 
 SERVICES:
-  ci        Helps you triggering and managing CI/CD from your local machine.
   config    Manages Sultan configurations.
   devstack  Manages the devstack on your remote machine.
   instance  Manages all of your GCP instance aspects.

@@ -109,13 +109,13 @@ hosts() {
     sudocheck
 
     if [ "$ETC_HOSTS_HACK" == true ]; then
-        # DANGER: cloudbuild/docker specific hack. DO NOT USE ELSEWHERE.
+        # DANGER: CI/docker specific hack. DO NOT USE ELSEWHERE.
         # in a container, /etc/hosts can't be overwritten
         # via `os.rename()` and ansible breaks. We can modify the existing
         # file though. Since it's an ephemeral environment anyway, we just
         # do a simple append and don't worry about being able to clean it
         # up later
-        echo "$IP_ADDRESS $EDX_HOST_NAMES" >> /etc/hosts
+        sudo -- sh -c "echo $IP_ADDRESS $EDX_HOST_NAMES >> /etc/hosts"
     else
         # shellcheck disable=SC2024
         sudo ansible-playbook \

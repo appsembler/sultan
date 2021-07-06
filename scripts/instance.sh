@@ -207,7 +207,6 @@ stop() {
   #############################################################################
   # Stops your instance on GCP, but doesn't delete it.                        #
   #############################################################################
-  $sultan devstack stop
   $sultan local hosts revert
 
 	message "Stopping your virtual machine on GCP..." "$INSTANCE_NAME"
