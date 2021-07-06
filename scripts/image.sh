@@ -35,7 +35,7 @@ _delete_command() {
 }
 
 _create_command() {
-  (gcloud beta compute images create "$1" \
+  (gcloud compute images create "$1" \
 		--source-disk="$INSTANCE_NAME" \
 		--source-disk-zone="$ZONE" \
 		--family="$IMAGE_FAMILY" \
