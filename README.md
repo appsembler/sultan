@@ -1,4 +1,4 @@
-# Sultan
+# Sultan [![Tests](https://github.com/appsembler/sultan/actions/workflows/push.yml/badge.svg)](https://github.com/appsembler/sultan/actions/workflows/push.yml)
 
 ### An Open edX Remote Devstack by Appsembler
 
