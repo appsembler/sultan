@@ -1,4 +1,11 @@
-on: push
+on:
+  push:
+  workflow_dispatch:
+      inputs:
+        debug_enabled:
+          description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+          required: false
+          default: false
 
 name: 'Tests'
 
@@ -90,6 +97,11 @@ jobs:
     - name: Create image
       run: ./tests/test_create_image.sh
       if: ${{ github.ref == 'refs/heads/master' && (env.DEVSTACK_BRANCH == 'juniper' || env.DEVSTACK_BRANCH =='') }}
+
+    # Enable tmate debugging of manually-triggered workflows if the input option was provided
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
 
     - name: Clean up
       run: ./tests/cleanup.sh
