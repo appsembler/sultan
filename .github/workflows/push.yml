@@ -37,7 +37,7 @@ jobs:
       run: |
         mkdir $HOME/.ssh/;
         chmod 700 $HOME/.ssh;
-        echo "$(gcloud secrets versions access latest --secret=${{ secrets.SSH_KEY_SECRET_NAME }} --project=$GCLOUD_PROJECT)" > ${{ secrets.SSH_KEY_LOCATION }};
+        echo "${{ secrets.BUILDER_PRIVATE_KEY }}" > ${{ secrets.SSH_KEY_LOCATION }};
         chmod 600 ${{ secrets.SSH_KEY_LOCATION }};
     - name: Checkout the branch
       uses: actions/checkout@v2
