@@ -1,6 +1,20 @@
-on: push
+name: 'Sultan Tests'
 
-name: 'Trigger: Push action'
+on:
+  push:
+  workflow_dispatch:
+      inputs:
+        # Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)
+        debug_enabled:
+          description: "Debug Mode"
+          required: false
+          default: false
+        devstack_branch:
+          description: "Devstack branch"
+          required: false
+          default: ""
+  repository_dispatch:
+    types: [devstack]
 
 jobs:
   shellcheck:
@@ -30,7 +44,7 @@ jobs:
       run: |
         mkdir $HOME/.ssh/;
         chmod 700 $HOME/.ssh;
-        echo "$(gcloud secrets versions access latest --secret=${{ secrets.SSH_KEY_SECRET_NAME }} --project=$GCLOUD_PROJECT)" > ${{ secrets.SSH_KEY_LOCATION }};
+        echo "${{ secrets.BUILDER_PRIVATE_KEY }}" > ${{ secrets.SSH_KEY_LOCATION }};
         chmod 600 ${{ secrets.SSH_KEY_LOCATION }};
     - name: Checkout the branch
       uses: actions/checkout@v2
@@ -43,7 +57,7 @@ jobs:
       run: |
         echo "CUSTOM_INSTANCE_NAME=sultan-${GITHUB_SHA:0:7}-$(date +%s)" >> $GITHUB_ENV
         echo "IMAGE=devstack-juniper" >> $GITHUB_ENV
-        echo "DEVSTACK_BRANCH=" >> $GITHUB_ENV
+        echo "DEVSTACK_BRANCH=${{ github.event.inputs.devstack_branch || github.event.client_payload.branch }}" >> $GITHUB_ENV
         echo "TERM=xterm-256color" >> $GITHUB_ENV
         echo "SERVICE_KEY_LOCATION=${{ secrets.SERVICE_KEY_LOCATION }}" >> $GITHUB_ENV
         echo "SSH_KEY_LOCATION=${{ secrets.SSH_KEY_LOCATION }}" >> $GITHUB_ENV
@@ -90,6 +104,11 @@ jobs:
     - name: Create image
       run: ./tests/test_create_image.sh
       if: ${{ github.ref == 'refs/heads/master' && (env.DEVSTACK_BRANCH == 'juniper' || env.DEVSTACK_BRANCH =='') }}
+
+    # Enable tmate debugging of manually-triggered workflows if the input option was provided
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
 
     - name: Clean up
       run: ./tests/cleanup.sh

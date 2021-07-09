@@ -76,7 +76,7 @@ stop()  {
     success "Your devstack stopped successfully."
   else
     warn "$SSH_AGENT_HOST_NAME is unreachable." "SKIPPING"
-    dim "This happens because of a misconfiguration in ${BOLD}~/.ssh/config${NORMAL}"
+    dim "This happens because of a misconfiguration in ${BOLD}$HOME/.ssh/config${NORMAL}"
   fi
 }
 
