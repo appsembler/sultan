@@ -1,6 +1,6 @@
 # Sultan [![Sultan Tests](https://github.com/appsembler/sultan/actions/workflows/test.yml/badge.svg?event=push)](https://github.com/appsembler/sultan/actions/workflows/test.yml)
 
-### An Open edX Remote Devstack by Appsembler
+### test
 
 This toolkit helps your run devstack on cloud (currently GCP). It will also provide you with the necessary tools to help you using your local machine for development, and your cloud instance for showing and testing.
 
