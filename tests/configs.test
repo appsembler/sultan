@@ -107,6 +107,13 @@ DEVSTACK_REPO_BRANCH=${DEVSTACK_BRANCH:-juniper}
 # To work on the master branches and latest images, unset OPENEDX_RELEASE or set it to an empty string.
 OPENEDX_RELEASE="juniper.master"
 
+# A comma-separated list of extra requirements to install inside your edxapp. This is an
+# alternative to the EDXAPP_EXTRA_REQUIREMENTS in edX Ansible scripts. At the moment
+# We only support cloneable git repos so that they persist in your setup. More info
+# in https://github.com/appsembler/devstack/pull/42.
+# Example: EDXAPP_EXTRA_REQUIREMENTS="https://github.com/appsembler/gestore.git==0.1.0-dev3,https://github.com/appsembler/course-access-groups.git"
+EDXAPP_EXTRA_REQUIREMENTS=""
+
 # The command that runs all of your devstack services (LMS, Studio, ...) Change it if you have a custom one.
 DEVSTACK_RUN_COMMAND="HOST=devstack.tahoe dev.up"
 
