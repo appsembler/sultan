@@ -1,4 +1,5 @@
 
+extra_requirements_directory: "{{ working_directory }}/src/edxapp-pip"
 devstack_directory: "{{ working_directory }}/devstack"
 
 ssh_keys_dir: "~/.ssh"

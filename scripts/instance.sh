@@ -167,6 +167,7 @@ deploy() {
           git_repo_url=$DEVSTACK_REPO_URL
           openedx_release=$OPENEDX_RELEASE
           git_repo_branch=$DEVSTACK_REPO_BRANCH
+          extra_requirements=$EDXAPP_EXTRA_REQUIREMENTS
           virtual_env_dir=$VIRTUAL_ENV" &> "$SHELL_OUTPUT"
         success "Your virtual machine has been deployed successfully!"
         message "Run ${BOLD}${CYAN}sultan instance provision${NORMAL}${MAGENTA} to start provisioning your devstack."
@@ -262,6 +263,7 @@ _image_setup() {
       ci_build=$ETC_HOSTS_HACK
       git_repo_url=$DEVSTACK_REPO_URL
       git_repo_branch=$DEVSTACK_REPO_BRANCH
+      extra_requirements=$EDXAPP_EXTRA_REQUIREMENTS
       openedx_release=$OPENEDX_RELEASE
       virtual_env_dir=$VIRTUAL_ENV
       home_dir=$HOME_DIR
