@@ -194,11 +194,11 @@ start() {
 		--zone="$ZONE" \
 		--project "$PROJECT_ID"
 
-	$sultan local hosts config
-	$sultan local ssh config
-
 	# always restrict the instance after starting it.
 	restrict
+
+	$sultan local hosts config
+	$sultan local ssh config
 
 	success "Your virtual machine has been started successfully!"
 }
