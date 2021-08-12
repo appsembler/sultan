@@ -77,6 +77,22 @@
     marker: "# {mark} SULTAN MANAGED BLOCK"
   tags: [ server, reconfiguration ]
 
+- name: Install edxapp extra requirements
+  git:
+    repo: "{{ repo }}"
+    version: "{{ version }}"
+    dest: "{{ extra_requirements_directory }}/{{ package_name }}"
+    accept_hostkey: yes
+    key_file: yes
+  loop: "{{ extra_requirements.split(',') }}"
+  vars:
+    repo: "{{ item.split('==').0 }}"
+    package_name: "{{ repo | basename | regex_replace('^(.*).git$', '\\1') }}"
+    version: "{{ item.split('==').1 | default('HEAD') }}"
+  when: extra_requirements
+  become: no
+  tags: [ devstack, reconfiguration, env ]
+
 - name: Checkout Github branch
   git:
     repo: "{{ git_repo_url }}"

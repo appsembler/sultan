@@ -356,6 +356,43 @@ Yup, really works fast and resets it to that glorious state you saved. Nice.
 > The instance is secured behind a firewall by default. To override this 
 > behavior, change `RESTRICT_INSTANCE` value in your configs to `false`. 
 
+### 4.5. Adding extra requirements
+Sultan supports `EDXAPP_EXTRA_REQUIREMENTS` in its unique way. If you are not
+familiar with this variable, edX uses it in its production Ansible deployment
+scripts, but they were never incorporated in the devstack.
+
+We introduced a way in our devstack ([devstack#42](https://github.com/appsembler/devstack/pull/42))
+to install extra pip packages without modifying edx-platform codebase. This 
+variable has been added to Sultan as a comma-separated configuration variable 
+(`EDXAPP_EXTRA_REQUIREMENTS`), and it utilizes our `edxapp-pip` directory 
+to install extra packages. That's been said, this variable will have no effect
+on your devstack unless your using Appsembler's version of the 
+devstack, unfortunately.
+
+#### How to use it
+The configuration variable expects a comma-separated list of pip packages' 
+git repos:
+
+```shell
+EDXAPP_EXTRA_REQUIREMENTS="https://github.com/appsembler/gestore.git==0.1.0-dev3,https://github.com/appsembler/course-access-groups.git"
+```
+
+Once you finish adding this requirement, you need to apply it to the machine:
+- If you haven't created a machine yet, then you're all sit, the changes will be deployed in the next `sultan setup`.
+- If your machine is created and running, run `sultan instance deploy` to have these libraries cloned in your sultan instance.
+
+#### Specifying a package version
+To specify the version for your package, simply add `==<branch_or_tag>` after 
+the repo link. If no version is specified, we will default to the main branch 
+of the repo (`HEAD`).
+
+> **NOTE**
+> 
+> If the package you're installing is a Django app, then you might need to 
+> consider adding the app name to your `ADDL_INSTALLED_APPS` in your lms/cms 
+> YAML configs.
+
+
 ## 5. Development
 To change or update edx-platform code from your machine and reflect on the 
 server immediately, there are so many ways you can choose from. However, we 
@@ -478,7 +515,7 @@ That should fix the problem.
 │                          │                                  └── IMAGE_NAME
 ├── HOST_NAME ─────────────┘
 ├── PROJECT_ID
-├── EXPOSED_PORTS
+├── EDXAPP_EXTRA_REQUIREMENTS
 ├── BOOT_DISK_TYPE
 ├── DISK_SIZE
 ├── MACHINE_TYPE
