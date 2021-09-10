@@ -28,6 +28,7 @@ ${BOLD}${GREEN}instance${NORMAL}
     start             Starts your stopped virtual machine on GCP.
     stop              Stops your virtual machine on GCP, but doesn't delete it.
     restart           Restarts your virtual machine on GCP.
+    reconfigure       Reconfigures your instance.
     describe          Describes your virtual machine instance.
     status            Shows the status of your running machine.
     setup             Setup a restricted instance for you on GCP contains a
@@ -253,7 +254,14 @@ _image_setup() {
 
   $sultan local hosts config
   $sultan local ssh config
+  $sultan instance reconfigure
 
+  success "Your instance has been successfully created!" "From $IMAGE_NAME"
+  message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGENTA} to start devstack servers."
+}
+
+
+reconfigure() {
   message "Personalizing your instance..."
   # shellcheck disable=SC1090
   ansible-playbook "$sultan_dir"/ansible/devstack.yml \
@@ -271,8 +279,7 @@ _image_setup() {
       user=$USER_NAME
       working_directory=$DEVSTACK_WORKSPACE" &> "$SHELL_OUTPUT"
 
-  success "Your instance has been successfully created!" "From $IMAGE_NAME"
-  message "Run ${BOLD}${CYAN}sultan devstack up${NORMAL}${MAGENTA} to start devstack servers."
+  success "Your instance has been reconfigured successfully"
 }
 
 describe() {

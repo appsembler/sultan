@@ -46,7 +46,7 @@
     requirements: "{{ working_directory }}/devstack/requirements/base.txt"
     virtualenv: "{{ working_directory }}/env"
     virtualenv_python: python3
-  become: false
+  become: no
   tags: [ devstack, env ]
 
 - name: Change '{{ working_directory }}' owner
