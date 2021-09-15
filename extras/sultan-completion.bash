@@ -336,6 +336,10 @@ _main_instance ()
         COMPREPLY=()
         return
         ;;
+      reconfigure)
+        COMPREPLY=()
+        return
+        ;;
       restart)
         COMPREPLY=()
         return
@@ -382,6 +386,7 @@ _main_instance ()
   ip
   ping
   provision
+  reconfigure
   restart
   restrict
   run
