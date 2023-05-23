@@ -1,4 +1,4 @@
 apache-libcloud==2.5.0
 ansible==7.0.0
 google-auth==1.25.0
-requests==2.25.1
+requests==2.31.0
